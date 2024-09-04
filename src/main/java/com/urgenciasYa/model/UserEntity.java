@@ -1,12 +1,39 @@
 package com.urgenciasYa.model;
 
+import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.data.annotation.Id;
+
+@Entity
+@Table(name = "Users")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 
 public class UserEntity {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private Long id;
+
+    @Column(nullable = false)
     private String name;
+    @Column(nullable = false)
     private String eps;
+    @Column(nullable = false)
     private String password;
-    private Long emergency_id;
-    private Long role_id;
+
+
+    @OneToOne
+    @JoinColumn(name = "emergency_id")
+    private EmergencyEntity emergency; // Relación uno a uno con otra entidad (EmergencyEntity)
+
+    @OneToOne
+    @JoinColumn(name = "role_id") // Especifica la columna de la llave foránea
+    private RoleEntity role; // Relación uno a uno con otra entidad (RoleEntity)
 }
