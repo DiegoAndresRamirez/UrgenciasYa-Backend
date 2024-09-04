@@ -11,7 +11,7 @@
 	<groupId>com.urgenciasYa</groupId>
 	<artifactId>AppUrgenciasYa</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Urgencias-Ya</name>
+	<name>Urgencias Ya</name>
 	<description>website that helps people find the nearest hospital according to their location and eps</description>
 	<url/>
 	<licenses>
