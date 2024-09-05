@@ -1,30 +1,44 @@
 package com.urgenciasYa.service.Impl;
 
+import com.urgenciasYa.dto.request.HospitalSearchRequestDTO;
+import com.urgenciasYa.dto.response.HospitalCardDTO;
 import com.urgenciasYa.model.Hospital;
 import com.urgenciasYa.repository.HospitalRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.urgenciasYa.model.Eps;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class HospitalService {
 
-    @Autowired
-    HospitalRepository hospitalRepository;
+    private final HospitalRepository hospitalRepository;
+
+    public HospitalService(HospitalRepository hospitalRepository) {
+        this.hospitalRepository = hospitalRepository;
+    }
 
     private static final double EARTH_RADIUS = 6371;
 
-    public List<Hospital> getHospitalsNearby(String eps, String town, double userLatitude, double userLongitude) {
-        List<Hospital> hospitals = hospitalRepository.findByEpsAndTown(eps, town);
+    public List<HospitalCardDTO> getHospitalsNearby(HospitalSearchRequestDTO requestDTO) {
+        List<Hospital> hospitals = hospitalRepository.findByEpsAndTown(requestDTO.getEps(), requestDTO.getTown());
 
         hospitals.sort((h1, h2) -> {
-            double distanceToH1 = calculateDistance(userLatitude, userLongitude, h1.getLatitude(), h1.getLongitude());
-            double distanceToH2 = calculateDistance(userLatitude, userLongitude, h2.getLatitude(), h2.getLongitude());
+            double distanceToH1 = calculateDistance(requestDTO.getUserLatitude(), requestDTO.getUserLongitude(), h1.getLatitude(), h1.getLongitude());
+            double distanceToH2 = calculateDistance(requestDTO.getUserLatitude(), requestDTO.getUserLongitude(), h2.getLatitude(), h2.getLongitude());
             return Double.compare(distanceToH1, distanceToH2);
         });
 
-        return hospitals;
+        return hospitals.stream().map(hospital -> HospitalCardDTO.builder()
+                .url_image(hospital.getUrl_image())
+                .phone_number(hospital.getPhone_number())
+                .name(hospital.getName())
+                .rating(hospital.getRating())
+                .howtogetthere(hospital.getHowtogetthere())
+                .nameTown(hospital.getTown_id().getName())
+                .nameEps(hospital.getEps_id().stream().findFirst().map(Eps::getName).orElse(""))
+                .build()).collect(Collectors.toList());
     }
 
     private double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
