@@ -14,4 +14,5 @@ import io.swagger.v3.oas.models.OpenAPI;
         description = "UrgenciasYa Application API Documentation"
 ))
 public class SwaggerConfig {
+
 }
