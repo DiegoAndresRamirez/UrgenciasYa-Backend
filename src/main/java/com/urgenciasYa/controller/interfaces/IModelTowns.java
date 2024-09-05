@@ -6,5 +6,5 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 public interface IModelTowns {
-    public ResponseEntity<List<Towns>> getAllCities();
+    public ResponseEntity<List<Towns>> getAllTowns();
 }
