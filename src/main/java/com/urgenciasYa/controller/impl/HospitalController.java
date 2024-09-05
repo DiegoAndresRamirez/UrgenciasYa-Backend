@@ -22,9 +22,11 @@ public class HospitalController {
     @GetMapping("/findByEpsAndTown")
     public ResponseEntity<List<Hospital>> getHospitalByEpsAndTown(
             @RequestParam String eps,
-            @RequestParam String town
+            @RequestParam String town,
+            @RequestParam double latitude,
+            @RequestParam double longitude
     ){
-        List<Hospital> hospitals = hospitalService.findHospitalByEpsAndTown(eps, town);
+        List<Hospital> hospitals = hospitalService.getHospitalsNearby(eps, town, latitude, longitude);
         if(hospitals.isEmpty()){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
