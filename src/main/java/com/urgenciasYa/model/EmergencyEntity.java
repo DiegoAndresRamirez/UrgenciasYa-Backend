@@ -6,11 +6,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.annotation.Id;
 
 
 @Entity
-@Table(name = "emergency")
+@Table(name = "emergencyContact")
 @Setter
 @Getter
 @AllArgsConstructor
@@ -18,10 +17,13 @@ import org.springframework.data.annotation.Id;
 public class EmergencyEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private Long id;
+    private String id;
     @Column(nullable = false)
     private String name;
     @Column(nullable = false)
     private String phone;
+
+    @OneToOne(mappedBy = "emergency")
+    private UserEntity user;
 
 }

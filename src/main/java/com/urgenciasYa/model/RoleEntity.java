@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.annotation.Id;
 
 @Entity
 @Table(name = "role")
@@ -17,8 +16,11 @@ import org.springframework.data.annotation.Id;
 public class RoleEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private Long id;
+    private String id;
     @Column(nullable = false)
     private String code;
+
+    @OneToOne(mappedBy = "role")
+    private UserEntity user;
 
 }
