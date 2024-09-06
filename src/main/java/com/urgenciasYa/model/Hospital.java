@@ -1,5 +1,6 @@
 package com.urgenciasYa.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,6 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Schema(description = "specialized institution designed to provide comprehensive medical care and treatment to individuals with various health conditions.")
 public class Hospital {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
