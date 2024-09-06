@@ -1,5 +1,6 @@
 package com.urgenciasYa.dto.response;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,6 +14,7 @@ import java.util.Map;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Schema(description = "specialized institution designed to provide comprehensive medical care and treatment to individuals with various health conditions.")
 
 public class HospitalCardDTO {
     private String url_image;
