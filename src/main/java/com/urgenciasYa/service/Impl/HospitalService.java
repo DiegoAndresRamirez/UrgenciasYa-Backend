@@ -4,10 +4,12 @@ import com.urgenciasYa.dto.request.HospitalSearchRequestDTO;
 import com.urgenciasYa.dto.response.HospitalCardDTO;
 import com.urgenciasYa.model.Hospital;
 import com.urgenciasYa.repository.HospitalRepository;
+import com.urgenciasYa.utils.ConcurrencyAlgorithm;
 import org.springframework.stereotype.Service;
 import com.urgenciasYa.model.Eps;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,23 +24,37 @@ public class HospitalService {
     private static final double EARTH_RADIUS = 6371;
 
     public List<HospitalCardDTO> getHospitalsNearby(HospitalSearchRequestDTO requestDTO) {
-        List<Hospital> hospitals = hospitalRepository.findByEpsAndTown(requestDTO.getEps(), requestDTO.getTown());
+        String eps = requestDTO.getEps();
+        String town = requestDTO.getTown();
+        double userLatitude = requestDTO.getLatitude();
+        double userLongitude = requestDTO.getLongitude();
+
+        List<Hospital> hospitals = hospitalRepository.findByEpsAndTown(eps, town);
 
         hospitals.sort((h1, h2) -> {
-            double distanceToH1 = calculateDistance(requestDTO.getUserLatitude(), requestDTO.getUserLongitude(), h1.getLatitude(), h1.getLongitude());
-            double distanceToH2 = calculateDistance(requestDTO.getUserLatitude(), requestDTO.getUserLongitude(), h2.getLatitude(), h2.getLongitude());
+            double distanceToH1 = calculateDistance(userLatitude, userLongitude, h1.getLatitude(), h1.getLongitude());
+            double distanceToH2 = calculateDistance(userLatitude, userLongitude, h2.getLatitude(), h2.getLongitude());
             return Double.compare(distanceToH1, distanceToH2);
         });
 
-        return hospitals.stream().map(hospital -> HospitalCardDTO.builder()
-                .url_image(hospital.getUrl_image())
-                .phone_number(hospital.getPhone_number())
-                .name(hospital.getName())
-                .rating(hospital.getRating())
-                .howtogetthere(hospital.getHowtogetthere())
-                .nameTown(hospital.getTown_id().getName())
-                .nameEps(hospital.getEps_id().stream().findFirst().map(Eps::getName).orElse(""))
-                .build()).collect(Collectors.toList());
+        return hospitals.stream().map(hospital -> {
+            Map<String, Integer> concurrencyProfile = ConcurrencyAlgorithm.generateConcurrencyProfile(
+                    hospital.getMorning_peak(),
+                    hospital.getAfternoon_peak(),
+                    hospital.getNight_peak()
+            );
+
+            return HospitalCardDTO.builder()
+                    .url_image(hospital.getUrl_image())
+                    .phone_number(hospital.getPhone_number())
+                    .name(hospital.getName())
+                    .rating(hospital.getRating())
+                    .howtogetthere(hospital.getHowtogetthere())
+                    .nameTown(hospital.getTown_id().getName())
+                    .nameEps(hospital.getEps_id().stream().findFirst().map(Eps::getName).orElse(""))
+                    .concurrencyProfile(concurrencyProfile)
+                    .build();
+        }).collect(Collectors.toList());
     }
 
     private double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
