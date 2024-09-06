@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Map;
+
 @Builder
 @Getter
 @Setter
@@ -20,4 +22,6 @@ public class HospitalCardDTO {
     private String howtogetthere;
     private String nameTown;
     private String nameEps;
+    private Map<String, Integer> concurrencyProfile;
+
 }
