@@ -15,13 +15,13 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/hospital/api/v1")
+@RequestMapping("/api/v1/hospitals")
 public class HospitalController {
 
     @Autowired
     private HospitalService hospitalService;
 
-    @GetMapping("/findByEpsAndTown")
+    @GetMapping
     public ResponseEntity<List<HospitalCardDTO>> getHospitalByEpsAndTown(
             @RequestParam String eps,
             @RequestParam String town,

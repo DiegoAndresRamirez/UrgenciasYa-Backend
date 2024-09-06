@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/towns")
+@RequestMapping("/api/v1/town")
 public class TownsController implements IModelTowns {
 
     @Autowired
