@@ -5,6 +5,7 @@ import com.urgenciasYa.dto.response.HospitalCardDTO;
 import com.urgenciasYa.model.Hospital;
 import com.urgenciasYa.repository.HospitalRepository;
 import com.urgenciasYa.utils.ConcurrencyAlgorithm;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.urgenciasYa.model.Eps;
 
@@ -15,11 +16,8 @@ import java.util.stream.Collectors;
 @Service
 public class HospitalService {
 
-    private final HospitalRepository hospitalRepository;
-
-    public HospitalService(HospitalRepository hospitalRepository) {
-        this.hospitalRepository = hospitalRepository;
-    }
+    @Autowired
+    private HospitalRepository hospitalRepository;
 
     private static final double EARTH_RADIUS = 6371;
 

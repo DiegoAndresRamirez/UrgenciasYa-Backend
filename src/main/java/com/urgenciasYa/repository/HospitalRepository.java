@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface HospitalRepository extends JpaRepository<Integer, Hospital> {
+public interface HospitalRepository extends JpaRepository<Hospital ,Long> {
 
     @Query("SELECT h FROM Hospital h JOIN h.eps_id e JOIN h.town_id t WHERE e.name = :epsName AND t.name = :townName")
     List<Hospital> findByEpsAndTown(@Param("epsName") String epsName, @Param("townName") String townName);

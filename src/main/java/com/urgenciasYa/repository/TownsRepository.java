@@ -2,7 +2,9 @@ package com.urgenciasYa.repository;
 
 import com.urgenciasYa.model.Towns;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface TownsRepository extends JpaRepository<Towns,Long> {
+@Repository
+public interface TownsRepository extends JpaRepository<Towns,Integer> {
 
 }

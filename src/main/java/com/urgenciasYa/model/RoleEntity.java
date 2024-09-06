@@ -7,12 +7,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity
 @Table(name = "role")
 @Setter
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
 public class RoleEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

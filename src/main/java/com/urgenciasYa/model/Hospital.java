@@ -7,14 +7,15 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-@Entity
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
 public class Hospital {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
     @Column(nullable = false)
     private String url_image;
     @Column(length = 15, nullable = false)
@@ -34,8 +35,12 @@ public class Hospital {
     @JoinColumn( nullable = false)
     @OneToOne
     private Towns town_id;
+
+
     @OneToMany(mappedBy = "hospital")
     private List<Eps> eps_id;
+
+
     @Column(nullable = false)
     private Integer latitude;
     @Column(nullable = false)
