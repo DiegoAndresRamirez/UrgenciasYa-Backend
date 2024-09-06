@@ -4,6 +4,9 @@ import com.urgenciasYa.controller.interfaces.IModelEps;
 import com.urgenciasYa.dto.response.EpsDTO;
 import com.urgenciasYa.model.Eps;
 import com.urgenciasYa.service.IModel.IEpsModel;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +24,12 @@ public class EpsController implements IModelEps {
     IEpsModel epsService;
 
     @Override
+    @Operation( summary = "Retrieves a list of all EPS entities.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "List obtained successfully"),
+            @ApiResponse(responseCode = "404", description = "No eps found"),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error")
+    })
     @GetMapping
     public ResponseEntity<List<EpsDTO>> getAllEps() {
         List<Eps> eps = epsService.readALl();
