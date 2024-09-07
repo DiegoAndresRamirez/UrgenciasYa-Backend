@@ -23,8 +23,8 @@ public class UserEntity {
     private String eps;
     @Column(nullable = false)
     private String password;
-
-
+    @Column(unique = true,nullable = false)
+    private String email;
     @OneToOne
     @JoinColumn(name = "emergency_id")
     private EmergencyEntity emergency; // Relación uno a uno con otra entidad (EmergencyEntity)

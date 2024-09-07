@@ -2,8 +2,8 @@ package com.urgenciasYa.controller.impl;
 
 import com.urgenciasYa.controller.interfaces.IModelUser;
 import com.urgenciasYa.dto.request.UserRegisterDTO;
-import com.urgenciasYa.model.UserEntity;
 import com.urgenciasYa.service.IModel.IUserModel;
+import com.urgenciasYa.service.Impl.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,12 +18,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController implements IModelUser {
 
     @Autowired
-    IUserModel userService;
+    UserService userService;
 
 
     @Override
     @PostMapping("/register")
-    public ResponseEntity<UserRegisterDTO> create(@RequestBody @Valid UserRegisterDTO userRegisterDTO) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.create(userRegisterDTO).getBody());
+    public ResponseEntity<String> create(@RequestBody @Valid UserRegisterDTO userRegisterDTO) {
+        userService.create(userRegisterDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body("Usuario creado con exito");
     }
 }

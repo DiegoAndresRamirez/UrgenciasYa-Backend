@@ -12,10 +12,11 @@ public class UserService implements IUserModel {
 
     @Autowired
     UserRepository userRepository;
-    @Override
-    public UserRegisterDTO create(UserRegisterDTO userRegisterDTO) {
 
-        UserRegisterDTO user = UserRegisterDTO.builder()
+    @Override
+    public UserEntity create(UserRegisterDTO userRegisterDTO) {
+
+        UserEntity user = UserEntity.builder()
                 .name(userRegisterDTO.getName())
                 .email(userRegisterDTO.getEmail())
                 .password(userRegisterDTO.getPassword())

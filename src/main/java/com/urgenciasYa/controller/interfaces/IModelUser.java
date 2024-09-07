@@ -2,7 +2,13 @@ package com.urgenciasYa.controller.interfaces;
 
 import com.urgenciasYa.controller.generic.Create;
 import com.urgenciasYa.dto.request.UserRegisterDTO;
+import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 
-public interface IModelUser extends Create<UserRegisterDTO> {
+public interface IModelUser extends Create<String> {
+    @PostMapping("/register")
+    ResponseEntity<String> create(@RequestBody @Valid UserRegisterDTO userRegisterDTO);
 }
