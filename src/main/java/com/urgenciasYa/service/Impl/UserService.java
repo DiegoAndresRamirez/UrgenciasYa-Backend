@@ -1,5 +1,6 @@
 package com.urgenciasYa.service.Impl;
 
+import com.urgenciasYa.dto.request.UserRegisterDTO;
 import com.urgenciasYa.model.UserEntity;
 import com.urgenciasYa.repository.UserRepository;
 import com.urgenciasYa.service.IModel.IUserModel;
@@ -12,7 +13,15 @@ public class UserService implements IUserModel {
     @Autowired
     UserRepository userRepository;
     @Override
-    public UserEntity create(UserEntity userEntity) {
-        return userRepository.save(userEntity);
+    public UserRegisterDTO create(UserRegisterDTO userRegisterDTO) {
+
+        UserRegisterDTO user = UserRegisterDTO.builder()
+                .name(userRegisterDTO.getName())
+                .email(userRegisterDTO.getEmail())
+                .password(userRegisterDTO.getPassword())
+                .eps(userRegisterDTO.getEps())
+                .build();
+
+        return userRepository.save(user);
     }
 }

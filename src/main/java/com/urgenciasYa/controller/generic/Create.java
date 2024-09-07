@@ -1,4 +1,7 @@
 package com.urgenciasYa.controller.generic;
 
-public interface Create {
+import org.springframework.http.ResponseEntity;
+
+public interface Create <Entity> {
+    public ResponseEntity<Entity> create(Entity entity);
 }
