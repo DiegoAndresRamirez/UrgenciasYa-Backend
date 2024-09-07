@@ -1,4 +1,5 @@
 package com.urgenciasYa.service.crud;
 
-public interface Create {
+public interface Create <Entity> {
+    public Entity create(Entity entity);
 }
