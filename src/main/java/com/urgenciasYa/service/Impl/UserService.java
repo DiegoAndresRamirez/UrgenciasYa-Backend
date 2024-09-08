@@ -1,6 +1,7 @@
 package com.urgenciasYa.service.Impl;
 
 import com.urgenciasYa.dto.request.UserRegisterDTO;
+import com.urgenciasYa.model.RoleEntity;
 import com.urgenciasYa.model.UserEntity;
 import com.urgenciasYa.repository.UserRepository;
 import com.urgenciasYa.service.IModel.IUserModel;
@@ -17,16 +18,25 @@ public class UserService implements IUserModel {
     @Autowired
     PasswordEncoder passwordEncoder;
 
+
+
+
     @Override
     public UserEntity create(UserRegisterDTO userRegisterDTO) {
-
+        UserEntity existUser= userRepository.findByEmail(userRegisterDTO.getEmail());
+        if(existUser != null){
+            throw new IllegalArgumentException("El correo ya existe");
+        }
         UserEntity user = UserEntity.builder()
                 .name(userRegisterDTO.getName())
                 .email(userRegisterDTO.getEmail())
                 .password(passwordEncoder.encode(userRegisterDTO.getPassword()))
                 .eps(userRegisterDTO.getEps())
+                .role(defaultRole)
                 .build();
 
         return userRepository.save(user);
     }
+
 }
+
