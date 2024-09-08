@@ -3,6 +3,7 @@ package com.urgenciasYa.service.Impl;
 import com.urgenciasYa.dto.request.UserRegisterDTO;
 import com.urgenciasYa.model.RoleEntity;
 import com.urgenciasYa.model.UserEntity;
+import com.urgenciasYa.repository.RoleRepository;
 import com.urgenciasYa.repository.UserRepository;
 import com.urgenciasYa.service.IModel.IUserModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,9 @@ public class UserService implements IUserModel {
     @Autowired
     PasswordEncoder passwordEncoder;
 
+    @Autowired
+    RoleRepository roleRepository;
+
 
 
 
@@ -27,6 +31,10 @@ public class UserService implements IUserModel {
         if(existUser != null){
             throw new IllegalArgumentException("El correo ya existe");
         }
+
+        RoleEntity defaultRole = roleRepository.findRoleByCode("USER")
+                .orElseThrow(() -> new RuntimeException("Rol 'USER' no encontrado."));
+
         UserEntity user = UserEntity.builder()
                 .name(userRegisterDTO.getName())
                 .email(userRegisterDTO.getEmail())
