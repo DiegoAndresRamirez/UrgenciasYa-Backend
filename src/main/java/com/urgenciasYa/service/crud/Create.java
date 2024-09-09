@@ -1,4 +1,7 @@
 package com.urgenciasYa.service.crud;
 
-public interface Create {
+import com.urgenciasYa.dto.request.UserRegisterDTO;
+
+public interface Create <Entity> {
+    public Entity create(UserRegisterDTO userRegisterDTO);
 }

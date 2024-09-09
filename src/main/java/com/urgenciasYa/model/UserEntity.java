@@ -2,10 +2,7 @@ package com.urgenciasYa.model;
 
 import jakarta.persistence.*;
 import jakarta.persistence.Entity;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Table(name = "users")
@@ -13,7 +10,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-
+@Builder
 public class UserEntity {
 
     @Id
@@ -26,8 +23,8 @@ public class UserEntity {
     private String eps;
     @Column(nullable = false)
     private String password;
-
-
+    @Column(unique = true,nullable = false)
+    private String email;
     @OneToOne
     @JoinColumn(name = "emergency_id")
     private EmergencyEntity emergency; // Relación uno a uno con otra entidad (EmergencyEntity)
