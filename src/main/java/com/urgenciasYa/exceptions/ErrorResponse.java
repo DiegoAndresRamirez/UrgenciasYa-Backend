@@ -10,5 +10,5 @@ import java.util.List;
 @Setter
 @SuperBuilder
 public class ErrorResponse extends ErrorSimple {
-    private List<String> erros;
+    private String message;
 }
