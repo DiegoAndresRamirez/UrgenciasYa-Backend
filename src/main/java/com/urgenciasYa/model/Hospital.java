@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Set;
 
 
 @Data
@@ -37,12 +38,8 @@ public class Hospital {
     @JoinColumn( nullable = false)
     @OneToOne
     private Towns town_id;
-
-
     @OneToMany(mappedBy = "hospital")
     private List<Eps> eps_id;
-
-
     @Column(nullable = false)
     private Integer latitude;
     @Column(nullable = false)

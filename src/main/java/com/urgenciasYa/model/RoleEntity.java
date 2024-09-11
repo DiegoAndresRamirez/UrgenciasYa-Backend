@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Set;
+
 @Table(name = "role")
 @Setter
 @Getter
@@ -20,7 +22,7 @@ public class RoleEntity {
     @Column(nullable = false)
     private String code;
 
-    @OneToOne(mappedBy = "role")
-    private UserEntity user;
+    @OneToMany(mappedBy = "role")
+    private Set<UserEntity> users;
 
 }

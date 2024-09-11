@@ -29,7 +29,7 @@ public class UserEntity {
     @JoinColumn(name = "emergency_id")
     private EmergencyEntity emergency; // Relación uno a uno con otra entidad (EmergencyEntity)
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "role_id") // Especifica la columna de la llave foránea
     private RoleEntity role; // Relación uno a uno con otra entidad (RoleEntity)
 }
