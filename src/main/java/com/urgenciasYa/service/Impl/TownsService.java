@@ -1,5 +1,6 @@
 package com.urgenciasYa.service.Impl;
 
+import com.urgenciasYa.dto.request.TownCreateDTO;
 import com.urgenciasYa.dto.response.TownsDTO;
 import com.urgenciasYa.model.Towns;
 import com.urgenciasYa.repository.TownsRepository;
@@ -31,7 +32,7 @@ public class TownsService implements ITownsModel {
 //    }
 
     @Override
-    public Towns create(TownsDTO entity) {
+    public Towns create(TownCreateDTO entity) {
         if(townsRepository.existByName(entity.getName()))
             throw new RuntimeException("El municipio ya existe en la base de datos");
         Towns town = new Towns();

@@ -12,10 +12,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestControllerAdvice
-@ResponseStatus(code = HttpStatus.BAD_REQUEST)
-public class BadRequest {
+
+public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(code = HttpStatus.BAD_REQUEST)
     public ErrorSimple badRequest (MethodArgumentNotValidException exception){
 
         List<String> errors = new ArrayList<>();
@@ -28,5 +29,16 @@ public class BadRequest {
                 .errors(errors)
                 .build();
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(code = HttpStatus.CONFLICT)
+    public ErrorSimple conflict(IllegalArgumentException exception){
+        return ErrorSimple.builder()
+                .code(HttpStatus.CONFLICT.value())
+                .status(HttpStatus.CONFLICT.name())
+                .message(exception.getMessage())
+                .build();
+    }
+
 
 }

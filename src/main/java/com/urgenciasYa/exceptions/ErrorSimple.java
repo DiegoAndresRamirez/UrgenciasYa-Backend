@@ -10,4 +10,5 @@ import lombok.experimental.SuperBuilder;
 public class ErrorSimple {
     private Integer code;
     private String status;
+    private String message;
 }
