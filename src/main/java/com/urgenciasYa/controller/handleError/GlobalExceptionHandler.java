@@ -40,5 +40,15 @@ public class GlobalExceptionHandler {
                 .build();
     }
 
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorSimple internalServerError(Exception exception){
+        return ErrorSimple.builder()
+                .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .status(HttpStatus.INTERNAL_SERVER_ERROR.name())
+                .message(exception.getMessage())
+                .build();
+    }
+
 
 }
