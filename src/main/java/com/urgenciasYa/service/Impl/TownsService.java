@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TownsService implements ITownsModel {
@@ -39,5 +40,18 @@ public class TownsService implements ITownsModel {
         town.setName(entity.getName());
 
         return townsRepository.save(town);
+    }
+
+    @Override
+    public Towns update(Towns towns) {
+        Optional<Towns> optionalTowns = townsRepository.findById(towns.getId());
+        if(optionalTowns.isPresent()){
+            Towns townsdb = optionalTowns.get();
+            townsdb.setName(towns.getName());
+            return townsRepository.save(townsdb);
+        }else {
+            throw new IllegalArgumentException("Municipio con el ID "+ towns.getId()+" No existe");
+        }
+
     }
 }

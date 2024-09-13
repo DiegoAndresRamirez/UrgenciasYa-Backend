@@ -5,6 +5,7 @@ import com.urgenciasYa.dto.response.TownsDTO;
 import com.urgenciasYa.model.Towns;
 import com.urgenciasYa.service.crud.CreateDTO;
 import com.urgenciasYa.service.crud.ReadAll;
+import com.urgenciasYa.service.crud.Update;
 
-public interface ITownsModel extends ReadAll<Towns>, CreateDTO<TownCreateDTO,Towns> {
+public interface ITownsModel extends ReadAll<Towns>, CreateDTO<TownCreateDTO,Towns>, Update<Towns> {
 }
