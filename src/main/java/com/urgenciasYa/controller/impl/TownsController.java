@@ -1,5 +1,6 @@
 package com.urgenciasYa.controller.impl;
 
+import com.urgenciasYa.controller.handleError.SuccessResponse;
 import com.urgenciasYa.controller.interfaces.IModelTowns;
 import com.urgenciasYa.dto.request.TownCreateDTO;
 import com.urgenciasYa.dto.response.TownsDTO;
@@ -27,7 +28,7 @@ public class TownsController implements IModelTowns {
     ITownsModel townsService;
 
     @Override
-    @Operation( summary = "Gets a list of all available cities")
+    @Operation(summary = "Gets a list of all available cities")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "List obtained successfully"),
             @ApiResponse(responseCode = "404", description = "No cities found"),
@@ -46,17 +47,9 @@ public class TownsController implements IModelTowns {
     }
 
     @Override
-    @PostMapping
     public ResponseEntity<String> create(TownCreateDTO dto) {
-        try{
-            townsService.create(dto);
-            return ResponseEntity.status(HttpStatus.CREATED).body("Usuario creado con exito");
-        }catch (IllegalArgumentException e){
-            Map<String, String> errorResponse = Collections.singletonMap("error", e.getMessage());
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse.toString());
-        }catch (Exception e){
-            Map<String, String> errorResponse = Collections.singletonMap("error", "Error interno del servidor");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse.toString());
-        }
+        return null;
     }
 }
+
+

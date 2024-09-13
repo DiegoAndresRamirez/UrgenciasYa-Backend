@@ -34,7 +34,7 @@ public class TownsService implements ITownsModel {
     @Override
     public Towns create(TownCreateDTO entity) {
         if(townsRepository.existByName(entity.getName()))
-            throw new RuntimeException("El municipio ya existe en la base de datos");
+            throw new IllegalArgumentException("El municipio ya existe en la base de datos");
         Towns town = new Towns();
         town.setName(entity.getName());
 
