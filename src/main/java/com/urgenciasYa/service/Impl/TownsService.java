@@ -56,9 +56,9 @@ public class TownsService implements ITownsModel {
     }
 
     @Override
-    public void delete(Towns towns,Integer integer) {
+    public void delete(Integer integer) {
         if(townsRepository.existsById(integer)){
-            townsRepository.delete(towns);
+          townsRepository.deleteById(integer);
         }else {
             throw new IllegalArgumentException("El municipio con ID " + integer + " No existe");
         }
