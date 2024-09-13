@@ -43,14 +43,14 @@ public class TownsService implements ITownsModel {
     }
 
     @Override
-    public Towns update(Towns towns) {
-        Optional<Towns> optionalTowns = townsRepository.findById(towns.getId());
+    public Towns update (Towns towns,Integer id) {
+        Optional<Towns> optionalTowns = townsRepository.findById(id);
         if(optionalTowns.isPresent()){
             Towns townsdb = optionalTowns.get();
             townsdb.setName(towns.getName());
             return townsRepository.save(townsdb);
         }else {
-            throw new IllegalArgumentException("Municipio con el ID "+ towns.getId()+" No existe");
+            throw new IllegalArgumentException("Municipio con el ID "+ id +" No existe");
         }
 
     }
