@@ -25,6 +25,8 @@ public class UserEntity {
     private String password;
     @Column(unique = true,nullable = false)
     private String email;
+    @Column(nullable = false, unique = true)
+    private String document;
     @OneToOne
     @JoinColumn(name = "emergency_id")
     private EmergencyEntity emergency; // Relación uno a uno con otra entidad (EmergencyEntity)
