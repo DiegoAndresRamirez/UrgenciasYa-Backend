@@ -72,6 +72,69 @@ public class TownsController implements IModelTowns {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorSimple);
         }
     }
+
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> update(@PathVariable Integer id, @RequestBody @Valid Towns towns) {
+        try {
+            townsService.update(towns,id);
+            SuccessResponse successResponse = SuccessResponse.builder()
+                    .code(HttpStatus.OK.value())
+                    .status(HttpStatus.OK.name())
+                    .message("Municipio actualizado")
+                    .build();
+            return ResponseEntity.status(HttpStatus.OK).body(successResponse);
+        }catch (IllegalArgumentException exception){
+            ErrorSimple errorSimple = ErrorSimple.builder()
+                    .code(HttpStatus.CONFLICT.value())
+                    .status(HttpStatus.CONFLICT.name())
+                    .message(exception.getMessage())
+                    .build();
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(errorSimple);
+        }catch (Exception exception){
+            ErrorSimple errorSimple = ErrorSimple.builder()
+                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR.name())
+                    .message(exception.getMessage())
+                    .build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorSimple);
+        }
+
+
+    }
+
+    @Override
+    public ResponseEntity<?> update(Towns towns, Integer integer) {
+        return null;
+    }
+
+    @Override
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@Valid @PathVariable Integer id) {
+        try{
+            townsService.delete(id);
+            SuccessResponse successResponse = SuccessResponse.builder()
+                    .code(HttpStatus.OK.value())
+                    .status(HttpStatus.OK.name())
+                    .message("Usuario borrado con exito")
+                    .build();
+            return ResponseEntity.status(HttpStatus.OK).body(successResponse);
+        }catch (IllegalArgumentException exception){
+            ErrorSimple errorSimple = ErrorSimple.builder()
+                    .code(HttpStatus.CONFLICT.value())
+                    .status(HttpStatus.CONFLICT.name())
+                    .message(exception.getMessage())
+                    .build();
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(errorSimple);
+        }catch (Exception exception){
+            ErrorSimple errorSimple = ErrorSimple.builder()
+                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR.name())
+                    .message(exception.getMessage())
+                    .build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorSimple);
+        }
+    }
 }
 
 
