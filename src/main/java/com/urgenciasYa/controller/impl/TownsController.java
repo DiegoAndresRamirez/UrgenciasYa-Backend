@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/town")
+@CrossOrigin(origins = "http://localhost:3000")
 public class TownsController implements IModelTowns {
 
     @Autowired

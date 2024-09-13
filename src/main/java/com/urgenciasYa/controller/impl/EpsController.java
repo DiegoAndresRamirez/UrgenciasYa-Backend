@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/eps")
+@CrossOrigin(origins = "http://localhost:3000")
 public class EpsController implements IModelEps {
 
     @Autowired
@@ -26,6 +27,7 @@ public class EpsController implements IModelEps {
 
     @Override
     @Operation( summary = "Retrieves a list of all EPS entities.")
+
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "List obtained successfully"),
             @ApiResponse(responseCode = "404", description = "No eps found"),

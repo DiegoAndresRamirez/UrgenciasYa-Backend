@@ -23,4 +23,6 @@ public class UserRegisterDTO {
     private String eps;
     @NotBlank(message = "Contraseña es requerida")
     private String password;
+    @NotBlank(message = "Documento requerido")
+    private String document;
 }

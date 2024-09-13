@@ -37,6 +37,7 @@ public class UserService implements IUserModel {
                 .password(userRegisterDTO.getPassword())
                 .eps(userRegisterDTO.getEps())
                 .role(defaultRole)
+                .document(userRegisterDTO.getDocument())
                 .build();
 
         return userRepository.save(user);
