@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TownsRepository extends JpaRepository<Towns,Integer> {
-    Boolean existByName(String name);
+    Boolean existsByName(String name);
 }

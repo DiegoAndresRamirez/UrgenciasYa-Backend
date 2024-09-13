@@ -8,6 +8,6 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
-public interface IModelTowns extends Create<String, TownCreateDTO> {
+public interface IModelTowns extends Create<TownCreateDTO> {
     public ResponseEntity<List<TownsDTO>> getAllTowns();
 }

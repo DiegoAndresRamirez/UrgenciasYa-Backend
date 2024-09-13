@@ -4,18 +4,17 @@ import com.urgenciasYa.controller.handleError.SuccessResponse;
 import com.urgenciasYa.controller.interfaces.IModelTowns;
 import com.urgenciasYa.dto.request.TownCreateDTO;
 import com.urgenciasYa.dto.response.TownsDTO;
+import com.urgenciasYa.exceptions.ErrorSimple;
 import com.urgenciasYa.model.Towns;
 import com.urgenciasYa.service.IModel.ITownsModel;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -47,8 +46,31 @@ public class TownsController implements IModelTowns {
     }
 
     @Override
-    public ResponseEntity<String> create(TownCreateDTO dto) {
-        return null;
+    @PostMapping
+    public ResponseEntity<?> create(@RequestBody @Valid TownCreateDTO dto) {
+        try {
+            townsService.create(dto);
+            SuccessResponse successResponse = SuccessResponse.builder()
+                    .code(HttpStatus.CREATED.value())
+                    .status(HttpStatus.CREATED.name())
+                    .message("Municipio creado con exito")
+                    .build();
+            return ResponseEntity.status(HttpStatus.CREATED).body(successResponse);
+        } catch (IllegalArgumentException exception) {
+            ErrorSimple errorSimple = ErrorSimple.builder()
+                    .code(HttpStatus.CONFLICT.value())
+                    .status(HttpStatus.CONFLICT.name())
+                    .message(exception.getMessage())
+                    .build();
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(errorSimple);
+        } catch (Exception exception) {
+            ErrorSimple errorSimple = ErrorSimple.builder()
+                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR.name())
+                    .message(exception.getMessage())
+                    .build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorSimple);
+        }
     }
 }
 
