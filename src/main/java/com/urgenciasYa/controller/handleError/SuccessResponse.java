@@ -1,13 +1,13 @@
-package com.urgenciasYa.exceptions;
+package com.urgenciasYa.controller.handleError;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.experimental.SuperBuilder;
 
 @Getter
 @Setter
-@SuperBuilder
-public class ErrorSimple {
+@Builder
+public class SuccessResponse {
     private Integer code;
     private String status;
     private String message;
