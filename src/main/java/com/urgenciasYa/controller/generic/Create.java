@@ -4,5 +4,5 @@ import com.urgenciasYa.dto.request.UserRegisterDTO;
 import org.springframework.http.ResponseEntity;
 
 public interface Create <D> {
-    public ResponseEntity<?> create(D dto);
+    ResponseEntity<?> create(D dto);
 }

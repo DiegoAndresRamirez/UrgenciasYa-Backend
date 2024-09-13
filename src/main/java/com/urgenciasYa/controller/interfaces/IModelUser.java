@@ -9,5 +9,5 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 public interface IModelUser extends Create<UserRegisterDTO> {
-    ResponseEntity<String> create(UserRegisterDTO userRegisterDTO);
+//    ResponseEntity<String> create(UserRegisterDTO userRegisterDTO);
 }

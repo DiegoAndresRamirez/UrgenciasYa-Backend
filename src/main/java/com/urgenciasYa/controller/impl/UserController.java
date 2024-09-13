@@ -1,8 +1,10 @@
 package com.urgenciasYa.controller.impl;
 
+import com.urgenciasYa.controller.handleError.SuccessResponse;
 import com.urgenciasYa.controller.interfaces.IModelUser;
 import com.urgenciasYa.dto.request.UserRegisterDTO;
 import com.urgenciasYa.exceptions.ErrorResponse;
+import com.urgenciasYa.exceptions.ErrorSimple;
 import com.urgenciasYa.exceptions.ErrorsResponse;
 import com.urgenciasYa.service.IModel.IUserModel;
 import com.urgenciasYa.service.Impl.UserService;
@@ -38,8 +40,29 @@ public class UserController implements IModelUser {
 
     @Override
     @PostMapping("/register")
-    public ResponseEntity<String> create(@RequestBody @Valid UserRegisterDTO userRegisterDTO) {
-        userService.create(userRegisterDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Usuario creado con exito");
+    public ResponseEntity<?> create(@RequestBody @Valid UserRegisterDTO userRegisterDTO) {
+        try{
+            userService.create(userRegisterDTO);
+            SuccessResponse successResponse = SuccessResponse.builder()
+                    .code(HttpStatus.CREATED.value())
+                    .status(HttpStatus.CREATED.name())
+                    .message("Registro exitoso")
+                    .build();
+            return ResponseEntity.status(HttpStatus.CREATED).body(successResponse);
+        }catch (IllegalArgumentException exception){
+            ErrorSimple errorSimple = ErrorSimple.builder()
+                    .code(HttpStatus.CONFLICT.value())
+                    .status(HttpStatus.CONFLICT.name())
+                    .message(exception.getMessage())
+                    .build();
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(errorSimple);
+        }catch(Exception exception){
+            ErrorSimple errorSimple = ErrorSimple.builder()
+                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR.name())
+                    .message(exception.getMessage())
+                    .build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorSimple);
+        }
     }
 }
