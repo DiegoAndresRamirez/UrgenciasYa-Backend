@@ -126,4 +126,9 @@ public class HospitalService implements IHospitalModel {
     public Hospital getById(Long id) {
         return this.hospitalRepository.findById(id).orElseThrow( () -> new EntityNotFoundException("Hospital with id " + id + " not found"));
     }
+
+    @Override
+    public List<Hospital> readALl() {
+        return this.hospitalRepository.findAll();
+    }
 }
