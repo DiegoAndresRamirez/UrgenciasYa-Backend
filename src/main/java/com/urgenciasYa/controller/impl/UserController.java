@@ -5,7 +5,7 @@ import com.urgenciasYa.controller.interfaces.IModelUser;
 import com.urgenciasYa.dto.request.UserRegisterDTO;
 import com.urgenciasYa.exceptions.ErrorSimple;
 import com.urgenciasYa.exceptions.ErrorsResponse;
-import com.urgenciasYa.service.Impl.UserService;
+import com.urgenciasYa.hexagonal.application.service.impl.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;

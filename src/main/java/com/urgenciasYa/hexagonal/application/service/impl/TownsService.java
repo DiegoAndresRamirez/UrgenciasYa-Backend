@@ -1,4 +1,4 @@
-package com.urgenciasYa.service.Impl;
+package com.urgenciasYa.hexagonal.application.service.impl;
 
 import com.urgenciasYa.dto.request.TownCreateDTO;
 import com.urgenciasYa.model.Towns;
