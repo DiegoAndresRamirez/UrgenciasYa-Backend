@@ -1,4 +1,4 @@
-package com.urgenciasYa.controller.impl;
+package com.urgenciasYa.hexagonal.application.controller.impl;
 
 import com.urgenciasYa.controller.handleError.SuccessResponse;
 import com.urgenciasYa.hexagonal.application.controller.interfaces.IModelUser;

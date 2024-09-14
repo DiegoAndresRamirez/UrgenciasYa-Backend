@@ -1,4 +1,4 @@
-package com.urgenciasYa.controller.impl;
+package com.urgenciasYa.hexagonal.application.controller.impl;
 
 import com.urgenciasYa.hexagonal.application.controller.interfaces.IModelHospital;
 import com.urgenciasYa.hexagonal.application.dto.request.HospitalCreateResponseDTO;

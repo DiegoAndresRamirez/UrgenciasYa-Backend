@@ -1,4 +1,4 @@
-package com.urgenciasYa.controller.impl;
+package com.urgenciasYa.hexagonal.application.controller.impl;
 
 import com.urgenciasYa.hexagonal.domain.model.Shift;
 import com.urgenciasYa.hexagonal.application.service.impl.ShiftService;
