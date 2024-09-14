@@ -1,4 +1,4 @@
-package com.urgenciasYa.utils.enums;
+package com.urgenciasYa.hexagonal.common.utils.enums;
 
 public enum StatusShift {
     PENDING,

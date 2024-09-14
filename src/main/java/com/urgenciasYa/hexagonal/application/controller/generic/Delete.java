@@ -1,4 +1,4 @@
-package com.urgenciasYa.controller.generic;
+package com.urgenciasYa.hexagonal.application.controller.generic;
 
 import org.springframework.http.ResponseEntity;
 

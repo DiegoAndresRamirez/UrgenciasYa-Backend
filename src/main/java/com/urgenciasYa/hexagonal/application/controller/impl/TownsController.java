@@ -1,10 +1,10 @@
 package com.urgenciasYa.hexagonal.application.controller.impl;
 
-import com.urgenciasYa.controller.handleError.SuccessResponse;
+import com.urgenciasYa.hexagonal.infrastructure.handleError.SuccessResponse;
 import com.urgenciasYa.hexagonal.application.controller.interfaces.IModelTowns;
 import com.urgenciasYa.hexagonal.application.dto.request.TownCreateDTO;
 import com.urgenciasYa.hexagonal.application.dto.response.TownsDTO;
-import com.urgenciasYa.exceptions.ErrorSimple;
+import com.urgenciasYa.hexagonal.application.exceptions.ErrorSimple;
 import com.urgenciasYa.hexagonal.domain.model.Towns;
 import com.urgenciasYa.hexagonal.application.service.IModel.ITownsModel;
 import io.swagger.v3.oas.annotations.Operation;

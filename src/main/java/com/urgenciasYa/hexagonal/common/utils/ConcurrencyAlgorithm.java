@@ -1,4 +1,4 @@
-package com.urgenciasYa.utils;
+package com.urgenciasYa.hexagonal.common.utils;
 
 import java.util.HashMap;
 import java.util.Map;

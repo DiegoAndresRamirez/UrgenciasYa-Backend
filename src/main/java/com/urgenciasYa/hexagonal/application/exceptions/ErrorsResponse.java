@@ -1,4 +1,4 @@
-package com.urgenciasYa.exceptions;
+package com.urgenciasYa.hexagonal.application.exceptions;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -9,6 +9,6 @@ import java.util.List;
 @Getter
 @Setter
 @SuperBuilder
-public class ErrorResponse extends ErrorSimple {
-    private String message;
+public class ErrorsResponse extends ErrorSimple {
+    private List<String> errors;
 }

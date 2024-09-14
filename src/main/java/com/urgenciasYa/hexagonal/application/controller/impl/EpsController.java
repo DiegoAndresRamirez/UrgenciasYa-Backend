@@ -1,10 +1,10 @@
 package com.urgenciasYa.hexagonal.application.controller.impl;
 
-import com.urgenciasYa.controller.handleError.SuccessResponse;
+import com.urgenciasYa.hexagonal.infrastructure.handleError.SuccessResponse;
 import com.urgenciasYa.hexagonal.application.controller.interfaces.IModelEps;
 import com.urgenciasYa.hexagonal.application.dto.request.EpsRequestDTO;
 import com.urgenciasYa.hexagonal.application.dto.response.EpsResponseDTO;
-import com.urgenciasYa.exceptions.ErrorSimple;
+import com.urgenciasYa.hexagonal.application.exceptions.ErrorSimple;
 import com.urgenciasYa.hexagonal.domain.model.Eps;
 import com.urgenciasYa.hexagonal.application.service.IModel.IEpsModel;
 import io.swagger.v3.oas.annotations.Operation;

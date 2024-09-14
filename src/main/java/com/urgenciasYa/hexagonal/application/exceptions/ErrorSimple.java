@@ -1,4 +1,4 @@
-package com.urgenciasYa.exceptions;
+package com.urgenciasYa.hexagonal.application.exceptions;
 
 import lombok.Getter;
 import lombok.Setter;

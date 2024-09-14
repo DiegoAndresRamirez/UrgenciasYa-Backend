@@ -9,7 +9,7 @@ import com.urgenciasYa.hexagonal.infrastructure.persistence.HospitalRepository;
 import com.urgenciasYa.hexagonal.infrastructure.persistence.ShiftRepository;
 import com.urgenciasYa.hexagonal.infrastructure.persistence.UserRepository;
 import com.urgenciasYa.hexagonal.application.service.IModel.IShiftModel;
-import com.urgenciasYa.utils.enums.StatusShift;
+import com.urgenciasYa.hexagonal.common.utils.enums.StatusShift;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

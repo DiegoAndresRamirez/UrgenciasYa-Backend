@@ -1,10 +1,10 @@
 package com.urgenciasYa.hexagonal.application.controller.impl;
 
-import com.urgenciasYa.controller.handleError.SuccessResponse;
+import com.urgenciasYa.hexagonal.infrastructure.handleError.SuccessResponse;
 import com.urgenciasYa.hexagonal.application.controller.interfaces.IModelUser;
 import com.urgenciasYa.hexagonal.application.dto.request.UserRegisterDTO;
-import com.urgenciasYa.exceptions.ErrorSimple;
-import com.urgenciasYa.exceptions.ErrorsResponse;
+import com.urgenciasYa.hexagonal.application.exceptions.ErrorSimple;
+import com.urgenciasYa.hexagonal.application.exceptions.ErrorsResponse;
 import com.urgenciasYa.hexagonal.application.service.impl.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

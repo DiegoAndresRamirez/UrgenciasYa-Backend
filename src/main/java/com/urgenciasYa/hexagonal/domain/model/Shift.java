@@ -1,6 +1,6 @@
 package com.urgenciasYa.hexagonal.domain.model;
 
-import com.urgenciasYa.utils.enums.StatusShift;
+import com.urgenciasYa.hexagonal.common.utils.enums.StatusShift;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;

@@ -1,7 +1,7 @@
-package com.urgenciasYa.controller.handleError;
+package com.urgenciasYa.hexagonal.infrastructure.handleError;
 
-import com.urgenciasYa.exceptions.ErrorSimple;
-import com.urgenciasYa.exceptions.ErrorsResponse;
+import com.urgenciasYa.hexagonal.application.exceptions.ErrorSimple;
+import com.urgenciasYa.hexagonal.application.exceptions.ErrorsResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;

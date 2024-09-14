@@ -1,4 +1,4 @@
-package com.urgenciasYa.controller.handleError;
+package com.urgenciasYa.hexagonal.infrastructure.handleError;
 
 import lombok.Builder;
 import lombok.Getter;
