@@ -1,8 +1,8 @@
 package com.urgenciasYa.hexagonal.application.service.impl;
 
-import com.urgenciasYa.dto.request.HospitalCreateResponseDTO;
-import com.urgenciasYa.dto.request.HospitalSearchRequestDTO;
-import com.urgenciasYa.dto.response.HospitalCardDTO;
+import com.urgenciasYa.hexagonal.application.dto.request.HospitalCreateResponseDTO;
+import com.urgenciasYa.hexagonal.application.dto.request.HospitalSearchRequestDTO;
+import com.urgenciasYa.hexagonal.application.dto.response.HospitalCardDTO;
 import com.urgenciasYa.hexagonal.domain.model.Hospital;
 import com.urgenciasYa.hexagonal.infrastructure.persistence.HospitalRepository;
 import com.urgenciasYa.hexagonal.application.service.IModel.IHospitalModel;

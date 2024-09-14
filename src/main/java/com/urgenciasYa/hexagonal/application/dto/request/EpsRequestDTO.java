@@ -1,4 +1,4 @@
-package com.urgenciasYa.dto.request;
+package com.urgenciasYa.hexagonal.application.dto.request;
 
 import lombok.*;
 

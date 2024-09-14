@@ -2,8 +2,8 @@ package com.urgenciasYa.controller.impl;
 
 import com.urgenciasYa.controller.handleError.SuccessResponse;
 import com.urgenciasYa.controller.interfaces.IModelEps;
-import com.urgenciasYa.dto.request.EpsRequestDTO;
-import com.urgenciasYa.dto.response.EpsResponseDTO;
+import com.urgenciasYa.hexagonal.application.dto.request.EpsRequestDTO;
+import com.urgenciasYa.hexagonal.application.dto.response.EpsResponseDTO;
 import com.urgenciasYa.exceptions.ErrorSimple;
 import com.urgenciasYa.model.Eps;
 import com.urgenciasYa.hexagonal.application.service.IModel.IEpsModel;

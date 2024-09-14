@@ -1,6 +1,6 @@
 package com.urgenciasYa.hexagonal.application.service.impl;
 
-import com.urgenciasYa.dto.request.EpsRequestDTO;
+import com.urgenciasYa.hexagonal.application.dto.request.EpsRequestDTO;
 import com.urgenciasYa.model.Eps;
 import com.urgenciasYa.repository.EpsRepository;
 import com.urgenciasYa.hexagonal.application.service.IModel.IEpsModel;

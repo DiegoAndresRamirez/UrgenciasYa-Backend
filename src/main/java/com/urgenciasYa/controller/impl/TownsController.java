@@ -2,8 +2,8 @@ package com.urgenciasYa.controller.impl;
 
 import com.urgenciasYa.controller.handleError.SuccessResponse;
 import com.urgenciasYa.controller.interfaces.IModelTowns;
-import com.urgenciasYa.dto.request.TownCreateDTO;
-import com.urgenciasYa.dto.response.TownsDTO;
+import com.urgenciasYa.hexagonal.application.dto.request.TownCreateDTO;
+import com.urgenciasYa.hexagonal.application.dto.response.TownsDTO;
 import com.urgenciasYa.exceptions.ErrorSimple;
 import com.urgenciasYa.model.Towns;
 import com.urgenciasYa.hexagonal.application.service.IModel.ITownsModel;

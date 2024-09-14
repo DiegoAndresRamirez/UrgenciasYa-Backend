@@ -1,9 +1,9 @@
 package com.urgenciasYa.controller.impl;
 
 import com.urgenciasYa.controller.interfaces.IModelHospital;
-import com.urgenciasYa.dto.request.HospitalCreateResponseDTO;
-import com.urgenciasYa.dto.request.HospitalSearchRequestDTO;
-import com.urgenciasYa.dto.response.HospitalCardDTO;
+import com.urgenciasYa.hexagonal.application.dto.request.HospitalCreateResponseDTO;
+import com.urgenciasYa.hexagonal.application.dto.request.HospitalSearchRequestDTO;
+import com.urgenciasYa.hexagonal.application.dto.response.HospitalCardDTO;
 import com.urgenciasYa.hexagonal.domain.model.Hospital;
 import com.urgenciasYa.hexagonal.application.service.impl.HospitalService;
 import io.swagger.v3.oas.annotations.Operation;

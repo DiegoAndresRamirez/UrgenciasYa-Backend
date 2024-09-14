@@ -1,6 +1,6 @@
 package com.urgenciasYa.hexagonal.application.service.impl;
 
-import com.urgenciasYa.dto.request.UserRegisterDTO;
+import com.urgenciasYa.hexagonal.application.dto.request.UserRegisterDTO;
 import com.urgenciasYa.model.RoleEntity;
 import com.urgenciasYa.model.UserEntity;
 import com.urgenciasYa.repository.RoleRepository;
