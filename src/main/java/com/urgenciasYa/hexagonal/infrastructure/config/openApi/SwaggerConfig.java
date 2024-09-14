@@ -1,4 +1,4 @@
-package com.urgenciasYa.config.openApi;
+package com.urgenciasYa.hexagonal.infrastructure.config.openApi;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
