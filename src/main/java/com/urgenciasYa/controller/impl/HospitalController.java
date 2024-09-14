@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -143,6 +144,30 @@ public class HospitalController implements IModelHospital {
             return ResponseEntity.ok("Hospital with ID " + id + " deleted successfully");
         } catch (Exception e) {
             return new ResponseEntity<>("Error: " + e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @Operation(
+            summary = "Retrieve a hospital by its ID",
+            description = "Fetches the hospital record identified by the given ID. Returns the hospital details if found.",
+            parameters = {
+                    @Parameter(name = "id", description = "ID of the hospital to retrieve", required = true)
+            }
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Hospital retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "Hospital not found"),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error")
+    })
+    @GetMapping("/{id}")
+    public ResponseEntity<Hospital> getById(@PathVariable Long id) {
+        try {
+            Hospital hospital = hospitalService.getById(id);
+            return ResponseEntity.ok(hospital);
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
