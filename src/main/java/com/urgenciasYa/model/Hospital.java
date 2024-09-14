@@ -3,6 +3,7 @@ package com.urgenciasYa.model;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -14,6 +15,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Builder
 @Schema(description = "specialized institution designed to provide comprehensive medical care and treatment to individuals with various health conditions.")
 public class Hospital {
     @Id
