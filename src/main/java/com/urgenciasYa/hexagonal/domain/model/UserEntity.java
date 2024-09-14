@@ -1,4 +1,4 @@
-package com.urgenciasYa.model;
+package com.urgenciasYa.hexagonal.domain.model;
 
 import jakarta.persistence.*;
 import jakarta.persistence.Entity;

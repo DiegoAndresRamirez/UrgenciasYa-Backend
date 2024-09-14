@@ -1,6 +1,5 @@
-package com.urgenciasYa.model;
+package com.urgenciasYa.hexagonal.domain.model;
 
-import com.urgenciasYa.hexagonal.domain.model.Hospital;
 import com.urgenciasYa.utils.enums.StatusShift;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;

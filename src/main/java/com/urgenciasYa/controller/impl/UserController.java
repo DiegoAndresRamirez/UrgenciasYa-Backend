@@ -1,7 +1,7 @@
 package com.urgenciasYa.controller.impl;
 
 import com.urgenciasYa.controller.handleError.SuccessResponse;
-import com.urgenciasYa.controller.interfaces.IModelUser;
+import com.urgenciasYa.hexagonal.application.controller.interfaces.IModelUser;
 import com.urgenciasYa.hexagonal.application.dto.request.UserRegisterDTO;
 import com.urgenciasYa.exceptions.ErrorSimple;
 import com.urgenciasYa.exceptions.ErrorsResponse;

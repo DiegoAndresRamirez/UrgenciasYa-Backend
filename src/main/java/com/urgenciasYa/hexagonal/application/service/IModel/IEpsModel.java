@@ -1,7 +1,7 @@
 package com.urgenciasYa.hexagonal.application.service.IModel;
 
 import com.urgenciasYa.hexagonal.application.dto.request.EpsRequestDTO;
-import com.urgenciasYa.model.Eps;
+import com.urgenciasYa.hexagonal.domain.model.Eps;
 import com.urgenciasYa.hexagonal.application.service.crud.CreateDTO;
 import com.urgenciasYa.hexagonal.application.service.crud.Delete;
 import com.urgenciasYa.hexagonal.application.service.crud.ReadAll;

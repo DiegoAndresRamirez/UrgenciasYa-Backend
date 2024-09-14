@@ -10,7 +10,7 @@ import com.urgenciasYa.utils.ConcurrencyAlgorithm;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.urgenciasYa.model.Eps;
+import com.urgenciasYa.hexagonal.domain.model.Eps;
 
 import java.util.List;
 import java.util.Map;

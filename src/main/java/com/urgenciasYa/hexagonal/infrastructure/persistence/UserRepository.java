@@ -1,6 +1,6 @@
-package com.urgenciasYa.repository;
+package com.urgenciasYa.hexagonal.infrastructure.persistence;
 
-import com.urgenciasYa.model.UserEntity;
+import com.urgenciasYa.hexagonal.domain.model.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

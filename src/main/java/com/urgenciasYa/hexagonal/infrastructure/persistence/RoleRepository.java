@@ -1,6 +1,6 @@
-package com.urgenciasYa.repository;
+package com.urgenciasYa.hexagonal.infrastructure.persistence;
 
-import com.urgenciasYa.model.RoleEntity;
+import com.urgenciasYa.hexagonal.domain.model.RoleEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

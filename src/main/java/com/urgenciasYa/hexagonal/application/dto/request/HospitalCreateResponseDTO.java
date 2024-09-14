@@ -1,8 +1,7 @@
 package com.urgenciasYa.hexagonal.application.dto.request;
 
-import com.urgenciasYa.model.Eps;
-import com.urgenciasYa.model.Towns;
-import jakarta.persistence.*;
+import com.urgenciasYa.hexagonal.domain.model.Eps;
+import com.urgenciasYa.hexagonal.domain.model.Towns;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

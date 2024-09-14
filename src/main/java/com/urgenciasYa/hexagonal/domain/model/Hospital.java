@@ -1,7 +1,5 @@
 package com.urgenciasYa.hexagonal.domain.model;
 
-import com.urgenciasYa.model.Eps;
-import com.urgenciasYa.model.Towns;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

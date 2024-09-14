@@ -1,6 +1,6 @@
-package com.urgenciasYa.repository;
+package com.urgenciasYa.hexagonal.infrastructure.persistence;
 
-import com.urgenciasYa.model.Eps;
+import com.urgenciasYa.hexagonal.domain.model.Eps;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,7 +1,7 @@
 package com.urgenciasYa.hexagonal.application.service.IModel;
 
 import com.urgenciasYa.hexagonal.application.dto.request.TownCreateDTO;
-import com.urgenciasYa.model.Towns;
+import com.urgenciasYa.hexagonal.domain.model.Towns;
 import com.urgenciasYa.hexagonal.application.service.crud.CreateDTO;
 import com.urgenciasYa.hexagonal.application.service.crud.Delete;
 import com.urgenciasYa.hexagonal.application.service.crud.ReadAll;

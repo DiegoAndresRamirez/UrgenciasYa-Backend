@@ -1,6 +1,6 @@
 package com.urgenciasYa.controller.impl;
 
-import com.urgenciasYa.model.Shift;
+import com.urgenciasYa.hexagonal.domain.model.Shift;
 import com.urgenciasYa.hexagonal.application.service.impl.ShiftService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

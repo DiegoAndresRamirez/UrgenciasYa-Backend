@@ -1,13 +1,13 @@
 package com.urgenciasYa.hexagonal.application.service.impl;
 
-import com.urgenciasYa.model.Eps;
+import com.urgenciasYa.hexagonal.domain.model.Eps;
 import com.urgenciasYa.hexagonal.domain.model.Hospital;
-import com.urgenciasYa.model.Shift;
-import com.urgenciasYa.model.UserEntity;
-import com.urgenciasYa.repository.EpsRepository;
+import com.urgenciasYa.hexagonal.domain.model.Shift;
+import com.urgenciasYa.hexagonal.domain.model.UserEntity;
+import com.urgenciasYa.hexagonal.infrastructure.persistence.EpsRepository;
 import com.urgenciasYa.hexagonal.infrastructure.persistence.HospitalRepository;
-import com.urgenciasYa.repository.ShiftRepository;
-import com.urgenciasYa.repository.UserRepository;
+import com.urgenciasYa.hexagonal.infrastructure.persistence.ShiftRepository;
+import com.urgenciasYa.hexagonal.infrastructure.persistence.UserRepository;
 import com.urgenciasYa.hexagonal.application.service.IModel.IShiftModel;
 import com.urgenciasYa.utils.enums.StatusShift;
 import org.springframework.beans.factory.annotation.Autowired;

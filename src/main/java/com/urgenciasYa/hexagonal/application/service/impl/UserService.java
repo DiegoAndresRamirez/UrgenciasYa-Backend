@@ -1,10 +1,10 @@
 package com.urgenciasYa.hexagonal.application.service.impl;
 
 import com.urgenciasYa.hexagonal.application.dto.request.UserRegisterDTO;
-import com.urgenciasYa.model.RoleEntity;
-import com.urgenciasYa.model.UserEntity;
-import com.urgenciasYa.repository.RoleRepository;
-import com.urgenciasYa.repository.UserRepository;
+import com.urgenciasYa.hexagonal.domain.model.RoleEntity;
+import com.urgenciasYa.hexagonal.domain.model.UserEntity;
+import com.urgenciasYa.hexagonal.infrastructure.persistence.RoleRepository;
+import com.urgenciasYa.hexagonal.infrastructure.persistence.UserRepository;
 import com.urgenciasYa.hexagonal.application.service.IModel.IUserModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
