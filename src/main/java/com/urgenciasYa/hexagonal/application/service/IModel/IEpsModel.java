@@ -1,4 +1,4 @@
-package com.urgenciasYa.service.IModel;
+package com.urgenciasYa.hexagonal.application.service.IModel;
 
 import com.urgenciasYa.dto.request.EpsRequestDTO;
 import com.urgenciasYa.model.Eps;

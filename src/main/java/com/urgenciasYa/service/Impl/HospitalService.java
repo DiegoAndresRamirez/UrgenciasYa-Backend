@@ -5,7 +5,7 @@ import com.urgenciasYa.dto.request.HospitalSearchRequestDTO;
 import com.urgenciasYa.dto.response.HospitalCardDTO;
 import com.urgenciasYa.hexagonal.domain.model.Hospital;
 import com.urgenciasYa.hexagonal.infrastructure.persistence.HospitalRepository;
-import com.urgenciasYa.service.IModel.IHospitalModel;
+import com.urgenciasYa.hexagonal.application.service.IModel.IHospitalModel;
 import com.urgenciasYa.utils.ConcurrencyAlgorithm;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;

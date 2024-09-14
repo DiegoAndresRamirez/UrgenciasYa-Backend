@@ -6,7 +6,7 @@ import com.urgenciasYa.dto.request.TownCreateDTO;
 import com.urgenciasYa.dto.response.TownsDTO;
 import com.urgenciasYa.exceptions.ErrorSimple;
 import com.urgenciasYa.model.Towns;
-import com.urgenciasYa.service.IModel.ITownsModel;
+import com.urgenciasYa.hexagonal.application.service.IModel.ITownsModel;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;

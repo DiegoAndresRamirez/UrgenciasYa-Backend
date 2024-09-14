@@ -1,10 +1,9 @@
 package com.urgenciasYa.service.Impl;
 
 import com.urgenciasYa.dto.request.TownCreateDTO;
-import com.urgenciasYa.dto.response.TownsDTO;
 import com.urgenciasYa.model.Towns;
 import com.urgenciasYa.repository.TownsRepository;
-import com.urgenciasYa.service.IModel.ITownsModel;
+import com.urgenciasYa.hexagonal.application.service.IModel.ITownsModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

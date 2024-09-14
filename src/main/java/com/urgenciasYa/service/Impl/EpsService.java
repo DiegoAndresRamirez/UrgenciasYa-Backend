@@ -3,7 +3,7 @@ package com.urgenciasYa.service.Impl;
 import com.urgenciasYa.dto.request.EpsRequestDTO;
 import com.urgenciasYa.model.Eps;
 import com.urgenciasYa.repository.EpsRepository;
-import com.urgenciasYa.service.IModel.IEpsModel;
+import com.urgenciasYa.hexagonal.application.service.IModel.IEpsModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

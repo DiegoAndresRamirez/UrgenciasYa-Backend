@@ -5,7 +5,7 @@ import com.urgenciasYa.model.RoleEntity;
 import com.urgenciasYa.model.UserEntity;
 import com.urgenciasYa.repository.RoleRepository;
 import com.urgenciasYa.repository.UserRepository;
-import com.urgenciasYa.service.IModel.IUserModel;
+import com.urgenciasYa.hexagonal.application.service.IModel.IUserModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
