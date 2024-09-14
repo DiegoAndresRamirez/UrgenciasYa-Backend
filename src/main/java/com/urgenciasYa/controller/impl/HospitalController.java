@@ -170,4 +170,25 @@ public class HospitalController implements IModelHospital {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @Operation(
+            summary = "Retrieve all hospitals",
+            description = "Fetches a list of all hospitals. Returns an empty list if no hospitals are found."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "List of hospitals retrieved successfully"),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error")
+    })
+    @Override
+    @GetMapping("/all")
+    public ResponseEntity<List<Hospital>> getAll() {
+        try {
+            List<Hospital> hospitals = this.hospitalService.readALl();
+            return ResponseEntity.ok(hospitals);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
 }
