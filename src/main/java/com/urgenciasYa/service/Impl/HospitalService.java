@@ -1,9 +1,11 @@
 package com.urgenciasYa.service.Impl;
 
+import com.urgenciasYa.dto.request.HospitalCreateResponseDTO;
 import com.urgenciasYa.dto.request.HospitalSearchRequestDTO;
 import com.urgenciasYa.dto.response.HospitalCardDTO;
 import com.urgenciasYa.model.Hospital;
 import com.urgenciasYa.repository.HospitalRepository;
+import com.urgenciasYa.service.IModel.IHospitalModel;
 import com.urgenciasYa.utils.ConcurrencyAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,7 +16,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
-public class HospitalService {
+public class HospitalService implements IHospitalModel {
 
     @Autowired
     private HospitalRepository hospitalRepository;
@@ -63,5 +65,25 @@ public class HospitalService {
                         Math.sin(dLon / 2) * Math.sin(dLon / 2);
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         return EARTH_RADIUS * c;
+    }
+
+    @Override
+    public Hospital create(HospitalCreateResponseDTO dto) {
+        Hospital hospital = Hospital.builder()
+                .url_image(dto.getUrl_image())
+                .phone_number(dto.getPhone_number())
+                .name(dto.getName())
+                .rating(dto.getRating())
+                .morning_peak(dto.getMorning_peak())
+                .afternoon_peak(dto.getAfternoon_peak())
+                .night_peak(dto.getNight_peak())
+                .howtogetthere(dto.getHowtogetthere())
+                .town_id(dto.getTown_id())
+                .eps_id(dto.getEps_id())
+                .latitude(dto.getLatitude())
+                .longitude(dto.getLongitude())
+                .build();
+
+        return hospitalRepository.save(hospital);
     }
 }
