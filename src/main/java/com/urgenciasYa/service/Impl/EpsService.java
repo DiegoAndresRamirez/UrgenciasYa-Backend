@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class EpsService implements IEpsModel {
@@ -35,7 +36,14 @@ public class EpsService implements IEpsModel {
     }
 
     @Override
-    public Eps update(Eps eps, Integer integer) {
-        return null;
+    public Eps update(Eps eps, Integer id) {
+        Optional<Eps> optionalEps = epsRepository.findById(id);
+        if(optionalEps.isPresent()){
+            Eps epsdb = optionalEps.get();
+            epsdb.setName(eps.getName());
+            return epsRepository.save(epsdb);
+        }else{
+            throw new IllegalArgumentException("La Eps con ID asignado "+ id + "NO existe en nuestra base de datos. Rectifica tus datos");
+        }
     }
 }
