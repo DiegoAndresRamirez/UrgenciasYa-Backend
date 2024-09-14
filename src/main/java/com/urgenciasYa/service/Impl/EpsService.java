@@ -1,5 +1,6 @@
 package com.urgenciasYa.service.Impl;
 
+import com.urgenciasYa.dto.request.EpsRequestDTO;
 import com.urgenciasYa.model.Eps;
 import com.urgenciasYa.repository.EpsRepository;
 import com.urgenciasYa.service.IModel.IEpsModel;
@@ -17,5 +18,24 @@ public class EpsService implements IEpsModel {
     @Override
     public List<Eps> readALl() {
         return epsRepository.findAll();
+    }
+
+    @Override
+    public Eps create(EpsRequestDTO entity) {
+        if(epsRepository.existsByName(entity.getName())) throw new IllegalArgumentException("La EPS que intentas crear, ya EXISTE. Rectifica tus datos.");
+
+        Eps eps = new Eps();
+        eps.setName(entity.getName());
+        return epsRepository.save(eps);
+    }
+
+    @Override
+    public void delete(Integer integer) {
+
+    }
+
+    @Override
+    public Eps update(Eps eps, Integer integer) {
+        return null;
     }
 }
