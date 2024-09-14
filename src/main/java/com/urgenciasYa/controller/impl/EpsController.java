@@ -1,18 +1,22 @@
 package com.urgenciasYa.controller.impl;
 
+import com.urgenciasYa.controller.handleError.SuccessResponse;
 import com.urgenciasYa.controller.interfaces.IModelEps;
-import com.urgenciasYa.dto.response.EpsDTO;
+import com.urgenciasYa.dto.request.EpsRequestDTO;
+import com.urgenciasYa.dto.request.TownCreateDTO;
+import com.urgenciasYa.dto.response.EpsResponseDTO;
+import com.urgenciasYa.exceptions.ErrorSimple;
 import com.urgenciasYa.model.Eps;
+import com.urgenciasYa.model.Towns;
 import com.urgenciasYa.service.IModel.IEpsModel;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,20 +31,60 @@ public class EpsController implements IModelEps {
 
     @Override
     @Operation( summary = "Retrieves a list of all EPS entities.")
-
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "List obtained successfully"),
             @ApiResponse(responseCode = "404", description = "No eps found"),
             @ApiResponse(responseCode = "500", description = "Internal Server Error")
     })
     @GetMapping
-    public ResponseEntity<List<EpsDTO>> getAllEps() {
-        List<Eps> eps = epsService.readALl();
-        List<EpsDTO> epsDTOS = eps.stream()
-                .map(e -> EpsDTO.builder()
-                        .name(e.getName())
+    public ResponseEntity<List<EpsResponseDTO>> getAllEps() {
+        // Se obtiene la lista de EPS desde el servicio
+        List<Eps> epss = epsService.readALl();
+
+        // Convertimos la lista de entidades EPS a DTOs
+        List<EpsResponseDTO> epsResponseDTO = epss.stream()
+                .map(eps -> EpsResponseDTO.builder()
+                        .name(eps.getName())
                         .build())
                 .collect(Collectors.toList());
-        return ResponseEntity.ok(epsDTOS);
+
+        return ResponseEntity.ok(epsResponseDTO);
+    }
+
+    @Override
+    @PostMapping
+    public ResponseEntity<?> create(@RequestBody @Valid EpsRequestDTO dto) {
+        try {
+            epsService.create(dto);
+            SuccessResponse successResponse = SuccessResponse.builder()
+                    .code(HttpStatus.CREATED.value())
+                    .status(HttpStatus.CREATED.name())
+                    .message("Eps creada con exito")
+                    .build();
+            return ResponseEntity.status(HttpStatus.CREATED).body(successResponse);
+        } catch (IllegalArgumentException exception) {
+            ErrorSimple errorSimple = ErrorSimple.builder()
+                    .code(HttpStatus.CONFLICT.value())
+                    .status(HttpStatus.CONFLICT.name())
+                    .message(exception.getMessage())
+                    .build();
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(errorSimple);
+        } catch (Exception exception) {
+            ErrorSimple errorSimple = ErrorSimple.builder()
+                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR.name())
+                    .message(exception.getMessage())
+                    .build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorSimple);
+        }
+    }
+    @Override
+    public ResponseEntity<?> delete(Integer integer) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<?> update(Eps eps, Integer integer) {
+        return null;
     }
 }
