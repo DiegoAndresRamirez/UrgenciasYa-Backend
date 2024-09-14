@@ -1,4 +1,4 @@
-package com.urgenciasYa.service.crud;
+package com.urgenciasYa.hexagonal.application.service.crud;
 
 import java.util.List;
 
