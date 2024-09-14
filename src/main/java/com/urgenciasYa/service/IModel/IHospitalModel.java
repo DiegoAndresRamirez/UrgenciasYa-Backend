@@ -7,5 +7,5 @@ import com.urgenciasYa.service.crud.Delete;
 import com.urgenciasYa.service.crud.ReadById;
 import com.urgenciasYa.service.crud.Update;
 
-public interface IHospitalModel extends CreateDTO<HospitalCreateResponseDTO, Hospital> , Update<Long, HospitalCreateResponseDTO, Hospital> , Delete<Long> , ReadById<HospitalCreateResponseDTO, Long> {
+public interface IHospitalModel extends CreateDTO<HospitalCreateResponseDTO, Hospital> , Update<Long, HospitalCreateResponseDTO, Hospital> , Delete<Long> , ReadById<Hospital, Long> {
 }
