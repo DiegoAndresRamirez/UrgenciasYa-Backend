@@ -7,12 +7,14 @@ import com.urgenciasYa.model.Hospital;
 import com.urgenciasYa.repository.HospitalRepository;
 import com.urgenciasYa.service.IModel.IHospitalModel;
 import com.urgenciasYa.utils.ConcurrencyAlgorithm;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.urgenciasYa.model.Eps;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -118,5 +120,10 @@ public class HospitalService implements IHospitalModel {
         }else{
             throw new RuntimeException("Hospital with id " + id + " not found");
         }
+    }
+
+    @Override
+    public Hospital getById(Long id) {
+        return this.hospitalRepository.findById(id).orElseThrow( () -> new EntityNotFoundException("Hospital with id " + id + " not found"));
     }
 }
