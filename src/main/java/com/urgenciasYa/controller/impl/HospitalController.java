@@ -87,4 +87,39 @@ public class HospitalController implements IModelHospital {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
+
+
+    @Operation(
+            summary = "Update an existing hospital",
+            description = "Updates an existing hospital record identified by the given ID with the provided data. Returns the updated hospital object if successful.",
+            requestBody = @RequestBody(
+                    description = "Hospital data for updating an existing record",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = HospitalCreateResponseDTO.class)
+                    )
+            ),
+            parameters = {
+                    @Parameter(name = "id", description = "ID of the hospital to be updated", required = true)
+            }
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Hospital updated successfully"),
+            @ApiResponse(responseCode = "400", description = "Bad request. Possibly due to invalid data in the provided DTO or hospital not found"),
+            @ApiResponse(responseCode = "404", description = "Hospital not found"),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error")
+    })
+    @Override
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Hospital> update(
+            @RequestBody HospitalCreateResponseDTO dto,
+            @PathVariable Long id) {
+        try {
+            Hospital updatedHospital = hospitalService.update(id, dto);
+            return ResponseEntity.ok(updatedHospital);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    }
 }
