@@ -1,7 +1,7 @@
 package com.urgenciasYa.service.Impl;
 
 import com.urgenciasYa.model.Eps;
-import com.urgenciasYa.model.Hospital;
+import com.urgenciasYa.hexagonal.domain.model.Hospital;
 import com.urgenciasYa.model.Shift;
 import com.urgenciasYa.model.UserEntity;
 import com.urgenciasYa.repository.EpsRepository;

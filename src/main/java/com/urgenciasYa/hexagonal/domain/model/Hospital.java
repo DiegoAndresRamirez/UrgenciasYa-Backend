@@ -1,5 +1,7 @@
-package com.urgenciasYa.model;
+package com.urgenciasYa.hexagonal.domain.model;
 
+import com.urgenciasYa.model.Eps;
+import com.urgenciasYa.model.Towns;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -8,7 +10,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
-import java.util.Set;
 
 
 @Data

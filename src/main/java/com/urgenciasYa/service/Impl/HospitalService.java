@@ -3,7 +3,7 @@ package com.urgenciasYa.service.Impl;
 import com.urgenciasYa.dto.request.HospitalCreateResponseDTO;
 import com.urgenciasYa.dto.request.HospitalSearchRequestDTO;
 import com.urgenciasYa.dto.response.HospitalCardDTO;
-import com.urgenciasYa.model.Hospital;
+import com.urgenciasYa.hexagonal.domain.model.Hospital;
 import com.urgenciasYa.repository.HospitalRepository;
 import com.urgenciasYa.service.IModel.IHospitalModel;
 import com.urgenciasYa.utils.ConcurrencyAlgorithm;
@@ -14,7 +14,6 @@ import com.urgenciasYa.model.Eps;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service

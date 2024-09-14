@@ -1,6 +1,6 @@
 package com.urgenciasYa.repository;
 
-import com.urgenciasYa.model.Hospital;
+import com.urgenciasYa.hexagonal.domain.model.Hospital;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
