@@ -5,7 +5,7 @@ import com.urgenciasYa.hexagonal.domain.model.Hospital;
 import com.urgenciasYa.model.Shift;
 import com.urgenciasYa.model.UserEntity;
 import com.urgenciasYa.repository.EpsRepository;
-import com.urgenciasYa.repository.HospitalRepository;
+import com.urgenciasYa.hexagonal.infrastructure.persistence.HospitalRepository;
 import com.urgenciasYa.repository.ShiftRepository;
 import com.urgenciasYa.repository.UserRepository;
 import com.urgenciasYa.service.IModel.IShiftModel;

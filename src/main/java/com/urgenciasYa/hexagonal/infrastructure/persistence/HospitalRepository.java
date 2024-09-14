@@ -1,4 +1,4 @@
-package com.urgenciasYa.repository;
+package com.urgenciasYa.hexagonal.infrastructure.persistence;
 
 import com.urgenciasYa.hexagonal.domain.model.Hospital;
 import org.springframework.data.jpa.repository.JpaRepository;
