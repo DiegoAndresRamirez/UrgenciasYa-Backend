@@ -122,4 +122,27 @@ public class HospitalController implements IModelHospital {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
+
+    @Operation(
+            summary = "Delete a hospital by its ID",
+            description = "Deletes the hospital record identified by the given ID. Returns a success message if the operation is successful.",
+            parameters = {
+                    @Parameter(name = "id", description = "ID of the hospital to be deleted", required = true)
+            }
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Hospital deleted successfully"),
+            @ApiResponse(responseCode = "404", description = "Hospital not found"),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error")
+    })
+    @Override
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> delete(@PathVariable Long id) {
+        try {
+            hospitalService.delete(id);
+            return ResponseEntity.ok("Hospital with ID " + id + " deleted successfully");
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error: " + e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
 }
