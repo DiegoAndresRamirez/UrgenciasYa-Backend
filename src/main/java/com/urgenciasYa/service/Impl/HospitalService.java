@@ -86,4 +86,27 @@ public class HospitalService implements IHospitalModel {
 
         return hospitalRepository.save(hospital);
     }
+
+    @Override
+    public Hospital update(Long aLong, HospitalCreateResponseDTO dto) {
+        Hospital existingHospital = hospitalRepository.findById(aLong).orElseThrow(() -> new RuntimeException("Hospital with id " + aLong + " not found"));
+
+        Hospital updatedHospital = Hospital.builder()
+                .id(existingHospital.getId())
+                .url_image(dto.getUrl_image())
+                .phone_number(dto.getPhone_number())
+                .name(dto.getName())
+                .rating(dto.getRating())
+                .morning_peak(dto.getMorning_peak())
+                .afternoon_peak(dto.getAfternoon_peak())
+                .night_peak(dto.getNight_peak())
+                .howtogetthere(dto.getHowtogetthere())
+                .town_id(dto.getTown_id())
+                .eps_id(dto.getEps_id())
+                .latitude(dto.getLatitude())
+                .longitude(dto.getLongitude())
+                .build();
+
+        return hospitalRepository.save(updatedHospital);
+    }
 }

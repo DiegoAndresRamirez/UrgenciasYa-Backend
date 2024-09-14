@@ -1,5 +1,5 @@
 package com.urgenciasYa.service.crud;
 
-public interface Update <ID, Entity> {
-    Entity update (ID id, Entity entity);
+public interface Update <ID, Entity, I> {
+    I update (ID id, Entity entity);
 }
