@@ -31,8 +31,12 @@ public class EpsService implements IEpsModel {
     }
 
     @Override
-    public void delete(Integer integer) {
-
+    public void delete(Integer id) {
+        if(epsRepository.existsById(id)){
+            epsRepository.deleteById(id);
+        }else{
+            throw new IllegalArgumentException(("La Eps con ID  "+ id + "NO existe en nuestra base de datos. Rectifica tus datos"));
+        }
     }
 
     @Override
@@ -43,7 +47,7 @@ public class EpsService implements IEpsModel {
             epsdb.setName(eps.getName());
             return epsRepository.save(epsdb);
         }else{
-            throw new IllegalArgumentException("La Eps con ID asignado "+ id + "NO existe en nuestra base de datos. Rectifica tus datos");
+            throw new IllegalArgumentException("La Eps con ID "+ id + "NO existe en nuestra base de datos. Rectifica tus datos");
         }
     }
 }

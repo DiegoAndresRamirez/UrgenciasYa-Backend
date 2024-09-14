@@ -79,8 +79,31 @@ public class EpsController implements IModelEps {
         }
     }
     @Override
-    public ResponseEntity<?> delete(Integer integer) {
-        return null;
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@Valid @PathVariable Integer id) {
+        try{
+            epsService.delete(id);
+            SuccessResponse successResponse = SuccessResponse.builder()
+                    .code(HttpStatus.OK.value())
+                    .status(HttpStatus.OK.name())
+                    .message("Eps borrada con exito")
+                    .build();
+            return ResponseEntity.status(HttpStatus.OK).body(successResponse);
+        }catch (IllegalArgumentException exception){
+            ErrorSimple errorSimple = ErrorSimple.builder()
+                    .code(HttpStatus.CONFLICT.value())
+                    .status(HttpStatus.CONFLICT.name())
+                    .message(exception.getMessage())
+                    .build();
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(errorSimple);
+        }catch (Exception exception){
+            ErrorSimple errorSimple = ErrorSimple.builder()
+                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR.name())
+                    .message(exception.getMessage())
+                    .build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorSimple);
+        }
     }
 
     @Override
