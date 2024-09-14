@@ -109,4 +109,14 @@ public class HospitalService implements IHospitalModel {
 
         return hospitalRepository.save(updatedHospital);
     }
+
+    @Override
+    public void delete(Long id) {
+        Hospital hospitalExist = this.hospitalRepository.findById(id).orElseThrow(() -> new RuntimeException("Hospital with id " + id + " not found"));
+        if(hospitalExist != null){
+            hospitalRepository.deleteById(hospitalExist.getId());
+        }else{
+            throw new RuntimeException("Hospital with id " + id + " not found");
+        }
+    }
 }
