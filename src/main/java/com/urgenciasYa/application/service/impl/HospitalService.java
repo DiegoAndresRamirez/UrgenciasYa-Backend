@@ -4,6 +4,10 @@ import com.urgenciasYa.application.dto.request.HospitalSearchRequestDTO;
 import com.urgenciasYa.application.dto.response.HospitalCardDTO;
 import com.urgenciasYa.application.dto.response.HospitalCreateResponseDTO;
 import com.urgenciasYa.domain.model.Hospital;
+import com.urgenciasYa.domain.model.HospitalEps;
+import com.urgenciasYa.domain.model.keys.HospitalEpsId;
+import com.urgenciasYa.infrastructure.persistence.EpsRepository;
+import com.urgenciasYa.infrastructure.persistence.HospitalEpsRepository;
 import com.urgenciasYa.infrastructure.persistence.HospitalRepository;
 import com.urgenciasYa.application.service.IModel.IHospitalModel;
 import com.urgenciasYa.common.utils.ConcurrencyAlgorithm;
@@ -12,8 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.urgenciasYa.domain.model.Eps;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,15 +28,21 @@ public class HospitalService implements IHospitalModel {
     @Autowired
     private HospitalRepository hospitalRepository;
 
+    @Autowired
+    private HospitalEpsRepository hospitalEpsRepository;
+
+    @Autowired
+    private EpsRepository epsRepository;
+
     private static final double EARTH_RADIUS = 6371;
 
     public List<HospitalCardDTO> getHospitalsNearby(HospitalSearchRequestDTO requestDTO) {
-        String eps = requestDTO.getEps();
-        String town = requestDTO.getTown();
+        String epsName = requestDTO.getEps();
+        String townName = requestDTO.getTown();
         double userLatitude = requestDTO.getLatitude();
         double userLongitude = requestDTO.getLongitude();
 
-        List<Hospital> hospitals = hospitalRepository.findByEpsAndTown(eps, town);
+        List<Hospital> hospitals = hospitalRepository.findByEpsNameAndTown(epsName, townName);
 
         hospitals.sort((h1, h2) -> {
             double distanceToH1 = calculateDistance(userLatitude, userLongitude, h1.getLatitude(), h1.getLongitude());
@@ -52,7 +64,7 @@ public class HospitalService implements IHospitalModel {
                     .rating(hospital.getRating())
                     .howtogetthere(hospital.getHowtogetthere())
                     .nameTown(hospital.getTown_id().getName())
-                    .nameEps(hospital.getEps_id().forEach(e -> e.getEps().getName())
+                    .nameEps(hospital.getEps_id().stream().map(hospitalEps -> hospitalEps.getEps().getName()).collect(Collectors.joining(", ")))
                     .concurrencyProfile(concurrencyProfile)
                     .build();
         }).collect(Collectors.toList());
@@ -80,35 +92,59 @@ public class HospitalService implements IHospitalModel {
                 .night_peak(dto.getNight_peak())
                 .howtogetthere(dto.getHowtogetthere())
                 .town_id(dto.getTown_id())
-                .eps_id(dto.getEps_id())
                 .latitude(dto.getLatitude())
                 .longitude(dto.getLongitude())
                 .build();
 
-        return hospitalRepository.save(hospital);
+        Hospital savedHospital = hospitalRepository.save(hospital);
+
+        List<HospitalEps> hospitalEpsList = dto.getEps_id().stream()
+                .map(eps -> {
+                    Eps epsEntity = epsRepository.findById(eps.getId())
+                            .orElseThrow(() -> new RuntimeException("EPS not found with ID: " + eps.getId()));
+                    return new HospitalEps(new HospitalEpsId(savedHospital.getId(), eps.getId()), savedHospital, epsEntity);
+                })
+                .collect(Collectors.toList());
+
+        hospitalEpsRepository.saveAll(hospitalEpsList);
+
+        return savedHospital;
     }
 
     @Override
-    public Hospital update(Long aLong, HospitalCreateResponseDTO dto) {
-        Hospital existingHospital = hospitalRepository.findById(aLong).orElseThrow(() -> new RuntimeException("Hospital with id " + aLong + " not found"));
+    public Hospital update(Long id, HospitalCreateResponseDTO dto) {
+        Hospital existingHospital = hospitalRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Hospital with id " + id + " not found"));
 
-        Hospital updatedHospital = Hospital.builder()
-                .id(existingHospital.getId())
-                .url_image(dto.getUrl_image())
-                .phone_number(dto.getPhone_number())
-                .name(dto.getName())
-                .rating(dto.getRating())
-                .morning_peak(dto.getMorning_peak())
-                .afternoon_peak(dto.getAfternoon_peak())
-                .night_peak(dto.getNight_peak())
-                .howtogetthere(dto.getHowtogetthere())
-                .town_id(dto.getTown_id())
-                .eps_id(dto.getEps_id())
-                .latitude(dto.getLatitude())
-                .longitude(dto.getLongitude())
-                .build();
+        existingHospital.setUrl_image(dto.getUrl_image());
+        existingHospital.setPhone_number(dto.getPhone_number());
+        existingHospital.setName(dto.getName());
+        existingHospital.setRating(dto.getRating());
+        existingHospital.setMorning_peak(dto.getMorning_peak());
+        existingHospital.setAfternoon_peak(dto.getAfternoon_peak());
+        existingHospital.setNight_peak(dto.getNight_peak());
+        existingHospital.setHowtogetthere(dto.getHowtogetthere());
+        existingHospital.setTown_id(dto.getTown_id());
+        existingHospital.setLatitude(dto.getLatitude());
+        existingHospital.setLongitude(dto.getLongitude());
 
-        return hospitalRepository.save(updatedHospital);
+        Hospital updatedHospital = hospitalRepository.save(existingHospital);
+
+        Set<HospitalEps> existingHospitalEps = new HashSet<>(hospitalEpsRepository.findAllByHospitalId(id));
+        Set<HospitalEps> newHospitalEps = dto.getEps_id().stream()
+                .map(eps -> {
+                    Eps epsEntity = epsRepository.findById(eps.getId())
+                            .orElseThrow(() -> new RuntimeException("EPS not found with ID: " + eps.getId()));
+                    return new HospitalEps(new HospitalEpsId(id, eps.getId()), updatedHospital, epsEntity);
+                })
+                .collect(Collectors.toSet());
+
+        existingHospitalEps.removeAll(newHospitalEps);
+        hospitalEpsRepository.deleteAll(existingHospitalEps);
+
+        hospitalEpsRepository.saveAll(newHospitalEps);
+
+        return updatedHospital;
     }
 
     @Override
