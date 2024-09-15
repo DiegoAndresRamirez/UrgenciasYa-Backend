@@ -52,7 +52,7 @@ public class HospitalService implements IHospitalModel {
                     .rating(hospital.getRating())
                     .howtogetthere(hospital.getHowtogetthere())
                     .nameTown(hospital.getTown_id().getName())
-                    .nameEps(hospital.getEps_id().stream().findFirst().map(Eps::getName).orElse(""))
+                    .nameEps(hospital.getEps_id().forEach(e -> e.getEps().getName())
                     .concurrencyProfile(concurrencyProfile)
                     .build();
         }).collect(Collectors.toList());

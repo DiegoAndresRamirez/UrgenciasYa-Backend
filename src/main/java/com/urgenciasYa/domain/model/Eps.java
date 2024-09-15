@@ -6,6 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+import java.util.Set;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -18,7 +21,6 @@ public class Eps {
     private Integer id;
     @Column(nullable = false)
     private String name;
-    @ManyToOne
-    @JoinColumn(name = "hospital_id")
-    private Hospital hospital;
+    @OneToMany(mappedBy = "eps")
+    private List<HospitalEps> hospitalsEps;
 }

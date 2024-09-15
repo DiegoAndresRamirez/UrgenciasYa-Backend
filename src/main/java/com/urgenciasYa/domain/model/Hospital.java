@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Set;
 
 
 @Data
@@ -34,13 +35,13 @@ public class Hospital {
     private Integer afternoon_peak;
     @Column(nullable = false)
     private Integer night_peak;
-    @Column(nullable = false)
+    @Column(nullable = false,length = 400)
     private String howtogetthere;
     @JoinColumn( nullable = false)
-    @OneToOne
+    @ManyToOne
     private Towns town_id;
     @OneToMany(mappedBy = "hospital")
-    private List<Eps> eps_id;
+    private List<HospitalEps> eps_id;
     @Column(nullable = false)
     private Integer latitude;
     @Column(nullable = false)
