@@ -39,16 +39,20 @@ public class HospitalService implements IHospitalModel {
     public List<HospitalCardDTO> getHospitalsNearby(HospitalSearchRequestDTO requestDTO) {
         String epsName = requestDTO.getEps();
         String townName = requestDTO.getTown();
-        double userLatitude = requestDTO.getLatitude();
-        double userLongitude = requestDTO.getLongitude();
+        Double userLatitude = requestDTO.getLatitude(); // Cambiado a Double para poder ser null
+        Double userLongitude = requestDTO.getLongitude(); // Cambiado a Double para poder ser null
 
+        // Encuentra los hospitales basados en EPS y town
         List<Hospital> hospitals = hospitalRepository.findByEpsNameAndTown(epsName, townName);
 
-        hospitals.sort((h1, h2) -> {
-            double distanceToH1 = calculateDistance(userLatitude, userLongitude, h1.getLatitude(), h1.getLongitude());
-            double distanceToH2 = calculateDistance(userLatitude, userLongitude, h2.getLatitude(), h2.getLongitude());
-            return Double.compare(distanceToH1, distanceToH2);
-        });
+        if (userLatitude != null && userLongitude != null) {
+            // Si latitud y longitud están disponibles, calcula la distancia
+            hospitals.sort((h1, h2) -> {
+                double distanceToH1 = calculateDistance(userLatitude, userLongitude, h1.getLatitude(), h1.getLongitude());
+                double distanceToH2 = calculateDistance(userLatitude, userLongitude, h2.getLatitude(), h2.getLongitude());
+                return Double.compare(distanceToH1, distanceToH2);
+            });
+        }
 
         return hospitals.stream().map(hospital -> {
             Map<String, Integer> concurrencyProfile = ConcurrencyAlgorithm.generateConcurrencyProfile(
