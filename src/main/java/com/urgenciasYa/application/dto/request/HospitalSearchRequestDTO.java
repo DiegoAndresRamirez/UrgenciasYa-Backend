@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 public class HospitalSearchRequestDTO {
     private String eps;
     private String town;
-    private double latitude;
-    private double longitude;
+    private Double latitude;
+    private Double longitude;
 }
