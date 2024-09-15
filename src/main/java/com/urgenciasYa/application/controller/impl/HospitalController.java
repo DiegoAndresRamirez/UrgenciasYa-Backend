@@ -151,23 +151,51 @@ public class HospitalController implements IModelHospital {
             }
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Hospital updated successfully"),
-            @ApiResponse(responseCode = "400", description = "Bad request. Possibly due to invalid data in the provided DTO or hospital not found"),
-            @ApiResponse(responseCode = "404", description = "Hospital not found"),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error")
+            @ApiResponse(responseCode = "200", description = "Hospital updated successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Hospital.class))),
+            @ApiResponse(responseCode = "400", description = "Bad request. Possibly due to invalid data in the provided DTO or hospital not found",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorSimple.class))),
+            @ApiResponse(responseCode = "404", description = "Hospital not found",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorSimple.class))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorSimple.class)))
     })
     @Override
     @PutMapping("/update/{id}")
-    public ResponseEntity<Hospital> update(
+    public ResponseEntity<?> update(
             @RequestBody HospitalCreateResponseDTO dto,
             @PathVariable Long id) {
         try {
             Hospital updatedHospital = hospitalService.update(id, dto);
             return ResponseEntity.ok(updatedHospital);
+        } catch (IllegalArgumentException e) {
+            ErrorSimple error = ErrorSimple.builder()
+                    .code(HttpStatus.BAD_REQUEST.value())
+                    .status(HttpStatus.BAD_REQUEST.name())
+                    .message("Invalid data provided for hospital update or hospital not found.")
+                    .build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+        } catch (EntityNotFoundException e) {
+            ErrorSimple error = ErrorSimple.builder()
+                    .code(HttpStatus.NOT_FOUND.value())
+                    .status(HttpStatus.NOT_FOUND.name())
+                    .message("Hospital with the given ID not found.")
+                    .build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            ErrorSimple error = ErrorSimple.builder()
+                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR.name())
+                    .message("An unexpected error occurred while updating the hospital.")
+                    .build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
         }
     }
+
 
     @Operation(
             summary = "Delete a hospital by its ID",
