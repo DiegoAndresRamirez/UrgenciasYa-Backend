@@ -1,6 +1,7 @@
 package com.urgenciasYa.application.service.impl;
 
 import com.urgenciasYa.application.dto.request.UserRegisterDTO;
+import com.urgenciasYa.application.dto.response.LoginDTO;
 import com.urgenciasYa.application.service.IModel.IUserModel;
 import com.urgenciasYa.domain.model.RoleEntity;
 import com.urgenciasYa.domain.model.UserEntity;
@@ -51,12 +52,22 @@ public class UserService implements IUserModel {
 
         return userRepository.save(user);
     }
-    public String verify(UserEntity user) {
+    public LoginDTO verify(UserEntity user) {
         Authentication authentication = authManager.authenticate(new UsernamePasswordAuthenticationToken(user.getName(), user.getPassword()));
         if (authentication.isAuthenticated()) {
-            return jwtService.generateToken(user.getName());
+            LoginDTO loginDTO = LoginDTO.builder()
+                    .name(user.getName())
+                    .email(user.getEmail())
+                    .password(user.getPassword())
+                    .document(user.getDocument())
+                    .eps(user.getEps())
+                    .token(jwtService.generateToken(user.getName()))
+                    .build();
+
+
+            return loginDTO;
         } else {
-            return "fail";
+            return LoginDTO.builder().build();
         }
     }
 
