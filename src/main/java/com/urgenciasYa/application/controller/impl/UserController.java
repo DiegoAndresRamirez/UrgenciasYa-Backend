@@ -2,7 +2,9 @@ package com.urgenciasYa.application.controller.impl;
 
 import com.urgenciasYa.application.controller.interfaces.IModelUser;
 import com.urgenciasYa.application.dto.request.UserRegisterDTO;
+import com.urgenciasYa.application.dto.response.LoginDTO;
 import com.urgenciasYa.application.exceptions.ErrorsResponse;
+import com.urgenciasYa.domain.model.UserEntity;
 import com.urgenciasYa.infrastructure.handleError.SuccessResponse;
 import com.urgenciasYa.application.exceptions.ErrorSimple;
 import com.urgenciasYa.application.service.impl.UserService;
@@ -18,7 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/user")
+@RequestMapping
 @Tag(name = "User")
 @CrossOrigin(origins = "http://localhost:3000")
 public class UserController implements IModelUser {
@@ -61,4 +63,20 @@ public class UserController implements IModelUser {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorSimple);
         }
     }
+    @PostMapping("/login")
+    public ResponseEntity<?>login(@RequestBody UserEntity user) {
+
+        try {
+            LoginDTO loginDTO = userService.verify(user);
+            return ResponseEntity.status(HttpStatus.OK).body(loginDTO);
+        } catch (Exception e) {
+            ErrorSimple errorSimple = ErrorSimple.builder()
+                    .code(HttpStatus.UNAUTHORIZED.value())
+                    .status(HttpStatus.UNAUTHORIZED.name())
+                    .message("Autenticación fallida")
+                    .build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorSimple);
+        }
+    }
+
 }
