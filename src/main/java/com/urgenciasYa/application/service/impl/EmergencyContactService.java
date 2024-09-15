@@ -18,4 +18,14 @@ public class EmergencyContactService implements IEmergencyContactModel {
         EmergencyEntity emergencyEntity = EmergencyEntity.builder().name(entity.getName()).phone(entity.getPhone()).build();
         return emergencyContactRepository.save(emergencyEntity);
     }
+
+
+    @Override
+    public EmergencyEntity Update(Long id, EmergencyContactRequestDTO emergencyContactRequestDTO) {
+        EmergencyEntity emergencyEntity = emergencyContactRepository.findById(id).orElseThrow(()-> new RuntimeException("Emergency contact not found"));
+
+        EmergencyEntity emergency = EmergencyEntity.builder().id(emergencyEntity.getId()).name(emergencyContactRequestDTO.getName()).phone(emergencyContactRequestDTO.getPhone()).build();
+
+        return emergencyContactRepository.save(emergency);
+    }
 }

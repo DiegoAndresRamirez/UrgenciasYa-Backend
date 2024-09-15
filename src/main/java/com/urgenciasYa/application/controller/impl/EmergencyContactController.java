@@ -14,9 +14,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/contacts")
@@ -55,6 +53,57 @@ public class EmergencyContactController implements IModelEmergencyContact {
                         .message("Failed to create emergency contact")
                         .build();
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorSimple);
+            }
+        } catch (IllegalArgumentException exception) {
+            ErrorSimple errorSimple = ErrorSimple.builder()
+                    .code(HttpStatus.BAD_REQUEST.value())
+                    .status(HttpStatus.BAD_REQUEST.name())
+                    .message(exception.getMessage())
+                    .build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorSimple);
+        } catch (Exception exception) {
+            ErrorSimple errorSimple = ErrorSimple.builder()
+                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR.name())
+                    .message(exception.getMessage())
+                    .build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorSimple);
+        }
+    }
+
+    @Override
+    @PutMapping("/{id}")
+    @Operation(
+            summary = "Update an existing emergency contact",
+            description = "Updates an existing emergency contact identified by the given ID and returns the updated contact.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Emergency contact updated successfully",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = EmergencyEntity.class))),
+                    @ApiResponse(responseCode = "400", description = "Bad Request, if the input data is invalid",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorSimple.class))),
+                    @ApiResponse(responseCode = "404", description = "Not Found, if the contact with the given ID does not exist",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorSimple.class))),
+                    @ApiResponse(responseCode = "500", description = "Internal Server Error, if something goes wrong",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorSimple.class)))
+            }
+    )
+    public ResponseEntity<?> update(@RequestBody EmergencyContactRequestDTO emergencyContactRequestDTO, @PathVariable Long id) {
+        try {
+            EmergencyEntity emergency = this.emergencyContactService.Update(id, emergencyContactRequestDTO);
+
+            if (emergency != null) {
+                return ResponseEntity.status(HttpStatus.OK).body(emergency);
+            } else {
+                ErrorSimple errorSimple = ErrorSimple.builder()
+                        .code(HttpStatus.NOT_FOUND.value())
+                        .status(HttpStatus.NOT_FOUND.name())
+                        .message("Emergency contact with the given ID not found")
+                        .build();
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorSimple);
             }
         } catch (IllegalArgumentException exception) {
             ErrorSimple errorSimple = ErrorSimple.builder()
