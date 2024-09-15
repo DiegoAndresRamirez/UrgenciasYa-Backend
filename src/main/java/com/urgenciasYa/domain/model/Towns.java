@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 
 @Data
 @NoArgsConstructor
@@ -17,4 +19,6 @@ public class Towns {
     private Integer id;
     @Column(nullable = false)
     private String name;
+    @OneToMany(mappedBy = "town_id")
+    private List<Hospital> hospitals;
 }
