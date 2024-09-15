@@ -35,8 +35,8 @@ public class HospitalController implements IModelHospital {
             parameters = {
                     @Parameter(name = "eps", description = "EPS code to filter hospitals", required = true),
                     @Parameter(name = "town", description = "Town to filter hospitals", required = true),
-                    @Parameter(name = "latitude", description = "Latitude for location-based search", required = true),
-                    @Parameter(name = "longitude", description = "Longitude for location-based search", required = true)
+                    @Parameter(name = "latitude", description = "Latitude for location-based search", required = false),
+                    @Parameter(name = "longitude", description = "Longitude for location-based search", required = false)
             }
     )
     @ApiResponses({
@@ -44,14 +44,21 @@ public class HospitalController implements IModelHospital {
             @ApiResponse(responseCode = "404", description = "No hospital found matching the criteria"),
             @ApiResponse(responseCode = "500", description = "Internal Server Error")
     })
-    @GetMapping
+    @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<List<HospitalCardDTO>> getHospitalByEpsAndTown(
             @RequestParam String eps,
             @RequestParam String town,
-            @RequestParam double latitude,
-            @RequestParam double longitude
+            @RequestParam(required = false) Double latitude,
+            @RequestParam(required = false) Double longitude
     ) {
-        HospitalSearchRequestDTO requestDTO = new HospitalSearchRequestDTO(eps, town, latitude, longitude);
+        HospitalSearchRequestDTO requestDTO;
+
+        if (latitude != null && longitude != null) {
+            requestDTO = new HospitalSearchRequestDTO(eps, town, latitude, longitude);
+        } else {
+            // If latitude and longitude are not provided, set them to some default value or use the town-only search.
+            requestDTO = new HospitalSearchRequestDTO(eps, town, null, null);
+        }
 
         List<HospitalCardDTO> hospitals = hospitalService.getHospitalsNearby(requestDTO);
 
