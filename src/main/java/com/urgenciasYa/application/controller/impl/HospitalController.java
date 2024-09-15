@@ -246,20 +246,35 @@ public class HospitalController implements IModelHospital {
     )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Hospital retrieved successfully"),
-            @ApiResponse(responseCode = "404", description = "Hospital not found"),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error")
+            @ApiResponse(responseCode = "404", description = "Hospital not found",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorSimple.class))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorSimple.class)))
     })
     @GetMapping("/{id}")
-    public ResponseEntity<Hospital> getById(@PathVariable Long id) {
+    public ResponseEntity<?> getById(@PathVariable Long id) {
         try {
             Hospital hospital = hospitalService.getById(id);
             return ResponseEntity.ok(hospital);
         } catch (EntityNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            ErrorSimple error = ErrorSimple.builder()
+                    .code(HttpStatus.NOT_FOUND.value())
+                    .status(HttpStatus.NOT_FOUND.name())
+                    .message("Hospital with the given ID not found.")
+                    .build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            ErrorSimple error = ErrorSimple.builder()
+                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR.name())
+                    .message("An unexpected error occurred while retrieving the hospital.")
+                    .build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
         }
     }
+
 
     @Operation(
             summary = "Retrieve all hospitals",
