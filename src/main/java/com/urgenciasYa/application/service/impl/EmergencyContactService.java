@@ -15,8 +15,7 @@ public class EmergencyContactService implements IEmergencyContactModel {
 
     @Override
     public EmergencyEntity create(EmergencyContactRequestDTO entity) {
-        EmergencyEntity emergencyEntity = new EmergencyEntity();
-        emergencyEntity.builder().name(entity.getName()).phone(entity.getPhone()).build();
+        EmergencyEntity emergencyEntity = EmergencyEntity.builder().name(entity.getName()).phone(entity.getPhone()).build();
         return emergencyContactRepository.save(emergencyEntity);
     }
 }
