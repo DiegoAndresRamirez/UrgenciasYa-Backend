@@ -1,5 +1,4 @@
 package com.urgenciasYa.common.utils;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,13 +15,16 @@ public class ConcurrencyAlgorithm {
 
         // Initialize the profile with 0 values
         for (int hour : hours) {
-            profile.put(String.format("%02d", hour), 0);
+            profile.put(String.format("%02d:00", hour), 0);
         }
 
         // Define the peak hours and their values
         int morningHour = 9; // 09:00 AM
         int afternoonHour = 15; // 15:00 PM
         int nightHour = 20; // 20:00 PM
+
+        // Define minimum value to avoid zero values
+        int minValue = 5;
 
         // Set peak values
         int morningValue = morningPeak;
@@ -32,23 +34,21 @@ public class ConcurrencyAlgorithm {
         // Calculate the values for each hour
         for (int hour = 0; hour < 24; hour++) {
             if (hour < morningHour) {
-                // Calculate the decreasing curve from morning peak to next hour
-                profile.put(String.format("%02d", hour), calculateValue(hour, morningHour, morningValue, morningValue - 10));
+                // Calculate the curve from night peak to morning peak
+                profile.put(String.format("%02d:00", hour), calculateValue(hour, nightHour, nightValue, morningValue));
             } else if (hour == morningHour) {
-                profile.put(String.format("%02d", hour), morningValue);
+                profile.put(String.format("%02d:00", hour), morningValue);
             } else if (hour > morningHour && hour < afternoonHour) {
-                // Calculate the increasing curve from morning peak to afternoon peak
-                profile.put(String.format("%02d", hour), calculateValue(hour, afternoonHour, morningValue, afternoonValue));
+                // Calculate the curve from morning peak to afternoon peak
+                profile.put(String.format("%02d:00", hour), calculateValue(hour, afternoonHour, morningValue, afternoonValue));
             } else if (hour == afternoonHour) {
-                profile.put(String.format("%02d", hour), afternoonValue);
+                profile.put(String.format("%02d:00", hour), afternoonValue);
             } else if (hour > afternoonHour && hour < nightHour) {
-                // Calculate the increasing curve from afternoon peak to night peak
-                profile.put(String.format("%02d", hour), calculateValue(hour, nightHour, afternoonValue, nightValue));
-            } else if (hour == nightHour) {
-                profile.put(String.format("%02d", hour), nightValue);
+                // Calculate the curve from afternoon peak to night peak
+                profile.put(String.format("%02d:00", hour), calculateValue(hour, nightHour, afternoonValue, nightValue));
             } else {
-                // Calculate the decreasing curve from night peak to midnight
-                profile.put(String.format("%02d", hour), calculateValue(hour, 24, nightValue, 0));
+                // Calculate the curve from night peak to midnight
+                profile.put(String.format("%02d:00", hour), calculateValue(hour, 24, nightValue, minValue));
             }
         }
 
@@ -56,7 +56,10 @@ public class ConcurrencyAlgorithm {
     }
 
     private static int calculateValue(int hour, int peakHour, int startValue, int endValue) {
-        double ratio = (hour - peakHour) / 24.0;
-        return (int) (startValue + (endValue - startValue) * Math.pow(ratio, 2)); // Quadratic interpolation
+        // Avoid zero values by adding a minimum value
+        double minValue = 5;
+        double range = endValue - startValue;
+        double ratio = (hour - peakHour + 12) / 24.0; // Adjust ratio for smoother transition
+        return (int) Math.max(minValue, startValue + (range * Math.sin((ratio * Math.PI) / 2))); // Use sine function for smooth curve
     }
 }
