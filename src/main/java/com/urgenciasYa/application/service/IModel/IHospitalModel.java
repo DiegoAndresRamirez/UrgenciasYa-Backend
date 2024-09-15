@@ -1,6 +1,6 @@
 package com.urgenciasYa.application.service.IModel;
 
-import com.urgenciasYa.application.dto.request.HospitalCreateResponseDTO;
+import com.urgenciasYa.application.dto.response.HospitalCreateResponseDTO;
 import com.urgenciasYa.application.service.crud.*;
 import com.urgenciasYa.domain.model.Hospital;
 

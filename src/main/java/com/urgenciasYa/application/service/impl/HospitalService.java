@@ -2,7 +2,7 @@ package com.urgenciasYa.application.service.impl;
 
 import com.urgenciasYa.application.dto.request.HospitalSearchRequestDTO;
 import com.urgenciasYa.application.dto.response.HospitalCardDTO;
-import com.urgenciasYa.application.dto.request.HospitalCreateResponseDTO;
+import com.urgenciasYa.application.dto.response.HospitalCreateResponseDTO;
 import com.urgenciasYa.domain.model.Hospital;
 import com.urgenciasYa.infrastructure.persistence.HospitalRepository;
 import com.urgenciasYa.application.service.IModel.IHospitalModel;
