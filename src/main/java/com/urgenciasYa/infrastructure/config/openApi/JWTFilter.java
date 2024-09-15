@@ -1,5 +1,6 @@
-package com.urgenciasYa.application.service.impl;
+package com.urgenciasYa.infrastructure.config.openApi;
 
+import com.urgenciasYa.application.service.impl.MyUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
