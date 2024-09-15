@@ -31,8 +31,11 @@ public class EpsService implements IEpsModel {
     }
 
     @Override
-    public void delete(Integer integer) {
-
+    public void delete(Integer id) {
+        if (!epsRepository.existsById(id)) {
+            throw new IllegalArgumentException("La EPS con ID " + id + " no existe.");
+        }
+        epsRepository.deleteById(id);
     }
 
     @Override
