@@ -4,6 +4,7 @@ import com.urgenciasYa.application.dto.request.HospitalSearchRequestDTO;
 import com.urgenciasYa.application.dto.response.HospitalCardDTO;
 import com.urgenciasYa.application.controller.interfaces.IModelHospital;
 import com.urgenciasYa.application.dto.response.HospitalCreateResponseDTO;
+import com.urgenciasYa.application.exceptions.ErrorSimple;
 import com.urgenciasYa.domain.model.Hospital;
 import com.urgenciasYa.application.service.impl.HospitalService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,7 +24,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/hospitals")
-@CrossOrigin(origins = "http://localhost:3000")
 public class HospitalController implements IModelHospital {
 
     @Autowired
@@ -41,11 +41,15 @@ public class HospitalController implements IModelHospital {
     )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "List obtained successfully"),
-            @ApiResponse(responseCode = "404", description = "No hospital found matching the criteria"),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error")
+            @ApiResponse(responseCode = "404", description = "No hospitals found matching the criteria",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorSimple.class))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorSimple.class)))
     })
-    @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<List<HospitalCardDTO>> getHospitalByEpsAndTown(
+    @GetMapping
+    public ResponseEntity<?> getHospitalByEpsAndTown(
             @RequestParam String eps,
             @RequestParam String town,
             @RequestParam(required = false) Double latitude,
@@ -56,17 +60,31 @@ public class HospitalController implements IModelHospital {
         if (latitude != null && longitude != null) {
             requestDTO = new HospitalSearchRequestDTO(eps, town, latitude, longitude);
         } else {
-            // If latitude and longitude are not provided, set them to some default value or use the town-only search.
             requestDTO = new HospitalSearchRequestDTO(eps, town, null, null);
         }
 
-        List<HospitalCardDTO> hospitals = hospitalService.getHospitalsNearby(requestDTO);
+        try {
+            List<HospitalCardDTO> hospitals = hospitalService.getHospitalsNearby(requestDTO);
 
-        if (hospitals.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            if (hospitals.isEmpty()) {
+                ErrorSimple error = ErrorSimple.builder()
+                        .code(HttpStatus.NOT_FOUND.value())
+                        .status(HttpStatus.NOT_FOUND.name())
+                        .message("No hospitals found matching the criteria.")
+                        .build();
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+            }
+
+            return ResponseEntity.ok(hospitals);
+
+        } catch (Exception e) {
+            ErrorSimple error = ErrorSimple.builder()
+                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR.name())
+                    .message("An unexpected error occurred.")
+                    .build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
         }
-
-        return new ResponseEntity<>(hospitals, HttpStatus.OK);
     }
 
     @Operation(
