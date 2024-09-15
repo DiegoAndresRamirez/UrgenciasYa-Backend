@@ -29,9 +29,9 @@ public class UserEntity {
     private String document;
     @OneToOne
     @JoinColumn(name = "emergency_id")
-    private EmergencyEntity emergency; // Relación uno a uno con otra entidad (EmergencyEntity)
+    private EmergencyEntity emergency;
 
     @ManyToOne
-    @JoinColumn(name = "role_id") // Especifica la columna de la llave foránea
-    private RoleEntity role; // Relación uno a uno con otra entidad (RoleEntity)
+    @JoinColumn(name = "role_id")
+    private RoleEntity role;
 }
