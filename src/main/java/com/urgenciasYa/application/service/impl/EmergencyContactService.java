@@ -28,4 +28,10 @@ public class EmergencyContactService implements IEmergencyContactModel {
 
         return emergencyContactRepository.save(emergency);
     }
+
+    @Override
+    public void delete(Long id) {
+        EmergencyEntity emergencyEntity = emergencyContactRepository.findById(id).orElseThrow(()-> new RuntimeException("Emergency contact not found"));
+        emergencyContactRepository.deleteById(id);
+    }
 }

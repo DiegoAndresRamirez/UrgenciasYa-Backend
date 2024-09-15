@@ -121,4 +121,46 @@ public class EmergencyContactController implements IModelEmergencyContact {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorSimple);
         }
     }
+
+
+    @Override
+    @DeleteMapping("/{id}")
+    @Operation(
+            summary = "Delete an existing emergency contact",
+            description = "Deletes an existing emergency contact identified by the given ID.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Emergency contact deleted successfully",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(type = "string", example = "Emergency contact deleted successfully"))),
+                    @ApiResponse(responseCode = "404", description = "Not Found, if the contact with the given ID does not exist",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorSimple.class))),
+                    @ApiResponse(responseCode = "500", description = "Internal Server Error, if something goes wrong",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorSimple.class)))
+            }
+    )
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        try {
+            emergencyContactService.delete(id);
+            return ResponseEntity.status(HttpStatus.OK).body("Emergency contact deleted successfully");
+        } catch (Exception ex) {
+            ErrorSimple errorSimple;
+            if (ex instanceof IllegalArgumentException) {
+                errorSimple = ErrorSimple.builder()
+                        .code(HttpStatus.NOT_FOUND.value())
+                        .status(HttpStatus.NOT_FOUND.name())
+                        .message("Emergency contact with the given ID not found")
+                        .build();
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorSimple);
+            } else {
+                errorSimple = ErrorSimple.builder()
+                        .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                        .status(HttpStatus.INTERNAL_SERVER_ERROR.name())
+                        .message("An unexpected error occurred")
+                        .build();
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorSimple);
+            }
+        }
+    }
 }
