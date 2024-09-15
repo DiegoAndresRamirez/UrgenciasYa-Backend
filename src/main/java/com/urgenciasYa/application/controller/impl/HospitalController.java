@@ -282,18 +282,23 @@ public class HospitalController implements IModelHospital {
     )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "List of hospitals retrieved successfully"),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error")
+            @ApiResponse(responseCode = "500", description = "Internal Server Error. An unexpected error occurred while retrieving the hospitals.")
     })
-    @Override
     @GetMapping("/all")
-    public ResponseEntity<List<Hospital>> getAll() {
+    public ResponseEntity<?> getAll() {
         try {
-            List<Hospital> hospitals = this.hospitalService.readALl();
+            List<Hospital> hospitals = hospitalService.readALl();
+            if (hospitals.isEmpty()) {
+                return ResponseEntity.ok(hospitals);
+            }
             return ResponseEntity.ok(hospitals);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            ErrorSimple error = ErrorSimple.builder()
+                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR.name())
+                    .message("An unexpected error occurred while retrieving the hospitals.")
+                    .build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
         }
     }
-
-
 }
