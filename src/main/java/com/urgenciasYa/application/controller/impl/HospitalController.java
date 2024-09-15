@@ -206,19 +206,36 @@ public class HospitalController implements IModelHospital {
     )
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Hospital deleted successfully"),
-            @ApiResponse(responseCode = "404", description = "Hospital not found"),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error")
+            @ApiResponse(responseCode = "404", description = "Hospital not found",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorSimple.class))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorSimple.class)))
     })
     @Override
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> delete(@PathVariable Long id) {
+    public ResponseEntity<?> delete(@PathVariable Long id) {
         try {
             hospitalService.delete(id);
-            return ResponseEntity.ok("Hospital with ID " + id + " deleted successfully");
+            return ResponseEntity.noContent().build();
+        } catch (EntityNotFoundException e) {
+            ErrorSimple error = ErrorSimple.builder()
+                    .code(HttpStatus.NOT_FOUND.value())
+                    .status(HttpStatus.NOT_FOUND.name())
+                    .message("Hospital with the given ID not found.")
+                    .build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
         } catch (Exception e) {
-            return new ResponseEntity<>("Error: " + e.getMessage(), HttpStatus.NOT_FOUND);
+            ErrorSimple error = ErrorSimple.builder()
+                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR.name())
+                    .message("An unexpected error occurred while deleting the hospital.")
+                    .build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
         }
     }
+
 
     @Operation(
             summary = "Retrieve a hospital by its ID",
