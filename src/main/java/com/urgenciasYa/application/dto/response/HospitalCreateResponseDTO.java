@@ -1,4 +1,4 @@
-package com.urgenciasYa.application.dto.request;
+package com.urgenciasYa.application.dto.response;
 
 import com.urgenciasYa.domain.model.Eps;
 import com.urgenciasYa.domain.model.Towns;
