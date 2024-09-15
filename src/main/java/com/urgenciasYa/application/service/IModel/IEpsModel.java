@@ -9,7 +9,7 @@ import com.urgenciasYa.application.service.crud.Update;
 
 public interface IEpsModel extends ReadAll<Eps>,
         CreateDTO<EpsRequestDTO, Eps>,
-        Update<Eps,Integer>,
+        Update<Integer, Eps>,
         Delete<Integer> {
 
 

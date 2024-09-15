@@ -9,6 +9,6 @@ import com.urgenciasYa.application.service.crud.Update;
 
 public interface ITownsModel extends ReadAll<Towns>,
         CreateDTO<TownCreateDTO,Towns>,
-        Update<Towns,Integer>,
+        Update<Integer, Towns>,
         Delete<Integer>{
 }

@@ -78,7 +78,7 @@ public class TownsController implements IModelTowns {
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Integer id, @RequestBody @Valid Towns towns) {
         try {
-            townsService.update(towns,id);
+            townsService.update(id, towns);
             SuccessResponse successResponse = SuccessResponse.builder()
                     .code(HttpStatus.OK.value())
                     .status(HttpStatus.OK.name())

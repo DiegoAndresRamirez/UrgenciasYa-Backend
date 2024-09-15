@@ -36,7 +36,7 @@ public class EpsService implements IEpsModel {
     }
 
     @Override
-    public Eps update(Eps eps, Integer id) {
+    public Eps update( Integer id ,Eps eps) {
         Optional<Eps> optionalEps = epsRepository.findById(id);
         if(optionalEps.isPresent()){
             Eps epsdb = optionalEps.get();

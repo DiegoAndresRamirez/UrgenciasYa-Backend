@@ -85,7 +85,7 @@ public class EpsController implements IModelEps {
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@RequestBody @Valid Eps eps,@PathVariable Integer id) {
         try {
-            epsService.update(eps,id);
+            epsService.update(id, eps);
             SuccessResponse successResponse = SuccessResponse.builder()
                     .code(HttpStatus.OK.value())
                     .status(HttpStatus.OK.name())
