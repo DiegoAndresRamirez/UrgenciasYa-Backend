@@ -100,19 +100,39 @@ public class HospitalController implements IModelHospital {
             )
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Hospital created successfully"),
-            @ApiResponse(responseCode = "400", description = "Bad request. Possibly due to invalid data in the provided DTO"),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error")
+            @ApiResponse(responseCode = "201", description = "Hospital created successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Hospital.class))),
+            @ApiResponse(responseCode = "400", description = "Bad request. Possibly due to invalid data in the provided DTO",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorSimple.class))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorSimple.class)))
     })
     @Override
     @PostMapping("/create")
-    public ResponseEntity<Hospital> create(@RequestBody HospitalCreateResponseDTO dto) {
+    public ResponseEntity<?> create(@RequestBody HospitalCreateResponseDTO dto) {
         try {
-            return ResponseEntity.status(HttpStatus.CREATED).body(hospitalService.create(dto));
+            Hospital createdHospital = hospitalService.create(dto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdHospital);
+        } catch (IllegalArgumentException e) {
+            ErrorSimple error = ErrorSimple.builder()
+                    .code(HttpStatus.BAD_REQUEST.value())
+                    .status(HttpStatus.BAD_REQUEST.name())
+                    .message("Invalid data provided for hospital creation.")
+                    .build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            ErrorSimple error = ErrorSimple.builder()
+                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR.name())
+                    .message("An unexpected error occurred while creating the hospital.")
+                    .build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
         }
     }
+
 
 
     @Operation(
