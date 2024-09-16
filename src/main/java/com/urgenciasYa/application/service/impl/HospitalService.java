@@ -20,10 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.urgenciasYa.domain.model.Eps;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -194,7 +191,33 @@ public class HospitalService implements IHospitalModel {
     }
 
     @Override
-    public List<Hospital> readALl() {
-        return this.hospitalRepository.findAll();
+    public List<HospitalGetResponseDTO> readALl() {
+        List<HospitalGetResponseDTO> hospitals = new ArrayList<>();
+        List<Hospital> hospitalExists = this.hospitalRepository.findAll();
+
+        hospitalExists.forEach((hospital) -> {
+            Towns townExist = hospital.getTown_id();
+            TownsDTO towns = TownsDTO.builder()
+                    .name(townExist.getName())
+                    .build();
+
+            HospitalGetResponseDTO hospitalGetResponseDTO = HospitalGetResponseDTO.builder()
+                    .url_image(hospital.getUrl_image())
+                    .phone_number(hospital.getPhone_number())
+                    .name(hospital.getName())
+                    .rating(hospital.getRating())
+                    .morning_peak(hospital.getMorning_peak())
+                    .afternoon_peak(hospital.getAfternoon_peak())
+                    .night_peak(hospital.getNight_peak())
+                    .howtogetthere(hospital.getHowtogetthere())
+                    .town_id(towns)
+                    .eps_id(hospital.getEps_id())
+                    .latitude(hospital.getLatitude())
+                    .longitude(hospital.getLongitude())
+                    .build();
+
+            hospitals.add(hospitalGetResponseDTO);
+        });
+        return hospitals;
     }
 }

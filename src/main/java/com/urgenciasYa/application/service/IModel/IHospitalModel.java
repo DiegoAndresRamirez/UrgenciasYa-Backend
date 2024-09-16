@@ -5,7 +5,7 @@ import com.urgenciasYa.application.dto.response.HospitalGetResponseDTO;
 import com.urgenciasYa.application.service.crud.*;
 import com.urgenciasYa.domain.model.Hospital;
 
-public interface IHospitalModel extends CreateDTO<HospitalCreateResponseDTO, Hospital>, Delete<Long>, ReadById<HospitalGetResponseDTO, Long>, ReadAll<Hospital> {
+public interface IHospitalModel extends CreateDTO<HospitalCreateResponseDTO, Hospital>, Delete<Long>, ReadById<HospitalGetResponseDTO, Long>, ReadAll<HospitalGetResponseDTO> {
     Hospital update (Long id, HospitalCreateResponseDTO entity);
 
 }
