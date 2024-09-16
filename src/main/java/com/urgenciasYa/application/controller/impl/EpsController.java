@@ -121,9 +121,39 @@ public class EpsController implements IModelEps {
     }
 
 
-    @Override
-    public ResponseEntity<?> delete(Integer integer) {
-        return null;
+    @DeleteMapping("/{id}")
+    @Operation(
+            summary = "Delete an EPS entity by ID",
+            description = "Deletes the EPS entity identified by the given ID."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "No Content, EPS entity deleted successfully"),
+            @ApiResponse(responseCode = "404", description = "Not Found, if the EPS entity with the given ID does not exist",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorSimple.class))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error, if something goes wrong",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorSimple.class)))
+    })
+    public ResponseEntity<?> delete(@PathVariable Integer id) {
+        try {
+            epsService.delete(id);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        } catch (IllegalArgumentException exception) {
+            ErrorSimple errorSimple = ErrorSimple.builder()
+                    .code(HttpStatus.NOT_FOUND.value())
+                    .status(HttpStatus.NOT_FOUND.name())
+                    .message("EPS entity with ID " + id + " not found")
+                    .build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorSimple);
+        } catch (Exception exception) {
+            ErrorSimple errorSimple = ErrorSimple.builder()
+                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR.name())
+                    .message("An unexpected error occurred: " + exception.getMessage())
+                    .build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorSimple);
+        }
     }
 
     @Override
