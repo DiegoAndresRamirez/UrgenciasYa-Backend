@@ -135,4 +135,39 @@ public class UserController implements IModelUser {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorSimple);
         }
     }
+
+    @DeleteMapping("/{id}")
+    @Operation(
+            summary = "Delete a user",
+            description = "Este endpoint permite eliminar un usuario del sistema utilizando su ID. Si el usuario se encuentra y se elimina correctamente, se devuelve una respuesta sin contenido (204 No Content). Si el usuario no se encuentra, se devuelve un error 404 Not Found. En caso de un error inesperado, se devuelve un error 500 Internal Server Error."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Usuario eliminado exitosamente, sin contenido en la respuesta"),
+            @ApiResponse(responseCode = "404", description = "Usuario no encontrado",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorSimple.class))),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorSimple.class)))
+    })
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        try {
+            userService.delete(id);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        } catch (RuntimeException e) {
+            ErrorSimple errorSimple = ErrorSimple.builder()
+                    .code(HttpStatus.NOT_FOUND.value())
+                    .status(HttpStatus.NOT_FOUND.name())
+                    .message("Usuario con ID " + id + " no encontrado: " + e.getMessage())
+                    .build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorSimple);
+        } catch (Exception e) {
+            ErrorSimple errorSimple = ErrorSimple.builder()
+                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR.name())
+                    .message("Error al eliminar el usuario: " + e.getMessage())
+                    .build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorSimple);
+        }
+    }
 }
