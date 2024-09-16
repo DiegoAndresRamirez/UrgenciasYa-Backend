@@ -3,14 +3,18 @@ package com.urgenciasYa.application.service.impl;
 import com.urgenciasYa.application.dto.request.HospitalSearchRequestDTO;
 import com.urgenciasYa.application.dto.response.HospitalCardDTO;
 import com.urgenciasYa.application.dto.response.HospitalCreateResponseDTO;
+import com.urgenciasYa.application.dto.response.HospitalGetResponseDTO;
+import com.urgenciasYa.application.dto.response.TownsDTO;
 import com.urgenciasYa.domain.model.Hospital;
 import com.urgenciasYa.domain.model.HospitalEps;
+import com.urgenciasYa.domain.model.Towns;
 import com.urgenciasYa.domain.model.keys.HospitalEpsId;
 import com.urgenciasYa.infrastructure.persistence.EpsRepository;
 import com.urgenciasYa.infrastructure.persistence.HospitalEpsRepository;
 import com.urgenciasYa.infrastructure.persistence.HospitalRepository;
 import com.urgenciasYa.application.service.IModel.IHospitalModel;
 import com.urgenciasYa.common.utils.ConcurrencyAlgorithm;
+import com.urgenciasYa.infrastructure.persistence.TownsRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,6 +34,9 @@ public class HospitalService implements IHospitalModel {
 
     @Autowired
     private HospitalEpsRepository hospitalEpsRepository;
+
+    @Autowired
+    private TownsRepository townsRepository;
 
     @Autowired
     private EpsRepository epsRepository;
@@ -160,8 +167,30 @@ public class HospitalService implements IHospitalModel {
     }
 
     @Override
-    public Hospital getById(Long id) {
-        return this.hospitalRepository.findById(id).orElseThrow( () -> new EntityNotFoundException("Hospital with id " + id + " not found"));
+    public HospitalGetResponseDTO getById(Long id) {
+        Hospital hospitalExists = this.hospitalRepository.findById(id).orElseThrow( () -> new EntityNotFoundException("Hospital with id " + id + " not found"));
+
+        Towns townExist = hospitalExists.getTown_id();
+        TownsDTO town = TownsDTO.builder()
+                .name(townExist.getName())
+                .build();
+
+        HospitalGetResponseDTO hospitalGetResponseDTO = HospitalGetResponseDTO.builder()
+                .url_image(hospitalExists.getUrl_image())
+                .phone_number(hospitalExists.getPhone_number())
+                .name(hospitalExists.getName())
+                .rating(hospitalExists.getRating())
+                .morning_peak(hospitalExists.getMorning_peak())
+                .afternoon_peak(hospitalExists.getAfternoon_peak())
+                .night_peak(hospitalExists.getNight_peak())
+                .howtogetthere(hospitalExists.getHowtogetthere())
+                .town_id(town)
+                .eps_id(hospitalExists.getEps_id())
+                .latitude(hospitalExists.getLatitude())
+                .longitude(hospitalExists.getLongitude())
+                .build();
+
+        return hospitalGetResponseDTO;
     }
 
     @Override
