@@ -8,6 +8,7 @@ import com.urgenciasYa.infrastructure.handleError.SuccessResponse;
 import com.urgenciasYa.application.exceptions.ErrorSimple;
 import com.urgenciasYa.domain.model.Towns;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -120,32 +121,50 @@ public class TownsController implements IModelTowns {
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Integer id, @RequestBody @Valid Towns towns) {
+    @Operation(
+            summary = "Update an existing town",
+            description = "Updates an existing town identified by the given ID with the provided details."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Town updated successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SuccessResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Bad Request, if the input data is invalid",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorSimple.class))),
+            @ApiResponse(responseCode = "404", description = "Not Found, if the town with the given ID does not exist",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorSimple.class))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error, if something goes wrong",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorSimple.class)))
+    })
+    public ResponseEntity<?> update(
+            @Parameter(description = "ID of the town to be updated") @PathVariable Integer id,
+            @RequestBody @Valid Towns towns) {
         try {
             townsService.update(id, towns);
             SuccessResponse successResponse = SuccessResponse.builder()
                     .code(HttpStatus.OK.value())
                     .status(HttpStatus.OK.name())
-                    .message("Municipio actualizado")
+                    .message("Municipio actualizado con éxito")
                     .build();
             return ResponseEntity.status(HttpStatus.OK).body(successResponse);
-        }catch (IllegalArgumentException exception){
+        } catch (IllegalArgumentException exception) {
             ErrorSimple errorSimple = ErrorSimple.builder()
-                    .code(HttpStatus.CONFLICT.value())
-                    .status(HttpStatus.CONFLICT.name())
+                    .code(HttpStatus.NOT_FOUND.value())
+                    .status(HttpStatus.NOT_FOUND.name())
                     .message(exception.getMessage())
                     .build();
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(errorSimple);
-        }catch (Exception exception){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorSimple);
+        } catch (Exception exception) {
             ErrorSimple errorSimple = ErrorSimple.builder()
                     .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
                     .status(HttpStatus.INTERNAL_SERVER_ERROR.name())
-                    .message(exception.getMessage())
+                    .message("Error interno del servidor: " + exception.getMessage())
                     .build();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorSimple);
         }
-
-
     }
 
     @Override
