@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/town")
-@CrossOrigin(origins = "http://localhost:3000")
 public class TownsController implements IModelTowns {
 
     @Autowired
@@ -74,15 +73,32 @@ public class TownsController implements IModelTowns {
         }
     }
 
-    @Override
-    @PostMapping
+    @PostMapping("/create")
+    @Operation(
+            summary = "Create a new town",
+            description = "Creates a new town with the provided details and returns the success response."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Town created successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SuccessResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Bad Request, if the input data is invalid",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorSimple.class))),
+            @ApiResponse(responseCode = "409", description = "Conflict, if the town already exists or there's a conflict",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorSimple.class))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error, if something goes wrong",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorSimple.class)))
+    })
     public ResponseEntity<?> create(@RequestBody @Valid TownCreateDTO dto) {
         try {
             townsService.create(dto);
             SuccessResponse successResponse = SuccessResponse.builder()
                     .code(HttpStatus.CREATED.value())
                     .status(HttpStatus.CREATED.name())
-                    .message("Municipio creado con exito")
+                    .message("Municipio creado con éxito")
                     .build();
             return ResponseEntity.status(HttpStatus.CREATED).body(successResponse);
         } catch (IllegalArgumentException exception) {
@@ -96,7 +112,7 @@ public class TownsController implements IModelTowns {
             ErrorSimple errorSimple = ErrorSimple.builder()
                     .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
                     .status(HttpStatus.INTERNAL_SERVER_ERROR.name())
-                    .message(exception.getMessage())
+                    .message("Error interno del servidor: " + exception.getMessage())
                     .build();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorSimple);
         }
