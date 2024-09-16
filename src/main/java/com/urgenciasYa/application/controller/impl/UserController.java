@@ -75,8 +75,23 @@ public class UserController implements IModelUser {
 
 
     @PostMapping("/login")
-    public ResponseEntity<?>login(@RequestBody UserEntity user) {
-
+    @Operation(
+            summary = "Login a user",
+            description = "Este endpoint permite a un usuario autenticarse en el sistema utilizando sus credenciales. Devuelve un token de sesión o información de sesión en caso de éxito."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Autenticación exitosa",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = LoginDTO.class))),
+            @ApiResponse(responseCode = "401", description = "Autenticación fallida, credenciales incorrectas",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorSimple.class))),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorSimple.class)))
+    })
+    public ResponseEntity<?> login(
+            @Parameter(description = "Credenciales del usuario") @RequestBody UserEntity user) {
         try {
             LoginDTO loginDTO = userService.verify(user);
             return ResponseEntity.status(HttpStatus.OK).body(loginDTO);
@@ -84,7 +99,7 @@ public class UserController implements IModelUser {
             ErrorSimple errorSimple = ErrorSimple.builder()
                     .code(HttpStatus.UNAUTHORIZED.value())
                     .status(HttpStatus.UNAUTHORIZED.name())
-                    .message("Autenticación fallida")
+                    .message("Autenticación fallida: " + e.getMessage())
                     .build();
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorSimple);
         }
