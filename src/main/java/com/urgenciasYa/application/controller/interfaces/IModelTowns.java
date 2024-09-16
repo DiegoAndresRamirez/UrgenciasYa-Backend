@@ -11,5 +11,5 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 public interface IModelTowns extends Create<TownCreateDTO>, Update<Towns,Integer>, Delete<Integer> {
-    public ResponseEntity<List<TownsDTO>> getAllTowns();}
+    public ResponseEntity<?> getAllTowns();}
 

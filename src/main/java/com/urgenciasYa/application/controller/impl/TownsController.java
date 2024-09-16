@@ -8,6 +8,8 @@ import com.urgenciasYa.infrastructure.handleError.SuccessResponse;
 import com.urgenciasYa.application.exceptions.ErrorSimple;
 import com.urgenciasYa.domain.model.Towns;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
@@ -27,23 +29,49 @@ public class TownsController implements IModelTowns {
     @Autowired
     ITownsModel townsService;
 
-    @Override
-    @Operation(summary = "Gets a list of all available cities")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "List obtained successfully"),
-            @ApiResponse(responseCode = "404", description = "No cities found"),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error")
-    })
     @GetMapping
-    public ResponseEntity<List<TownsDTO>> getAllTowns() {
-        List<Towns> towns = townsService.readALl();
-        List<TownsDTO> townsDTOS = towns.stream()
-                .map(town -> TownsDTO.builder()
-                        .name(town.getName())
-                        .build())
-                .collect(Collectors.toList());
+    @Operation(
+            summary = "Gets a list of all available cities",
+            description = "Retrieves a list of all available cities from the service."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "List obtained successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = TownsDTO.class))),
+            @ApiResponse(responseCode = "404", description = "No cities found",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorSimple.class))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorSimple.class)))
+    })
+    public ResponseEntity<?> getAllTowns() {
+        try {
+            List<Towns> towns = townsService.readALl();
+            if (towns.isEmpty()) {
+                ErrorSimple errorSimple = ErrorSimple.builder()
+                        .code(HttpStatus.NOT_FOUND.value())
+                        .status(HttpStatus.NOT_FOUND.name())
+                        .message("No cities found")
+                        .build();
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorSimple);
+            }
 
-        return ResponseEntity.ok(townsDTOS);
+            List<TownsDTO> townsDTOS = towns.stream()
+                    .map(town -> TownsDTO.builder()
+                            .name(town.getName())
+                            .build())
+                    .collect(Collectors.toList());
+
+            return ResponseEntity.ok(townsDTOS);
+        } catch (Exception e) {
+            ErrorSimple errorSimple = ErrorSimple.builder()
+                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR.name())
+                    .message("An unexpected error occurred: " + e.getMessage())
+                    .build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorSimple);
+        }
     }
 
     @Override
