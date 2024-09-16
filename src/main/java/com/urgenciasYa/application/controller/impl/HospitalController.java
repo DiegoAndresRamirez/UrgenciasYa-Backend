@@ -4,6 +4,7 @@ import com.urgenciasYa.application.dto.request.HospitalSearchRequestDTO;
 import com.urgenciasYa.application.dto.response.HospitalCardDTO;
 import com.urgenciasYa.application.controller.interfaces.IModelHospital;
 import com.urgenciasYa.application.dto.response.HospitalCreateResponseDTO;
+import com.urgenciasYa.application.dto.response.HospitalGetResponseDTO;
 import com.urgenciasYa.application.exceptions.ErrorSimple;
 import com.urgenciasYa.domain.model.Hospital;
 import com.urgenciasYa.application.service.impl.HospitalService;
@@ -256,7 +257,7 @@ public class HospitalController implements IModelHospital {
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable Long id) {
         try {
-            Hospital hospital = hospitalService.getById(id);
+            HospitalGetResponseDTO hospital = hospitalService.getById(id);
             return ResponseEntity.ok(hospital);
         } catch (EntityNotFoundException e) {
             ErrorSimple error = ErrorSimple.builder()
