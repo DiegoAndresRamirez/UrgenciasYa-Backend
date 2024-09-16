@@ -13,7 +13,7 @@ public class TwilioConfig {
     @Value("${twilio.auth-token}")
     private String authToken;
 
-    @Bean
+
     public void initializeTwilio() {
         Twilio.init(accountSid, authToken);
     }

@@ -17,8 +17,8 @@ import java.util.Set;
 @Entity
 public class RoleEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     @Column(nullable = false)
     private String code;
 
