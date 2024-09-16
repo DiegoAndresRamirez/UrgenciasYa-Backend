@@ -256,7 +256,7 @@ public class HospitalController implements IModelHospital {
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable Long id) {
         try {
-            Hospital hospital = hospitalService.getById(id);
+            HospitalCreateResponseDTO hospital = hospitalService.getById(id);
             return ResponseEntity.ok(hospital);
         } catch (EntityNotFoundException e) {
             ErrorSimple error = ErrorSimple.builder()
