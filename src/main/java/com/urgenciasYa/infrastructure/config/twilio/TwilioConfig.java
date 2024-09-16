@@ -7,33 +7,14 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class TwilioConfig {
-
     @Value("${twilio.account-sid}")
-    private String smsAccountSid;
+    private String accountSid;
 
     @Value("${twilio.auth-token}")
-    private String smsAuthToken;
+    private String authToken;
 
-    @Value("${twilio.account-sid-call}")
-    private String callAccountSid;
 
-    @Value("${twilio.auth-token-call}")
-    private String callAuthToken;
-
-    @Bean
-    public TwilioInitializer smsTwilioInitializer() {
-        return new TwilioInitializer(smsAccountSid, smsAuthToken);
-    }
-
-    @Bean
-    public TwilioInitializer callTwilioInitializer() {
-        return new TwilioInitializer(callAccountSid, callAuthToken);
-    }
-
-    // Clase interna para inicializar Twilio
-    public static class TwilioInitializer {
-        public TwilioInitializer(String accountSid, String authToken) {
-            Twilio.init(accountSid, authToken);
-        }
+    public void initializeTwilio() {
+        Twilio.init(accountSid, authToken);
     }
 }
