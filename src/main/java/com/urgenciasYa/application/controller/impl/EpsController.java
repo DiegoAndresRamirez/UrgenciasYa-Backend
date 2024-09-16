@@ -8,6 +8,8 @@ import com.urgenciasYa.infrastructure.handleError.SuccessResponse;
 import com.urgenciasYa.application.exceptions.ErrorSimple;
 import com.urgenciasYa.domain.model.Eps;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
@@ -27,26 +29,50 @@ public class EpsController implements IModelEps {
     @Autowired
     IEpsModel epsService;
 
-    @Override
-    @Operation( summary = "Retrieves a list of all EPS entities.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "List obtained successfully"),
-            @ApiResponse(responseCode = "404", description = "No eps found"),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error")
-    })
     @GetMapping
+    @Operation(
+            summary = "Retrieves a list of all EPS entities.",
+            description = "Returns a list of all EPS entities available in the system."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "List obtained successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = EpsResponseDTO.class))),
+            @ApiResponse(responseCode = "404", description = "No EPS entities found",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorSimple.class))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorSimple.class)))
+    })
     public ResponseEntity<List<EpsResponseDTO>> getAllEps() {
-        // Se obtiene la lista de EPS desde el servicio
-        List<Eps> epss = epsService.readALl();
+        try {
+            List<Eps> epss = epsService.readALl();
 
-        // Convertimos la lista de entidades EPS a DTOs
-        List<EpsResponseDTO> epsResponseDTO = epss.stream()
-                .map(eps -> EpsResponseDTO.builder()
-                        .name(eps.getName())
-                        .build())
-                .collect(Collectors.toList());
+            if (epss.isEmpty()) {
+                ErrorSimple errorSimple = ErrorSimple.builder()
+                        .code(HttpStatus.NOT_FOUND.value())
+                        .status(HttpStatus.NOT_FOUND.name())
+                        .message("No EPS entities found")
+                        .build();
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(List.of());
+            }
 
-        return ResponseEntity.ok(epsResponseDTO);
+            List<EpsResponseDTO> epsResponseDTO = epss.stream()
+                    .map(eps -> EpsResponseDTO.builder()
+                            .name(eps.getName())
+                            .build())
+                    .collect(Collectors.toList());
+
+            return ResponseEntity.ok(epsResponseDTO);
+        } catch (Exception e) {
+            ErrorSimple errorSimple = ErrorSimple.builder()
+                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR.name())
+                    .message("An unexpected error occurred: " + e.getMessage())
+                    .build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(List.of());
+        }
     }
 
     @Override
