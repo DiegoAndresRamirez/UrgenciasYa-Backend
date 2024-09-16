@@ -288,7 +288,7 @@ public class HospitalController implements IModelHospital {
     @GetMapping("/all")
     public ResponseEntity<?> getAll() {
         try {
-            List<Hospital> hospitals = hospitalService.readALl();
+            List<HospitalGetResponseDTO> hospitals = hospitalService.readALl();
             if (hospitals.isEmpty()) {
                 return ResponseEntity.ok(hospitals);
             }
