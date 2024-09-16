@@ -167,34 +167,44 @@ public class TownsController implements IModelTowns {
         }
     }
 
-    @Override
-    public ResponseEntity<?> update(Towns towns, Integer integer) {
-        return null;
-    }
-
-    @Override
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@Valid @PathVariable Integer id) {
-        try{
+    @Operation(
+            summary = "Delete a town by ID",
+            description = "Deletes the town with the specified ID."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Town deleted successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SuccessResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Not Found, if the town with the given ID does not exist",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorSimple.class))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error, if something goes wrong",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorSimple.class)))
+    })
+    public ResponseEntity<?> delete(
+            @Parameter(description = "ID of the town to be deleted") @PathVariable Integer id) {
+        try {
             townsService.delete(id);
             SuccessResponse successResponse = SuccessResponse.builder()
                     .code(HttpStatus.OK.value())
                     .status(HttpStatus.OK.name())
-                    .message("Usuario borrado con exito")
+                    .message("Municipio borrado con éxito")
                     .build();
             return ResponseEntity.status(HttpStatus.OK).body(successResponse);
-        }catch (IllegalArgumentException exception){
+        } catch (IllegalArgumentException exception) {
             ErrorSimple errorSimple = ErrorSimple.builder()
-                    .code(HttpStatus.CONFLICT.value())
-                    .status(HttpStatus.CONFLICT.name())
-                    .message(exception.getMessage())
+                    .code(HttpStatus.NOT_FOUND.value())
+                    .status(HttpStatus.NOT_FOUND.name())
+                    .message("Municipio con el ID proporcionado no encontrado")
                     .build();
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(errorSimple);
-        }catch (Exception exception){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorSimple);
+        } catch (Exception exception) {
             ErrorSimple errorSimple = ErrorSimple.builder()
                     .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
                     .status(HttpStatus.INTERNAL_SERVER_ERROR.name())
-                    .message(exception.getMessage())
+                    .message("Error interno del servidor: " + exception.getMessage())
                     .build();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorSimple);
         }
