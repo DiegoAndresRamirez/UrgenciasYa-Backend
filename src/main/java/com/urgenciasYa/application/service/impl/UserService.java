@@ -10,6 +10,7 @@ import com.urgenciasYa.domain.model.RoleEntity;
 import com.urgenciasYa.domain.model.UserEntity;
 import com.urgenciasYa.infrastructure.persistence.RoleRepository;
 import com.urgenciasYa.infrastructure.persistence.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -97,6 +98,16 @@ public class UserService implements IUserModel {
                                 .build() : null)
                         .build())
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public void delete(Long id) {
+        if (!userRepository.existsById(String.valueOf(id))) {
+            throw new RuntimeException("Usuario con ID " + id + " no encontrado");
+        }
+
+        userRepository.deleteById(String.valueOf(id));
     }
 }
 
