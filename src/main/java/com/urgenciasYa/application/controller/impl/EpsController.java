@@ -75,15 +75,32 @@ public class EpsController implements IModelEps {
         }
     }
 
-    @Override
     @PostMapping
+    @Operation(
+            summary = "Create a new EPS entity",
+            description = "Creates a new EPS entity with the provided details."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "EPS entity created successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SuccessResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Bad Request, if the request body is invalid",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorSimple.class))),
+            @ApiResponse(responseCode = "409", description = "Conflict, if an EPS entity with the same details already exists",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorSimple.class))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error, if something goes wrong",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorSimple.class)))
+    })
     public ResponseEntity<?> create(@RequestBody @Valid EpsRequestDTO dto) {
         try {
             epsService.create(dto);
             SuccessResponse successResponse = SuccessResponse.builder()
                     .code(HttpStatus.CREATED.value())
                     .status(HttpStatus.CREATED.name())
-                    .message("Eps creada con exito")
+                    .message("EPS creada con éxito")
                     .build();
             return ResponseEntity.status(HttpStatus.CREATED).body(successResponse);
         } catch (IllegalArgumentException exception) {
@@ -102,6 +119,8 @@ public class EpsController implements IModelEps {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorSimple);
         }
     }
+
+
     @Override
     public ResponseEntity<?> delete(Integer integer) {
         return null;
