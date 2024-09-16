@@ -3,6 +3,7 @@ package com.urgenciasYa.application.controller.impl;
 import com.urgenciasYa.application.controller.interfaces.IModelUser;
 import com.urgenciasYa.application.dto.request.UserRegisterDTO;
 import com.urgenciasYa.application.dto.response.LoginDTO;
+import com.urgenciasYa.application.dto.response.UserResponseDTO;
 import com.urgenciasYa.application.exceptions.ErrorsResponse;
 import com.urgenciasYa.domain.model.UserEntity;
 import com.urgenciasYa.infrastructure.handleError.SuccessResponse;
@@ -20,6 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping
@@ -105,4 +108,31 @@ public class UserController implements IModelUser {
         }
     }
 
+    @GetMapping
+    @Operation(
+            summary = "Retrieve all users",
+            description = "Este endpoint permite obtener una lista de todos los usuarios registrados en el sistema. La respuesta incluye información detallada de cada usuario en formato DTO."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Lista de usuarios obtenida exitosamente",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = UserResponseDTO.class))),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorSimple.class)))
+    })
+    public ResponseEntity<?> getAll() {
+        try {
+            List<UserResponseDTO> users = userService.readAll();
+
+            return ResponseEntity.ok(users);
+        } catch (Exception e) {
+            ErrorSimple errorSimple = ErrorSimple.builder()
+                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR.name())
+                    .message("Error al obtener la lista de usuarios: " + e.getMessage())
+                    .build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorSimple);
+        }
+    }
 }

@@ -1,7 +1,10 @@
 package com.urgenciasYa.application.service.impl;
 
+import com.urgenciasYa.application.dto.request.EmergencyContactRequestDTO;
 import com.urgenciasYa.application.dto.request.UserRegisterDTO;
 import com.urgenciasYa.application.dto.response.LoginDTO;
+import com.urgenciasYa.application.dto.response.RoleResponseDTO;
+import com.urgenciasYa.application.dto.response.UserResponseDTO;
 import com.urgenciasYa.application.service.IModel.IUserModel;
 import com.urgenciasYa.domain.model.RoleEntity;
 import com.urgenciasYa.domain.model.UserEntity;
@@ -13,6 +16,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService implements IUserModel {
@@ -71,5 +77,26 @@ public class UserService implements IUserModel {
         }
     }
 
+    @Override
+    public List<UserResponseDTO> readAll() {
+        List<UserEntity> users = userRepository.findAll();
+
+        return users.stream()
+                .map(userEntity -> UserResponseDTO.builder()
+                        .id(userEntity.getId())
+                        .name(userEntity.getName())
+                        .eps(userEntity.getEps())
+                        .email(userEntity.getEmail())
+                        .document(userEntity.getDocument())
+                        .emergency(userEntity.getEmergency() != null ? EmergencyContactRequestDTO.builder()
+                                .name(userEntity.getEmergency().getName())
+                                .phone(userEntity.getEmergency().getPhone())
+                                .build() : null)
+                        .role(userEntity.getRole() != null ? RoleResponseDTO.builder()
+                                .code(userEntity.getRole().getCode())
+                                .build() : null)
+                        .build())
+                .collect(Collectors.toList());
+    }
 }
 
