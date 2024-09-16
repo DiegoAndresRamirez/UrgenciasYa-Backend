@@ -103,11 +103,11 @@ public class UserService implements IUserModel {
     @Override
     @Transactional
     public void delete(Long id) {
-        if (!userRepository.existsById(String.valueOf(id))) {
+        if (!userRepository.existsById(id)) {
             throw new RuntimeException("Usuario con ID " + id + " no encontrado");
         }
 
-        userRepository.deleteById(String.valueOf(id));
+        userRepository.deleteById(id);
     }
 }
 
