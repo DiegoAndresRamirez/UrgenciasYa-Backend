@@ -24,6 +24,6 @@ public class HospitalCreateResponseDTO {
     private String howtogetthere;
     private Towns town_id; 
     private List<Eps> eps_id;
-    private Integer latitude;
-    private Integer longitude;
+    private Float latitude;
+    private Float longitude;
 }

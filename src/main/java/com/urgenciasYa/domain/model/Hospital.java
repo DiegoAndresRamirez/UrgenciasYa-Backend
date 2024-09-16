@@ -43,7 +43,7 @@ public class Hospital {
     @OneToMany(mappedBy = "hospital")
     private List<HospitalEps> eps_id;
     @Column(nullable = false)
-    private Integer latitude;
+    private Float latitude;
     @Column(nullable = false)
-    private Integer longitude;
+    private Float longitude;
 }
