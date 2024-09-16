@@ -156,32 +156,53 @@ public class EpsController implements IModelEps {
         }
     }
 
-    @Override
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@RequestBody @Valid Eps eps,@PathVariable Integer id) {
+    @Operation(
+            summary = "Update an existing EPS entity",
+            description = "Updates the EPS entity identified by the given ID with the provided details."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "EPS entity updated successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SuccessResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Bad Request, if the request body is invalid",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorSimple.class))),
+            @ApiResponse(responseCode = "404", description = "Not Found, if the EPS entity with the given ID does not exist",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorSimple.class))),
+            @ApiResponse(responseCode = "409", description = "Conflict, if there is a conflict with the current state of the resource",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorSimple.class))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error, if something goes wrong",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorSimple.class)))
+    })
+    public ResponseEntity<?> update(@RequestBody @Valid Eps eps, @PathVariable Integer id) {
         try {
             epsService.update(id, eps);
             SuccessResponse successResponse = SuccessResponse.builder()
                     .code(HttpStatus.OK.value())
                     .status(HttpStatus.OK.name())
-                    .message("Eps actualizada")
+                    .message("EPS entity updated successfully")
                     .build();
             return ResponseEntity.status(HttpStatus.OK).body(successResponse);
-        }catch (IllegalArgumentException exception){
+        } catch (IllegalArgumentException exception) {
             ErrorSimple errorSimple = ErrorSimple.builder()
-                    .code(HttpStatus.CONFLICT.value())
-                    .status(HttpStatus.CONFLICT.name())
-                    .message(exception.getMessage())
+                    .code(HttpStatus.NOT_FOUND.value())
+                    .status(HttpStatus.NOT_FOUND.name())
+                    .message("EPS entity with ID " + id + " not found")
                     .build();
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(errorSimple);
-        }catch (Exception exception){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorSimple);
+        } catch (Exception exception) {
             ErrorSimple errorSimple = ErrorSimple.builder()
                     .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
                     .status(HttpStatus.INTERNAL_SERVER_ERROR.name())
-                    .message(exception.getMessage())
+                    .message("An unexpected error occurred: " + exception.getMessage())
                     .build();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorSimple);
         }
-
     }
+
+
 }
