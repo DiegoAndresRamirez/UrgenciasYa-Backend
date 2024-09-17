@@ -2,8 +2,10 @@ package com.urgenciasYa.application.controller.impl;
 
 import com.urgenciasYa.application.controller.interfaces.IModelUser;
 import com.urgenciasYa.application.dto.request.UserRegisterDTO;
+import com.urgenciasYa.application.dto.request.UserUpdateDTO;
 import com.urgenciasYa.application.dto.response.LoginDTO;
 import com.urgenciasYa.application.dto.response.UserResponseDTO;
+import com.urgenciasYa.application.dto.response.UserUpdateResponseDTO;
 import com.urgenciasYa.application.exceptions.ErrorsResponse;
 import com.urgenciasYa.domain.model.UserEntity;
 import com.urgenciasYa.infrastructure.handleError.SuccessResponse;
@@ -170,4 +172,49 @@ public class UserController implements IModelUser {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorSimple);
         }
     }
+
+
+
+    @PutMapping("/update")
+    @Operation(
+            summary = "Update user profile",
+            description = "Este endpoint permite a un usuario actualizar su perfil, incluyendo nombre, correo electrónico, contraseña, contacto de emergencia y EPS."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Perfil actualizado con éxito",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = UserUpdateResponseDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Solicitud incorrecta, posiblemente debido a datos inválidos",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorsResponse.class))),
+            @ApiResponse(responseCode = "401", description = "Contraseña actual incorrecta",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorSimple.class))),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorSimple.class)))
+    })
+    public ResponseEntity<?> updateProfile(
+            @Parameter(description = "Información para actualizar el perfil del usuario") @RequestBody UserUpdateDTO userUpdateDTO) {
+        try {
+            UserResponseDTO updatedUser = userService.updateProfile(userUpdateDTO);
+            return ResponseEntity.status(HttpStatus.OK).body(updatedUser);
+        } catch (IllegalArgumentException exception) {
+            ErrorSimple errorSimple = ErrorSimple.builder()
+                    .code(HttpStatus.BAD_REQUEST.value())
+                    .status(HttpStatus.BAD_REQUEST.name())
+                    .message(exception.getMessage())
+                    .build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorSimple);
+        } catch (Exception exception) {
+            ErrorSimple errorSimple = ErrorSimple.builder()
+                    .code(HttpStatus.UNAUTHORIZED.value())
+                    .status(HttpStatus.UNAUTHORIZED.name())
+                    .message("Contraseña actual incorrecta: " + exception.getMessage())
+                    .build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorSimple);
+        }
+    }
+
+
 }

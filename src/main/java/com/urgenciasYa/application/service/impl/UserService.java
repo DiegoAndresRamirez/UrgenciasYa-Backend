@@ -2,6 +2,7 @@ package com.urgenciasYa.application.service.impl;
 
 import com.urgenciasYa.application.dto.request.EmergencyContactRequestDTO;
 import com.urgenciasYa.application.dto.request.UserRegisterDTO;
+import com.urgenciasYa.application.dto.request.UserUpdateDTO;
 import com.urgenciasYa.application.dto.response.LoginDTO;
 import com.urgenciasYa.application.dto.response.RoleResponseDTO;
 import com.urgenciasYa.application.dto.response.UserResponseDTO;
@@ -20,6 +21,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 
 @Service
 public class UserService implements IUserModel {
@@ -109,5 +112,46 @@ public class UserService implements IUserModel {
 
         userRepository.deleteById(id);
     }
+
+
+
+    @Transactional
+    public UserResponseDTO updateProfile(UserUpdateDTO userUpdateDTO) {
+        UserEntity user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario con ID " + id + " no encontrado"));
+
+        // Verificar contraseña actual
+        if (userUpdateDTO.getCurrentPassword() != null && !encoder.matches(userUpdateDTO.getCurrentPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("La contraseña actual es incorrecta");
+        }
+
+        // Actualizar información del usuario
+        user.setName(userUpdateDTO.getName());
+        user.setEmail(userUpdateDTO.getEmail());
+        if (userUpdateDTO.getNewPassword() != null) {
+            user.setPassword(encoder.encode(userUpdateDTO.getNewPassword()));
+        }
+        user.setEmergency(userUpdateDTO.getEmergencyContact() != null ? new com.urgenciasYa.domain.model.EmergencyEntity(userUpdateDTO.getEmergencyContact()) : user.getEmergency());
+        user.setEps(userUpdateDTO.getEps());
+
+        UserEntity updatedUser = userRepository.save(user);
+
+        return UserResponseDTO.builder()
+                .id(updatedUser.getId())
+                .name(updatedUser.getName())
+                .email(updatedUser.getEmail())
+                .eps(updatedUser.getEps())
+                .document(updatedUser.getDocument())
+                .emergency(updatedUser.getEmergency() != null ? EmergencyContactRequestDTO.builder()
+                        .name(updatedUser.getEmergency().getName())
+                        .phone(updatedUser.getEmergency().getPhone())
+                        .build() : null)
+                .role(updatedUser.getRole() != null ? RoleResponseDTO.builder()
+                        .code(updatedUser.getRole().getCode())
+                        .build() : null)
+                .build();
+    }
+
+
 }
 

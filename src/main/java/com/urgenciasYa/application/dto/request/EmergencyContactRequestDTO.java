@@ -13,4 +13,7 @@ import lombok.NoArgsConstructor;
 public class EmergencyContactRequestDTO {
     private String name;
     private String phone;
+
+    public EmergencyContactRequestDTO(String emergencyContact) {
+    }
 }

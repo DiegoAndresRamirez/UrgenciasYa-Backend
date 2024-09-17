@@ -24,4 +24,6 @@ public class EmergencyEntity {
     @OneToOne(mappedBy = "emergency")
     private UserEntity user;
 
+    public EmergencyEntity(String emergencyContact) {
+    }
 }
