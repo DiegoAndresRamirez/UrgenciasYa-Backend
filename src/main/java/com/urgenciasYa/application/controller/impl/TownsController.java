@@ -29,7 +29,7 @@ public class TownsController implements IModelTowns {
     @Autowired
     ITownsModel townsService;
 
-    @GetMapping
+    @GetMapping("/getAll")
     @Operation(
             summary = "Gets a list of all available cities",
             description = "Retrieves a list of all available cities from the service."

@@ -49,7 +49,7 @@ public class HospitalController implements IModelHospital {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ErrorSimple.class)))
     })
-    @GetMapping
+    @GetMapping("/filter")
     public ResponseEntity<?> getHospitalByEpsAndTown(
             @RequestParam String eps,
             @RequestParam String town,

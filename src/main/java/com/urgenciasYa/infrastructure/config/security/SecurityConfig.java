@@ -25,8 +25,12 @@ public class SecurityConfig {
     @Autowired
     private UserDetailsService userDetailsService;
 
+    private final String[] PUBLIC_RESOURCES = {"/login","register","/api/v1/town/getAll","/api/v1/eps/getAll","/api/v1/hospitals/filter"};
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
+
 
         return http.csrf(customizer -> customizer.disable()).
                 authorizeHttpRequests(request -> request

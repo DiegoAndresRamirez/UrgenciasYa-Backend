@@ -28,7 +28,7 @@ public class EpsController implements IModelEps {
     @Autowired
     IEpsModel epsService;
 
-    @GetMapping
+    @GetMapping("/getAll")
     @Operation(
             summary = "Retrieves a list of all EPS entities.",
             description = "Returns a list of all EPS entities available in the system."
