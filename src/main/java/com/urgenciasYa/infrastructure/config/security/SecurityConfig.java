@@ -26,6 +26,9 @@ public class SecurityConfig {
     private UserDetailsService userDetailsService;
 
     private final String[] PUBLIC_RESOURCES = {"/login","register","/api/v1/town/getAll","/api/v1/eps/getAll","/api/v1/hospitals/filter"};
+    private final String[] ADMIN_RESOURCES = {"login","/api/v1/town/**","/api/v1/eps/**","/api/v1/hospitals/**","/api/shifts/**"};
+    private final String[] USER_RESOURCES = {""};
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

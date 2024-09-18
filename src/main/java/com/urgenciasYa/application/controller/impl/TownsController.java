@@ -74,7 +74,7 @@ public class TownsController implements IModelTowns {
         }
     }
 
-    @PostMapping("/create")
+    @PostMapping("/admin/create")
     @Operation(
             summary = "Create a new town",
             description = "Creates a new town with the provided details and returns the success response."
@@ -167,7 +167,7 @@ public class TownsController implements IModelTowns {
         }
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/admin/{id}")
     @Operation(
             summary = "Delete a town by ID",
             description = "Deletes the town with the specified ID."

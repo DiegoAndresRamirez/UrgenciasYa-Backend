@@ -74,7 +74,7 @@ public class EpsController implements IModelEps {
         }
     }
 
-    @PostMapping
+    @PostMapping("/admin")
     @Operation(
             summary = "Create a new EPS entity",
             description = "Creates a new EPS entity with the provided details."
@@ -120,7 +120,7 @@ public class EpsController implements IModelEps {
     }
 
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/admin/{id}")
     @Operation(
             summary = "Delete an EPS entity by ID",
             description = "Deletes the EPS entity identified by the given ID."
