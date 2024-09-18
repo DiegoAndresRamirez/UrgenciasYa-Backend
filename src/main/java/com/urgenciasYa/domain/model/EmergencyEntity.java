@@ -21,6 +21,6 @@ public class EmergencyEntity {
     @Column(nullable = false)
     private String phone;
 
-    @OneToOne(mappedBy = "emergency")
+    @OneToOne(mappedBy = "emergency", cascade = CascadeType.ALL, orphanRemoval = true)
     private UserEntity user;
 }

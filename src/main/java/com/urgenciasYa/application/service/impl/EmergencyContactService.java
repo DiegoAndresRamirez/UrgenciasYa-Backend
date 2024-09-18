@@ -53,17 +53,21 @@ public class EmergencyContactService implements IEmergencyContactModel {
 
 
     @Override
-    public EmergencyEntity Update(Long id, EmergencyContactRequestDTO emergencyContactRequestDTO) {
-        EmergencyEntity emergencyEntity = emergencyContactRepository.findById(id).orElseThrow(()-> new RuntimeException("Emergency contact not found"));
+    public EmergencyEntity update(Long id, String name, String phone) {
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre no puede estar vacío");
+        }
+        if (phone == null || phone.trim().isEmpty()) {
+            throw new IllegalArgumentException("El teléfono no puede estar vacío");
+        }
 
-        EmergencyEntity emergency = EmergencyEntity.builder().id(emergencyEntity.getId()).name(emergencyContactRequestDTO.getName()).phone(emergencyContactRequestDTO.getPhone()).build();
+        EmergencyEntity emergencyEntity = emergencyContactRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Emergency contact not found"));
 
-        return emergencyContactRepository.save(emergency);
+        emergencyEntity.setName(name.trim());
+        emergencyEntity.setPhone(phone.trim());
+
+        return emergencyContactRepository.save(emergencyEntity);
     }
 
-    @Override
-    public void delete(Long id) {
-        EmergencyEntity emergencyEntity = emergencyContactRepository.findById(id).orElseThrow(()-> new RuntimeException("Emergency contact not found"));
-        emergencyContactRepository.deleteById(id);
-    }
 }
