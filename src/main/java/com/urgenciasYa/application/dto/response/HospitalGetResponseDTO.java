@@ -23,7 +23,7 @@ public class HospitalGetResponseDTO {
     private Integer night_peak;
     private String howtogetthere;
     private TownsDTO town_id;
-    private List<HospitalEps> eps_id;
+    private List<String> eps_id;
     private Float latitude;
     private Float longitude;
 }
