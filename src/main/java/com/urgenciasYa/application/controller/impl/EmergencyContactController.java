@@ -28,6 +28,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1/contacts")
 @Tag(name = "Emergency Contacts", description = "Endpoints for managing emergency contacts")
+@CrossOrigin(origins = "http://localhost:3000")
 public class EmergencyContactController implements IModelEmergencyContact {
 
     @Autowired
