@@ -5,6 +5,7 @@ import com.urgenciasYa.domain.model.Towns;
 import com.urgenciasYa.infrastructure.persistence.TownsRepository;
 import com.urgenciasYa.application.service.IModel.ITownsModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,16 +21,6 @@ public class TownsService implements ITownsModel {
     public List<Towns> readALl() {
         return townsRepository.findAll();
     }
-
-//    @Override
-//    public Towns create(Towns towns) {
-//        if(townsRepository.existByName(towns.getName()))
-//            throw new RuntimeException("El municipio ya existe en la base de datos");
-//        Towns town = new Towns();
-//        town.setName(towns.getName());
-//
-//        return townsRepository.save(town);
-//    }
 
     @Override
     public Towns create(TownCreateDTO entity) {
@@ -64,4 +55,13 @@ public class TownsService implements ITownsModel {
         }
     }
 
+    @Override
+    public Towns getById(Integer id) {
+        Optional<Towns> optionalTown = townsRepository.findById(id);
+        if (optionalTown.isPresent()) {
+            return optionalTown.get();
+        } else {
+            throw new IllegalArgumentException("Municipio con el ID " + id + " no existe");
+        }
+    }
 }
