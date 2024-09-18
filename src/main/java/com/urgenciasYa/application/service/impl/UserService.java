@@ -40,8 +40,8 @@ public class UserService implements IUserModel {
 
     @Override
     public UserEntity create(UserRegisterDTO userRegisterDTO) {
-        UserEntity existUser= userRepository.findByEmail(userRegisterDTO.getEmail());
-        if(existUser != null){
+        UserEntity existUser = userRepository.findByEmail(userRegisterDTO.getEmail());
+        if (existUser != null) {
             throw new IllegalArgumentException("El correo ya existe");
         }
 
@@ -59,6 +59,8 @@ public class UserService implements IUserModel {
 
         return userRepository.save(user);
     }
+
+
     public LoginDTO verify(UserEntity user) {
         Authentication authentication = authManager.authenticate(new UsernamePasswordAuthenticationToken(user.getName(), user.getPassword()));
         if (authentication.isAuthenticated()) {

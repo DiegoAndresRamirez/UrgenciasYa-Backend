@@ -28,6 +28,7 @@ public class UserEntity {
     private String email;
     @Column(nullable = false, unique = true)
     private String document;
+
     @OneToOne
     @JoinColumn(name = "emergency_id")
     private EmergencyEntity emergency;

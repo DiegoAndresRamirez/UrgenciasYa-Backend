@@ -1,10 +1,7 @@
 package com.urgenciasYa.application.service.impl;
 
 import com.urgenciasYa.application.dto.request.HospitalSearchRequestDTO;
-import com.urgenciasYa.application.dto.response.HospitalCardDTO;
-import com.urgenciasYa.application.dto.response.HospitalCreateResponseDTO;
-import com.urgenciasYa.application.dto.response.HospitalGetResponseDTO;
-import com.urgenciasYa.application.dto.response.TownsDTO;
+import com.urgenciasYa.application.dto.response.*;
 import com.urgenciasYa.domain.model.Hospital;
 import com.urgenciasYa.domain.model.HospitalEps;
 import com.urgenciasYa.domain.model.Towns;
@@ -172,6 +169,13 @@ public class HospitalService implements IHospitalModel {
                 .name(townExist.getName())
                 .build();
 
+        List<HospitalEps> epsExists = hospitalExists.getEps_id();
+        List<String> epsName = new ArrayList<>();
+        for (HospitalEps hospitalEps : epsExists) {
+            Eps epsInstance = hospitalEps.getEps();
+            epsName.add(epsInstance.getName());;
+        }
+
         HospitalGetResponseDTO hospitalGetResponseDTO = HospitalGetResponseDTO.builder()
                 .url_image(hospitalExists.getUrl_image())
                 .phone_number(hospitalExists.getPhone_number())
@@ -182,7 +186,7 @@ public class HospitalService implements IHospitalModel {
                 .night_peak(hospitalExists.getNight_peak())
                 .howtogetthere(hospitalExists.getHowtogetthere())
                 .town_id(town)
-                .eps_id(hospitalExists.getEps_id())
+                .eps_id(epsName)
                 .latitude(hospitalExists.getLatitude())
                 .longitude(hospitalExists.getLongitude())
                 .build();
@@ -201,6 +205,13 @@ public class HospitalService implements IHospitalModel {
                     .name(townExist.getName())
                     .build();
 
+            List<HospitalEps> epsExists = hospital.getEps_id();
+            List<String> epsName = new ArrayList<>();
+            for (HospitalEps hospitalEps : epsExists) {
+                Eps epsInstance = hospitalEps.getEps();
+                epsName.add(epsInstance.getName());;
+            }
+
             HospitalGetResponseDTO hospitalGetResponseDTO = HospitalGetResponseDTO.builder()
                     .url_image(hospital.getUrl_image())
                     .phone_number(hospital.getPhone_number())
@@ -211,7 +222,7 @@ public class HospitalService implements IHospitalModel {
                     .night_peak(hospital.getNight_peak())
                     .howtogetthere(hospital.getHowtogetthere())
                     .town_id(towns)
-                    .eps_id(hospital.getEps_id())
+                    .eps_id(epsName)
                     .latitude(hospital.getLatitude())
                     .longitude(hospital.getLongitude())
                     .build();
