@@ -1,6 +1,7 @@
 package com.urgenciasYa.application.controller.impl;
 
 import com.urgenciasYa.application.controller.interfaces.IModelUser;
+import com.urgenciasYa.application.dto.request.LoginRequestDTO;
 import com.urgenciasYa.application.dto.request.UserRegisterDTO;
 import com.urgenciasYa.application.dto.response.LoginDTO;
 import com.urgenciasYa.application.dto.response.UserResponseDTO;
@@ -94,9 +95,13 @@ public class UserController implements IModelUser {
                             schema = @Schema(implementation = ErrorSimple.class)))
     })
     public ResponseEntity<?> login(
-            @Parameter(description = "Credenciales del usuario") @RequestBody UserEntity user) {
+            @Parameter(description = "Credenciales del usuario") @RequestBody LoginRequestDTO loginRequestDTO) {
         try {
-            LoginDTO loginDTO = userService.verify(user);
+            UserEntity userEntity = new UserEntity();
+            userEntity.setName(loginRequestDTO.getName());
+            userEntity.setPassword(loginRequestDTO.getPassword());
+
+            LoginDTO loginDTO = userService.verify(userEntity);
             return ResponseEntity.status(HttpStatus.OK).body(loginDTO);
         } catch (Exception e) {
             ErrorSimple errorSimple = ErrorSimple.builder()
@@ -204,6 +209,55 @@ public class UserController implements IModelUser {
                     .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
                     .status(HttpStatus.INTERNAL_SERVER_ERROR.name())
                     .message("Error al obtener el usuario: " + e.getMessage())
+                    .build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorSimple);
+        }
+    }
+
+    @PutMapping("/{id}")
+    @Operation(
+            summary = "Update an existing user",
+            description = "Este endpoint permite actualizar un usuario existente utilizando su ID y la información proporcionada en el DTO."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Usuario actualizado exitosamente",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SuccessResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Usuario no encontrado",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorSimple.class))),
+            @ApiResponse(responseCode = "400", description = "Solicitud incorrecta, posiblemente debido a datos inválidos",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorsResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorSimple.class)))
+    })
+    public ResponseEntity<?> update(
+            @Parameter(description = "ID del usuario a actualizar") @PathVariable Long id,
+            @Parameter(description = "Información actualizada del usuario") @RequestBody @Valid UserRegisterDTO userRegisterDTO) {
+        try {
+            userService.update(id, userRegisterDTO);
+
+            SuccessResponse successResponse = SuccessResponse.builder()
+                    .code(HttpStatus.OK.value())
+                    .status(HttpStatus.OK.name())
+                    .message("Usuario actualizado exitosamente")
+                    .build();
+
+            return ResponseEntity.ok(successResponse);
+        } catch (IllegalArgumentException e) {
+            ErrorSimple errorSimple = ErrorSimple.builder()
+                    .code(HttpStatus.NOT_FOUND.value())
+                    .status(HttpStatus.NOT_FOUND.name())
+                    .message(e.getMessage())
+                    .build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorSimple);
+        } catch (Exception e) {
+            ErrorSimple errorSimple = ErrorSimple.builder()
+                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR.name())
+                    .message("Error al actualizar el usuario: " + e.getMessage())
                     .build();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorSimple);
         }

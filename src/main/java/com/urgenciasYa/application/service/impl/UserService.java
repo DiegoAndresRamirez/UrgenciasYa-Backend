@@ -129,5 +129,23 @@ public class UserService implements IUserModel {
             throw new IllegalArgumentException("Usuario con ID " + id + " no encontrado");
         }
     }
+
+    @Override
+    public void update(Long id, UserRegisterDTO userRegisterDTO) {
+        UserEntity existingUser = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario con ID " + id + " no encontrado"));
+
+        existingUser.setName(userRegisterDTO.getName());
+        existingUser.setEmail(userRegisterDTO.getEmail());
+        existingUser.setEps(userRegisterDTO.getEps());
+        existingUser.setDocument(userRegisterDTO.getDocument());
+
+        if (userRegisterDTO.getPassword() != null && !userRegisterDTO.getPassword().isEmpty()) {
+            existingUser.setPassword(encoder.encode(userRegisterDTO.getPassword()));
+        }
+
+        userRepository.save(existingUser);
+    }
+
 }
 
