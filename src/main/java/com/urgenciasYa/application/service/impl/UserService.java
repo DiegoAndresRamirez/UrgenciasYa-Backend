@@ -19,6 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -110,6 +111,23 @@ public class UserService implements IUserModel {
         }
 
         userRepository.deleteById(id);
+    }
+
+    @Override
+    public UserRegisterDTO getById(Long id) {
+        Optional<UserEntity> optionalUser = userRepository.findById(id);
+        if (optionalUser.isPresent()) {
+            UserEntity user = optionalUser.get();
+            return UserRegisterDTO.builder()
+                    .name(user.getName())
+                    .email(user.getEmail())
+                    .eps(user.getEps())
+                    .password(user.getPassword())
+                    .document(user.getDocument())
+                    .build();
+        } else {
+            throw new IllegalArgumentException("Usuario con ID " + id + " no encontrado");
+        }
     }
 }
 

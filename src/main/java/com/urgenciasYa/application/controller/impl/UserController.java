@@ -111,7 +111,8 @@ public class UserController implements IModelUser {
     @GetMapping
     @Operation(
             summary = "Retrieve all users",
-            description = "Este endpoint permite obtener una lista de todos los usuarios registrados en el sistema. La respuesta incluye información detallada de cada usuario en formato DTO."
+            description = "Este endpoint permite obtener una lista de todos los usuarios registrados en el sistema. La respuesta incluye información detallada de cada usuario en formato DTO.",
+            operationId = "getAllUsers" // Agregando un ID único para este endpoint
     )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Lista de usuarios obtenida exitosamente",
@@ -166,6 +167,43 @@ public class UserController implements IModelUser {
                     .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
                     .status(HttpStatus.INTERNAL_SERVER_ERROR.name())
                     .message("Error al eliminar el usuario: " + e.getMessage())
+                    .build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorSimple);
+        }
+    }
+
+    @GetMapping("/{id}")
+    @Operation(
+            summary = "Retrieve a user by ID",
+            description = "Este endpoint permite obtener un usuario específico utilizando su ID."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Usuario obtenido exitosamente",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = UserRegisterDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Usuario no encontrado",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorSimple.class))),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorSimple.class)))
+    })
+    public ResponseEntity<?> getById(@PathVariable Long id) {
+        try {
+            UserRegisterDTO userDTO = userService.getById(id);
+            return ResponseEntity.ok(userDTO);
+        } catch (IllegalArgumentException e) {
+            ErrorSimple errorSimple = ErrorSimple.builder()
+                    .code(HttpStatus.NOT_FOUND.value())
+                    .status(HttpStatus.NOT_FOUND.name())
+                    .message(e.getMessage())
+                    .build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorSimple);
+        } catch (Exception e) {
+            ErrorSimple errorSimple = ErrorSimple.builder()
+                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR.name())
+                    .message("Error al obtener el usuario: " + e.getMessage())
                     .build();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorSimple);
         }
