@@ -24,28 +24,28 @@ public class ShiftController {
 
     @PostMapping("/create")
     @Operation(
-            summary = "Crear un turno de urgencia",
-            description = "Permite a los usuarios solicitar un turno en el hospital asignado por su EPS. Devuelve los detalles del turno creado.",
+            summary = "Create an emergency shift",
+            description = "Allows users to request an emergency shift at the hospital assigned by their EPS. Returns the details of the created shift.",
             tags = {"Shift"}
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Turno creado exitosamente",
+            @ApiResponse(responseCode = "201", description = "Shift created successfully",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = Shift.class))),
-            @ApiResponse(responseCode = "400", description = "Solicitud inválida",
+            @ApiResponse(responseCode = "400", description = "Invalid request",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ErrorSimple.class))),
-            @ApiResponse(responseCode = "404", description = "Usuario, hospital o EPS no encontrado",
+            @ApiResponse(responseCode = "404", description = "User, hospital, or EPS not found",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ErrorSimple.class))),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor",
+            @ApiResponse(responseCode = "500", description = "Internal Server Error",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ErrorSimple.class)))
     })
     public ResponseEntity<?> createShift(
-            @Parameter(description = "Número de documento del usuario") @RequestParam String document,
-            @Parameter(description = "ID del hospital") @RequestParam Long hospitalId,
-            @Parameter(description = "ID de la EPS") @RequestParam Integer epsId
+            @Parameter(description = "User's document number") @RequestParam String document,
+            @Parameter(description = "Hospital ID") @RequestParam Long hospitalId,
+            @Parameter(description = "EPS ID") @RequestParam Integer epsId
     ) {
         try {
             Shift shift = shiftService.createShift(document, hospitalId, epsId);
@@ -68,9 +68,10 @@ public class ShiftController {
             ErrorSimple errorSimple = ErrorSimple.builder()
                     .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
                     .status(HttpStatus.INTERNAL_SERVER_ERROR.name())
-                    .message("Error interno del servidor: " + e.getMessage())
+                    .message("Internal server error: " + e.getMessage())
                     .build();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorSimple);
         }
     }
+
 }
