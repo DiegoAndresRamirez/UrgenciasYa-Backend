@@ -269,5 +269,4 @@ public class UserController implements IModelUser {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorSimple);
         }
     }
-
 }
