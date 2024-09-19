@@ -9,7 +9,7 @@ import lombok.Setter;
 public class LoginRequestDTO {
 
     @NotBlank(message = "Nombre es requerido")
-    private String name;
+    private String email;
 
     @NotBlank(message = "Contraseña es requerida")
     private String password;
