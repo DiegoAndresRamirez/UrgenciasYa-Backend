@@ -34,13 +34,68 @@ public class EmergencyContactController implements IModelEmergencyContact {
     @Autowired
     private EmergencyContactService emergencyContactService;
 
-    @Operation(summary = "Crear un nuevo contacto de emergencia",
-            description = "Crea un nuevo contacto de emergencia para un usuario específico")
-    @ApiResponse(responseCode = "201", description = "Contacto de emergencia creado exitosamente",
-            content = @Content(schema = @Schema(implementation = EmergencyEntity.class)))
-    @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos")
-    @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
-    @ApiResponse(responseCode = "409", description = "El usuario ya tiene un contacto de emergencia")
+    @Operation(
+            summary = "Crear un nuevo contacto de emergencia",
+            description = "Este endpoint permite crear un nuevo contacto de emergencia para un usuario específico. " +
+                    "Se requiere que el usuario exista y que no tenga ya un contacto de emergencia registrado.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "201",
+                            description = "Contacto de emergencia creado exitosamente",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(
+                                            implementation = EmergencyEntity.class,
+                                            example = "{\"message\": \"Contacto de emergencia creado con éxito\"}"
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Datos de entrada inválidos",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(
+                                            type = "string",
+                                            example = "Los campos 'name' y 'phone' son obligatorios."
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Usuario no encontrado",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(
+                                            type = "string",
+                                            example = "No se encontró el usuario con ID {userId}."
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "409",
+                            description = "El usuario ya tiene un contacto de emergencia",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(
+                                            type = "string",
+                                            example = "El usuario ya tiene un contacto de emergencia registrado."
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Error interno del servidor",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(
+                                            type = "string",
+                                            example = "Error interno del servidor. Por favor, inténtelo de nuevo más tarde."
+                                    )
+                            )
+                    )
+            }
+    )
     @PostMapping("/create/{userId}")
     public ResponseEntity<?> create(
             @PathVariable Long userId,
@@ -64,46 +119,86 @@ public class EmergencyContactController implements IModelEmergencyContact {
     @Override
     @PutMapping("/{id}")
     @Operation(
-            summary = "Update an existing emergency contact",
-            description = "Updates an existing emergency contact identified by the given ID and returns the updated contact.",
+            summary = "Actualizar un contacto de emergencia existente",
+            description = "Actualiza un contacto de emergencia identificado por el ID proporcionado. " +
+                    "Devuelve el mensaje de éxito o un error si la operación falla.",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "Emergency contact updated successfully",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = EmergencyEntity.class))),
-                    @ApiResponse(responseCode = "400", description = "Bad Request, if the input data is invalid",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = ErrorSimple.class))),
-                    @ApiResponse(responseCode = "404", description = "Not Found, if the contact with the given ID does not exist",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = ErrorSimple.class))),
-                    @ApiResponse(responseCode = "500", description = "Internal Server Error, if something goes wrong",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = ErrorSimple.class)))
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Contacto de emergencia actualizado exitosamente",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(
+                                            implementation = EmergencyEntity.class,
+                                            example = "{\"message\": \"Contacto de emergencia actualizado con éxito\"}"
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Solicitud inválida, si los datos de entrada son incorrectos",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(
+                                            implementation = ErrorSimple.class,
+                                            example = "{\"code\": 400, \"status\": \"BAD_REQUEST\", \"message\": \"El nombre y el teléfono son obligatorios.\"}"
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "No encontrado, si el contacto con el ID dado no existe",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(
+                                            implementation = ErrorSimple.class,
+                                            example = "{\"code\": 404, \"status\": \"NOT_FOUND\", \"message\": \"No se encontró el contacto con ID {id}.\"}"
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Error interno del servidor, si algo sale mal",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(
+                                            implementation = ErrorSimple.class,
+                                            example = "{\"code\": 500, \"status\": \"INTERNAL_SERVER_ERROR\", \"message\": \"Error interno del servidor.\"}"
+                                    )
+                            )
+                    )
             }
     )
     public ResponseEntity<?> update(
             @PathVariable Long id,
-            @RequestParam String name,
-            @RequestParam String phone){
+            @RequestParam @NotBlank String name,
+            @RequestParam @NotBlank String phone) {
         try {
-            this.emergencyContactService.update(id, name, phone); // No necesitas almacenar el resultado
+            this.emergencyContactService.update(id, name, phone);
 
             Map<String, String> response = new HashMap<>();
             response.put("message", "Contacto de emergencia actualizado con éxito");
 
-            return ResponseEntity.status(HttpStatus.OK).body(response);
+            return ResponseEntity.ok(response);
         } catch (IllegalArgumentException exception) {
             ErrorSimple errorSimple = ErrorSimple.builder()
                     .code(HttpStatus.BAD_REQUEST.value())
                     .status(HttpStatus.BAD_REQUEST.name())
                     .message(exception.getMessage())
                     .build();
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorSimple);
+            return ResponseEntity.badRequest().body(errorSimple);
+        } catch (EntityNotFoundException exception) {
+            ErrorSimple errorSimple = ErrorSimple.builder()
+                    .code(HttpStatus.NOT_FOUND.value())
+                    .status(HttpStatus.NOT_FOUND.name())
+                    .message("No se encontró el contacto con ID " + id)
+                    .build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorSimple);
         } catch (Exception exception) {
             ErrorSimple errorSimple = ErrorSimple.builder()
                     .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
                     .status(HttpStatus.INTERNAL_SERVER_ERROR.name())
-                    .message(exception.getMessage())
+                    .message("Error interno del servidor. Por favor, inténtelo de nuevo más tarde.")
                     .build();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorSimple);
         }
