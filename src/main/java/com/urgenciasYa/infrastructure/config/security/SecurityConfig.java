@@ -27,7 +27,7 @@ public class SecurityConfig {
 
     private final String[] PUBLIC_RESOURCES = {"/login","register","/api/v1/town/getAll","/api/v1/eps/getAll","/api/v1/hospitals/filter"};
     private final String[] ADMIN_RESOURCES = {"login","/api/v1/town/**","/api/v1/eps/**","/api/v1/hospitals/**","/api/shifts/**"};
-    private final String[] USER_RESOURCES = {""};
+    private final String[] USER_RESOURCES = {"/api/v1/contacts/","/api/v1/town/getAll","/api/v1/hospitals/filter","/api/v1/eps/getAll","/api/v1/eps/{id}"};
 
 
     @Bean
