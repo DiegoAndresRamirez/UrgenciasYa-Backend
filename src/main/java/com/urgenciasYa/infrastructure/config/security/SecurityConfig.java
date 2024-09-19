@@ -1,5 +1,7 @@
 package com.urgenciasYa.infrastructure.config.security;
 
+import com.urgenciasYa.domain.model.RoleEntity;
+import com.urgenciasYa.domain.model.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -37,7 +39,9 @@ public class SecurityConfig {
 
         return http.csrf(customizer -> customizer.disable()).
                 authorizeHttpRequests(request -> request
-                        .requestMatchers("login", "register", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**").permitAll()
+                        .requestMatchers(PUBLIC_RESOURCES).permitAll()
+                        .requestMatchers(ADMIN_RESOURCES).hasAuthority("ADMIN")
+                        .requestMatchers(USER_RESOURCES).hasAuthority("USER")
                         .anyRequest().authenticated()).
                 httpBasic(Customizer.withDefaults()).
                 sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
