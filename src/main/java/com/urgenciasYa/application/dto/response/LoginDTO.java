@@ -1,5 +1,6 @@
 package com.urgenciasYa.application.dto.response;
 
+import com.urgenciasYa.domain.model.RoleEntity;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
@@ -22,4 +23,6 @@ public class LoginDTO {
     private String document;
     @NotBlank(message = "token es requerida")
     private String token;
+
+    private RoleEntity role;
 }

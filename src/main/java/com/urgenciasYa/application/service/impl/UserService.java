@@ -64,13 +64,18 @@ public class UserService implements IUserModel {
     public LoginDTO verify(UserEntity user) {
         Authentication authentication = authManager.authenticate(new UsernamePasswordAuthenticationToken(user.getName(), user.getPassword()));
         if (authentication.isAuthenticated()) {
+
+            String roleName = user.getRole().getCode();
+            String token = jwtService.generateToken(user.getName(), roleName);
+
             LoginDTO loginDTO = LoginDTO.builder()
                     .name(user.getName())
                     .email(user.getEmail())
                     .password(user.getPassword())
                     .document(user.getDocument())
                     .eps(user.getEps())
-                    .token(jwtService.generateToken(user.getName()))
+                    .token(token)
+                    .role(user.getRole())
                     .build();
 
 
