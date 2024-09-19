@@ -49,4 +49,14 @@ public class EpsService implements IEpsModel {
             throw new IllegalArgumentException("La Eps con ID asignado "+ id + "NO existe en nuestra base de datos. Rectifica tus datos");
         }
     }
+
+    @Override
+    public Eps getById(Integer id) {
+        Optional<Eps> optionalEps = epsRepository.findById(id);
+        if (optionalEps.isPresent()) {
+            return optionalEps.get();
+        } else {
+            throw new IllegalArgumentException("EPS con el ID " + id + " no existe");
+        }
+    }
 }

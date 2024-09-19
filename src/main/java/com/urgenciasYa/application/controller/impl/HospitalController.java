@@ -42,7 +42,9 @@ public class HospitalController implements IModelHospital {
             }
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "List obtained successfully"),
+            @ApiResponse(responseCode = "200", description = "List obtained successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = HospitalCardDTO.class))),
             @ApiResponse(responseCode = "404", description = "No hospitals found matching the criteria",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ErrorSimple.class))),
@@ -89,6 +91,7 @@ public class HospitalController implements IModelHospital {
         }
     }
 
+
     @Operation(
             summary = "Create a new hospital",
             description = "Creates a new hospital record in the system using the provided hospital data. Returns the created hospital object if successful.",
@@ -134,6 +137,7 @@ public class HospitalController implements IModelHospital {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
         }
     }
+
 
 
 
@@ -199,6 +203,7 @@ public class HospitalController implements IModelHospital {
     }
 
 
+
     @Operation(
             summary = "Delete a hospital by its ID",
             description = "Deletes the hospital record identified by the given ID. Returns a success message if the operation is successful.",
@@ -239,6 +244,7 @@ public class HospitalController implements IModelHospital {
     }
 
 
+
     @Operation(
             summary = "Retrieve a hospital by its ID",
             description = "Fetches the hospital record identified by the given ID. Returns the hospital details if found.",
@@ -247,7 +253,9 @@ public class HospitalController implements IModelHospital {
             }
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Hospital retrieved successfully"),
+            @ApiResponse(responseCode = "200", description = "Hospital retrieved successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = HospitalGetResponseDTO.class))),
             @ApiResponse(responseCode = "404", description = "Hospital not found",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ErrorSimple.class))),
@@ -278,21 +286,23 @@ public class HospitalController implements IModelHospital {
     }
 
 
+
     @Operation(
             summary = "Retrieve all hospitals",
             description = "Fetches a list of all hospitals. Returns an empty list if no hospitals are found."
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "List of hospitals retrieved successfully"),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error. An unexpected error occurred while retrieving the hospitals.")
+            @ApiResponse(responseCode = "200", description = "List of hospitals retrieved successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = HospitalGetResponseDTO.class))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error. An unexpected error occurred while retrieving the hospitals.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorSimple.class)))
     })
     @GetMapping("/all")
     public ResponseEntity<?> getAll() {
         try {
             List<HospitalGetResponseDTO> hospitals = hospitalService.readALl();
-            if (hospitals.isEmpty()) {
-                return ResponseEntity.ok(hospitals);
-            }
             return ResponseEntity.ok(hospitals);
         } catch (Exception e) {
             ErrorSimple error = ErrorSimple.builder()

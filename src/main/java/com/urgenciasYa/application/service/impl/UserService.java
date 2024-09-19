@@ -19,6 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -111,5 +112,40 @@ public class UserService implements IUserModel {
 
         userRepository.deleteById(id);
     }
+
+    @Override
+    public UserRegisterDTO getById(Long id) {
+        Optional<UserEntity> optionalUser = userRepository.findById(id);
+        if (optionalUser.isPresent()) {
+            UserEntity user = optionalUser.get();
+            return UserRegisterDTO.builder()
+                    .name(user.getName())
+                    .email(user.getEmail())
+                    .eps(user.getEps())
+                    .password(user.getPassword())
+                    .document(user.getDocument())
+                    .build();
+        } else {
+            throw new IllegalArgumentException("Usuario con ID " + id + " no encontrado");
+        }
+    }
+
+    @Override
+    public void update(Long id, UserRegisterDTO userRegisterDTO) {
+        UserEntity existingUser = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario con ID " + id + " no encontrado"));
+
+        existingUser.setName(userRegisterDTO.getName());
+        existingUser.setEmail(userRegisterDTO.getEmail());
+        existingUser.setEps(userRegisterDTO.getEps());
+        existingUser.setDocument(userRegisterDTO.getDocument());
+
+        if (userRegisterDTO.getPassword() != null && !userRegisterDTO.getPassword().isEmpty()) {
+            existingUser.setPassword(encoder.encode(userRegisterDTO.getPassword()));
+        }
+
+        userRepository.save(existingUser);
+    }
+
 }
 

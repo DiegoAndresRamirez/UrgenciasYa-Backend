@@ -75,6 +75,52 @@ public class TownsController implements IModelTowns {
         }
     }
 
+
+    @GetMapping("/{id}")
+    @Operation(
+            summary = "Get town by ID",
+            description = "Retrieves a town by the specified ID."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Town retrieved successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = TownsDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Not Found, if the town with the given ID does not exist",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorSimple.class))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error, if something goes wrong",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorSimple.class)))
+    })
+    public ResponseEntity<?> getById(
+            @Parameter(description = "ID of the town to be retrieved") @PathVariable Integer id) {
+        try {
+            Towns town = townsService.getById(id);
+            if (town == null) {
+                ErrorSimple errorSimple = ErrorSimple.builder()
+                        .code(HttpStatus.NOT_FOUND.value())
+                        .status(HttpStatus.NOT_FOUND.name())
+                        .message("Town not found")
+                        .build();
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorSimple);
+            }
+
+            TownsDTO townDTO = TownsDTO.builder()
+                    .name(town.getName())
+                    .build();
+
+            return ResponseEntity.ok(townDTO);
+        } catch (Exception e) {
+            ErrorSimple errorSimple = ErrorSimple.builder()
+                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR.name())
+                    .message("An unexpected error occurred: " + e.getMessage())
+                    .build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorSimple);
+        }
+    }
+
+
     @PostMapping("/create")
     @Operation(
             summary = "Create a new town",
@@ -119,6 +165,7 @@ public class TownsController implements IModelTowns {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorSimple);
         }
     }
+
 
 
     @PutMapping("/{id}")
@@ -168,6 +215,7 @@ public class TownsController implements IModelTowns {
         }
     }
 
+
     @DeleteMapping("/{id}")
     @Operation(
             summary = "Delete a town by ID",
@@ -210,6 +258,7 @@ public class TownsController implements IModelTowns {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorSimple);
         }
     }
+
 }
 
 

@@ -6,7 +6,7 @@ import com.urgenciasYa.application.service.crud.Delete;
 import com.urgenciasYa.application.service.crud.Update;
 import com.urgenciasYa.domain.model.EmergencyEntity;
 
-public interface IEmergencyContactModel extends  Delete<Long> {
-    EmergencyEntity Update(Long id, EmergencyContactRequestDTO emergencyContactRequestDTO);
+public interface IEmergencyContactModel {
+    EmergencyEntity update(Long id, String name, String phone);
     EmergencyEntity create (Long userId, String name, String phone);
 }
