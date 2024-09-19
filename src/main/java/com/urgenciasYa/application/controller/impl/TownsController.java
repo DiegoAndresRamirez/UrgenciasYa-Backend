@@ -75,6 +75,7 @@ public class TownsController implements IModelTowns {
         }
     }
 
+
     @GetMapping("/{id}")
     @Operation(
             summary = "Get town by ID",
@@ -118,6 +119,7 @@ public class TownsController implements IModelTowns {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorSimple);
         }
     }
+
 
     @PostMapping("/create")
     @Operation(
@@ -163,6 +165,7 @@ public class TownsController implements IModelTowns {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorSimple);
         }
     }
+
 
 
     @PutMapping("/{id}")
@@ -212,6 +215,7 @@ public class TownsController implements IModelTowns {
         }
     }
 
+
     @DeleteMapping("/{id}")
     @Operation(
             summary = "Delete a town by ID",
@@ -254,6 +258,7 @@ public class TownsController implements IModelTowns {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorSimple);
         }
     }
+
 }
 
 
