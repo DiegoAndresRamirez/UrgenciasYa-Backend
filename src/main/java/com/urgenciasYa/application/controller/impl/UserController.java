@@ -10,6 +10,7 @@ import com.urgenciasYa.domain.model.UserEntity;
 import com.urgenciasYa.infrastructure.handleError.SuccessResponse;
 import com.urgenciasYa.application.exceptions.ErrorSimple;
 import com.urgenciasYa.application.service.impl.UserService;
+import com.urgenciasYa.infrastructure.persistence.UserRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -33,6 +34,8 @@ public class UserController implements IModelUser {
 
     @Autowired
     UserService userService;
+    @Autowired
+    private UserRepository userRepository;
 
     @PostMapping("/register")
     @Operation(
@@ -100,7 +103,7 @@ public class UserController implements IModelUser {
             @Parameter(description = "User credentials") @RequestBody LoginRequestDTO loginRequestDTO) {
         try {
             UserEntity userEntity = new UserEntity();
-            userEntity.setName(loginRequestDTO.getName());
+            userEntity.setName(userRepository.findByEmail(loginRequestDTO.getEmail()).getName());
             userEntity.setPassword(loginRequestDTO.getPassword());
 
             LoginDTO loginDTO = userService.verify(userEntity);
@@ -269,5 +272,4 @@ public class UserController implements IModelUser {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorSimple);
         }
     }
-
 }
