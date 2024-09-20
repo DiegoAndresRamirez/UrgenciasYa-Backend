@@ -2,12 +2,15 @@ package com.urgenciasYa.application.service.impl;
 
 import com.urgenciasYa.application.dto.request.EmergencyContactRequestDTO;
 import com.urgenciasYa.application.dto.request.UserRegisterDTO;
+import com.urgenciasYa.application.dto.response.EpsUserResponseDTO;
 import com.urgenciasYa.application.dto.response.LoginDTO;
 import com.urgenciasYa.application.dto.response.RoleResponseDTO;
 import com.urgenciasYa.application.dto.response.UserResponseDTO;
 import com.urgenciasYa.application.service.IModel.IUserModel;
+import com.urgenciasYa.domain.model.Eps;
 import com.urgenciasYa.domain.model.RoleEntity;
 import com.urgenciasYa.domain.model.UserEntity;
+import com.urgenciasYa.infrastructure.persistence.EpsRepository;
 import com.urgenciasYa.infrastructure.persistence.RoleRepository;
 import com.urgenciasYa.infrastructure.persistence.UserRepository;
 import jakarta.transaction.Transactional;
@@ -37,6 +40,9 @@ public class UserService implements IUserModel {
     @Autowired
     RoleRepository roleRepository;
 
+    @Autowired
+    EpsRepository epsRepository;
+
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
     @Override
@@ -46,6 +52,13 @@ public class UserService implements IUserModel {
             throw new IllegalArgumentException("El correo ya existe");
         }
 
+        Eps epsExists = epsRepository.findByName(existUser.getEps());
+
+        EpsUserResponseDTO epsUserResponseDTO = EpsUserResponseDTO.builder()
+                .id(epsExists.getId())
+                .name(epsExists.getName())
+                .build();
+
         RoleEntity defaultRole = roleRepository.findRoleByCode("USER")
                 .orElseThrow(() -> new RuntimeException("Rol 'USER' no encontrado."));
 
@@ -53,7 +66,7 @@ public class UserService implements IUserModel {
                 .name(userRegisterDTO.getName())
                 .email(userRegisterDTO.getEmail())
                 .password(encoder.encode(userRegisterDTO.getPassword()))
-                .eps(userRegisterDTO.getEps())
+                .eps(epsUserResponseDTO.getName())
                 .role(defaultRole)
                 .document(userRegisterDTO.getDocument())
                 .build();
@@ -66,15 +79,9 @@ public class UserService implements IUserModel {
         Authentication authentication = authManager.authenticate(new UsernamePasswordAuthenticationToken(user.getName(), user.getPassword()));
         if (authentication.isAuthenticated()) {
             LoginDTO loginDTO = LoginDTO.builder()
-                    .name(user.getName())
-                    .email(user.getEmail())
-                    .password(user.getPassword())
-                    .document(user.getDocument())
-                    .eps(user.getEps())
+                    .id(userRepository.findByName(user.getName()).getId())
                     .token(jwtService.generateToken(user.getName()))
                     .build();
-
-
             return loginDTO;
         } else {
             return LoginDTO.builder().build();
@@ -118,10 +125,18 @@ public class UserService implements IUserModel {
         Optional<UserEntity> optionalUser = userRepository.findById(id);
         if (optionalUser.isPresent()) {
             UserEntity user = optionalUser.get();
+
+            Eps epsExists = epsRepository.findByName(user.getEps());
+
+            EpsUserResponseDTO epsUserResponseDTO = EpsUserResponseDTO.builder()
+                    .id(epsExists.getId())
+                    .name(epsExists.getName())
+                    .build();
+
             return UserRegisterDTO.builder()
                     .name(user.getName())
                     .email(user.getEmail())
-                    .eps(user.getEps())
+                    .eps(epsUserResponseDTO)
                     .password(user.getPassword())
                     .document(user.getDocument())
                     .build();
@@ -135,9 +150,16 @@ public class UserService implements IUserModel {
         UserEntity existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Usuario con ID " + id + " no encontrado"));
 
+        Eps epsExists = epsRepository.findByName(existingUser.getEps());
+
+        EpsUserResponseDTO epsUserResponseDTO = EpsUserResponseDTO.builder()
+                .id(epsExists.getId())
+                .name(epsExists.getName())
+                .build();
+
         existingUser.setName(userRegisterDTO.getName());
         existingUser.setEmail(userRegisterDTO.getEmail());
-        existingUser.setEps(userRegisterDTO.getEps());
+        existingUser.setEps(userRegisterDTO.getEps().getName());
         existingUser.setDocument(userRegisterDTO.getDocument());
 
         if (userRegisterDTO.getPassword() != null && !userRegisterDTO.getPassword().isEmpty()) {

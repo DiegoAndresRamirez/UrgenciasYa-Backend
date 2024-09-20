@@ -10,16 +10,8 @@ import lombok.Setter;
 @Setter
 @Getter
 public class LoginDTO {
-    @NotBlank(message = "Nombre es Requerido")
-    private String name;
-    @Email(message = "Email es requerido")
-    private String email;
-    @NotBlank(message = "EPS es requerida")
-    private String eps;
-    @NotBlank(message = "Contraseña es requerida")
-    private String password;
-    @NotBlank(message = "Documento requerido")
-    private String document;
+    @NotBlank(message = "Id requerido")
+    private Long id;
     @NotBlank(message = "token es requerida")
     private String token;
 }

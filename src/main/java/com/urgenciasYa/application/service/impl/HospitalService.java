@@ -63,6 +63,7 @@ public class HospitalService implements IHospitalModel {
             );
 
             return HospitalCardDTO.builder()
+                    .id(hospital.getId())
                     .url_image(hospital.getUrl_image())
                     .phone_number(hospital.getPhone_number())
                     .name(hospital.getName())
@@ -177,6 +178,7 @@ public class HospitalService implements IHospitalModel {
         }
 
         HospitalGetResponseDTO hospitalGetResponseDTO = HospitalGetResponseDTO.builder()
+                .id(hospitalExists.getId())
                 .url_image(hospitalExists.getUrl_image())
                 .phone_number(hospitalExists.getPhone_number())
                 .name(hospitalExists.getName())
@@ -213,6 +215,7 @@ public class HospitalService implements IHospitalModel {
             }
 
             HospitalGetResponseDTO hospitalGetResponseDTO = HospitalGetResponseDTO.builder()
+                    .id(hospital.getId())
                     .url_image(hospital.getUrl_image())
                     .phone_number(hospital.getPhone_number())
                     .name(hospital.getName())
