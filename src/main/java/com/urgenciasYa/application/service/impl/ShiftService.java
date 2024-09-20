@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @Service
 public class ShiftService implements IShiftModel {
@@ -31,6 +32,9 @@ public class ShiftService implements IShiftModel {
     @Autowired
     private EpsRepository epsRepository;
 
+    @Autowired
+    private HospitalService hospitalService;
+
     @Override
     public Shift createShift(String document, Long hospitalId, Integer epsId) throws Exception {
         UserEntity user = userRepository.findByDocument(document);
@@ -41,10 +45,24 @@ public class ShiftService implements IShiftModel {
         Hospital hospital = hospitalRepository.findById(hospitalId).orElseThrow(() -> new Exception("Hospital not found"));
         Eps eps = epsRepository.findById(epsId).orElseThrow(() -> new Exception("EPS not found"));
 
-        LocalDateTime estimatedTime = LocalDateTime.now().plusHours(1);
+        // Obtener el concurrency profile utilizando el nuevo método, sin latitud y longitud
+        Map<String, Integer> concurrencyProfile = hospitalService.getConcurrencyProfileByHospital(hospitalId, eps.getName(), hospital.getTown_id().getName(), null, null);
+
+        // Obtener la hora actual y el valor correspondiente
+        LocalDateTime now = LocalDateTime.now();
+        String hourKey = String.format("%02d", now.getHour());
+        Integer value = concurrencyProfile.get(hourKey);
+
+        // Generar shiftNumber
+        char letter = (char) ('A' + value / 10);
+        String number = String.format("%02d", value % 10);
+        String shiftNumber = letter + number;
+
+        // Estimar el tiempo del turno
+        LocalDateTime estimatedTime = now.plusHours(1);
 
         Shift shift = new Shift();
-        shift.setShiftNumber("S" + System.currentTimeMillis());
+        shift.setShiftNumber(shiftNumber);
         shift.setEstimatedTime(estimatedTime);
         shift.setStatus(StatusShift.PENDING);
         shift.setUser(user);
@@ -53,5 +71,4 @@ public class ShiftService implements IShiftModel {
 
         return shiftRepository.save(shift);
     }
-
 }

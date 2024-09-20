@@ -234,4 +234,15 @@ public class HospitalService implements IHospitalModel {
         });
         return hospitals;
     }
+
+    public Map<String, Integer> getConcurrencyProfileByHospital(Long hospitalId, String eps, String town, Double latitude, Double longitude) {
+        HospitalSearchRequestDTO requestDTO = new HospitalSearchRequestDTO(eps, town, latitude, longitude);
+        List<HospitalCardDTO> hospitals = getHospitalsNearby(requestDTO);
+
+        return hospitals.stream()
+                .filter(hospital -> hospital.getId().equals(hospitalId))
+                .map(HospitalCardDTO::getConcurrencyProfile)
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Hospital not found or has no concurrency profile"));
+    }
 }
