@@ -17,6 +17,7 @@ import java.util.Map;
 @Schema(description = "specialized institution designed to provide comprehensive medical care and treatment to individuals with various health conditions.")
 
 public class HospitalCardDTO {
+    private Long id;
     private String url_image;
     private String phone_number;
     private String name;

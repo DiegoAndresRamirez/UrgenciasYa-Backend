@@ -14,6 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class HospitalGetResponseDTO {
+    private Long id;
     private String url_image;
     private String phone_number;
     private String name;
