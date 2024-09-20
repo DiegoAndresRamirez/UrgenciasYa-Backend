@@ -66,15 +66,9 @@ public class UserService implements IUserModel {
         Authentication authentication = authManager.authenticate(new UsernamePasswordAuthenticationToken(user.getName(), user.getPassword()));
         if (authentication.isAuthenticated()) {
             LoginDTO loginDTO = LoginDTO.builder()
-                    .name(user.getName())
-                    .email(user.getEmail())
-                    .password(user.getPassword())
-                    .document(user.getDocument())
-                    .eps(user.getEps())
+                    .id(userRepository.findByName(user.getName()).getId())
                     .token(jwtService.generateToken(user.getName()))
                     .build();
-
-
             return loginDTO;
         } else {
             return LoginDTO.builder().build();
