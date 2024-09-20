@@ -119,7 +119,6 @@ public class UserController implements IModelUser {
     }
 
 
-
     @GetMapping
     @Operation(
             summary = "Retrieve all users",

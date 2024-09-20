@@ -2,12 +2,15 @@ package com.urgenciasYa.application.service.impl;
 
 import com.urgenciasYa.application.dto.request.EmergencyContactRequestDTO;
 import com.urgenciasYa.application.dto.request.UserRegisterDTO;
+import com.urgenciasYa.application.dto.response.EpsUserResponseDTO;
 import com.urgenciasYa.application.dto.response.LoginDTO;
 import com.urgenciasYa.application.dto.response.RoleResponseDTO;
 import com.urgenciasYa.application.dto.response.UserResponseDTO;
 import com.urgenciasYa.application.service.IModel.IUserModel;
+import com.urgenciasYa.domain.model.Eps;
 import com.urgenciasYa.domain.model.RoleEntity;
 import com.urgenciasYa.domain.model.UserEntity;
+import com.urgenciasYa.infrastructure.persistence.EpsRepository;
 import com.urgenciasYa.infrastructure.persistence.RoleRepository;
 import com.urgenciasYa.infrastructure.persistence.UserRepository;
 import jakarta.transaction.Transactional;
@@ -36,6 +39,9 @@ public class UserService implements IUserModel {
 
     @Autowired
     RoleRepository roleRepository;
+
+    @Autowired
+    EpsRepository epsRepository;
 
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
@@ -112,10 +118,18 @@ public class UserService implements IUserModel {
         Optional<UserEntity> optionalUser = userRepository.findById(id);
         if (optionalUser.isPresent()) {
             UserEntity user = optionalUser.get();
+
+            Eps epsExists = epsRepository.findByName(user.getEps());
+
+            EpsUserResponseDTO epsUserResponseDTO = EpsUserResponseDTO.builder()
+                    .id(epsExists.getId())
+                    .name(epsExists.getName())
+                    .build();
+
             return UserRegisterDTO.builder()
                     .name(user.getName())
                     .email(user.getEmail())
-                    .eps(user.getEps())
+                    .eps(epsUserResponseDTO)
                     .password(user.getPassword())
                     .document(user.getDocument())
                     .build();

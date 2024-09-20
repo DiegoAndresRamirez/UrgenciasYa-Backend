@@ -1,5 +1,6 @@
 package com.urgenciasYa.application.dto.request;
 
+import com.urgenciasYa.application.dto.response.EpsUserResponseDTO;
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -20,7 +21,7 @@ public class UserRegisterDTO {
     @Email(message = "Email es requerido")
     private String email;
     @NotBlank(message = "EPS es requerida")
-    private String eps;
+    private EpsUserResponseDTO eps;
     @NotBlank(message = "Contraseña es requerida")
     private String password;
     @NotBlank(message = "Documento requerido")
