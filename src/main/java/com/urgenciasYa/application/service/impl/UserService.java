@@ -1,11 +1,7 @@
 package com.urgenciasYa.application.service.impl;
 
-import com.urgenciasYa.application.dto.request.EmergencyContactRequestDTO;
-import com.urgenciasYa.application.dto.request.UserRegisterDTO;
-import com.urgenciasYa.application.dto.response.EpsUserResponseDTO;
-import com.urgenciasYa.application.dto.response.LoginDTO;
-import com.urgenciasYa.application.dto.response.RoleResponseDTO;
-import com.urgenciasYa.application.dto.response.UserResponseDTO;
+import com.urgenciasYa.application.dto.request.*;
+import com.urgenciasYa.application.dto.response.*;
 import com.urgenciasYa.application.service.IModel.IUserModel;
 import com.urgenciasYa.domain.model.Eps;
 import com.urgenciasYa.domain.model.RoleEntity;
@@ -46,18 +42,19 @@ public class UserService implements IUserModel {
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
     @Override
-    public UserEntity create(UserRegisterDTO userRegisterDTO) {
+    public UserEntity create(UserRegisterRequestDTO userRegisterDTO) {
         UserEntity existUser = userRepository.findByEmail(userRegisterDTO.getEmail());
         if (existUser != null) {
             throw new IllegalArgumentException("El correo ya existe");
         }
 
-        Eps epsExists = epsRepository.findByName(existUser.getEps());
-
-        EpsUserResponseDTO epsUserResponseDTO = EpsUserResponseDTO.builder()
-                .id(epsExists.getId())
-                .name(epsExists.getName())
-                .build();
+        // Aquí deberías obtener el EPS del DTO directamente
+        String epsName = userRegisterDTO.getEps().getName();
+        // Si necesitas buscar el EPS en la base de datos, puedes hacerlo aquí
+        Eps epsExists = epsRepository.findByName(epsName);
+        if (epsExists == null) {
+            throw new IllegalArgumentException("La EPS no existe");
+        }
 
         RoleEntity defaultRole = roleRepository.findRoleByCode("USER")
                 .orElseThrow(() -> new RuntimeException("Rol 'USER' no encontrado."));
@@ -66,13 +63,14 @@ public class UserService implements IUserModel {
                 .name(userRegisterDTO.getName())
                 .email(userRegisterDTO.getEmail())
                 .password(encoder.encode(userRegisterDTO.getPassword()))
-                .eps(epsUserResponseDTO.getName())
+                .eps(epsExists.getName()) // Usar el nombre de EPS encontrado
                 .role(defaultRole)
                 .document(userRegisterDTO.getDocument())
                 .build();
 
         return userRepository.save(user);
     }
+
 
 
     public LoginDTO verify(UserEntity user) {
@@ -146,28 +144,44 @@ public class UserService implements IUserModel {
     }
 
     @Override
-    public void update(Long id, UserRegisterDTO userRegisterDTO) {
+    public UserEntity update(Long id, UserUpdateDTO userUpdateDTO) {
         UserEntity existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Usuario con ID " + id + " no encontrado"));
 
-        Eps epsExists = epsRepository.findByName(existingUser.getEps());
-
-        EpsUserResponseDTO epsUserResponseDTO = EpsUserResponseDTO.builder()
-                .id(epsExists.getId())
-                .name(epsExists.getName())
-                .build();
-
-        existingUser.setName(userRegisterDTO.getName());
-        existingUser.setEmail(userRegisterDTO.getEmail());
-        existingUser.setEps(userRegisterDTO.getEps().getName());
-        existingUser.setDocument(userRegisterDTO.getDocument());
-
-        if (userRegisterDTO.getPassword() != null && !userRegisterDTO.getPassword().isEmpty()) {
-            existingUser.setPassword(encoder.encode(userRegisterDTO.getPassword()));
+        // Usar el EPS del DTO
+        String epsName = userUpdateDTO.getEps().getName();
+        Eps epsExists = epsRepository.findByName(epsName);
+        if (epsExists == null) {
+            throw new IllegalArgumentException("La EPS no existe");
         }
 
-        userRepository.save(existingUser);
+        existingUser.setName(userUpdateDTO.getName());
+        existingUser.setEmail(userUpdateDTO.getEmail());
+        existingUser.setEps(epsExists.getName());
+        existingUser.setDocument(userUpdateDTO.getDocument());
+
+        return userRepository.save(existingUser);
     }
+
+    public void changePassword(Long id, ChangePasswordDTO passwordChangeDTO) {
+        UserEntity user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario con ID " + id + " no encontrado"));
+
+        // Verificar la contraseña actual
+        if (!encoder.matches(passwordChangeDTO.getCurrentPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("La contraseña actual es incorrecta");
+        }
+
+        // Verificar que la nueva contraseña y su confirmación coincidan
+        if (!passwordChangeDTO.getNewPassword().equals(passwordChangeDTO.getConfirmNewPassword())) {
+            throw new IllegalArgumentException("La nueva contraseña y su confirmación no coinciden");
+        }
+
+        // Establecer la nueva contraseña
+        user.setPassword(encoder.encode(passwordChangeDTO.getNewPassword()));
+        userRepository.save(user);
+    }
+
 
 }
 

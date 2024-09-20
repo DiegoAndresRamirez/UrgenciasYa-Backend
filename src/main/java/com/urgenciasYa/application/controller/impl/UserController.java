@@ -1,11 +1,12 @@
 package com.urgenciasYa.application.controller.impl;
 
 import com.urgenciasYa.application.controller.interfaces.IModelUser;
-import com.urgenciasYa.application.dto.request.LoginRequestDTO;
-import com.urgenciasYa.application.dto.request.UserRegisterDTO;
+import com.urgenciasYa.application.dto.request.*;
 import com.urgenciasYa.application.dto.response.LoginDTO;
 import com.urgenciasYa.application.dto.response.UserResponseDTO;
 import com.urgenciasYa.application.exceptions.ErrorsResponse;
+import com.urgenciasYa.application.service.impl.JWTService;
+import com.urgenciasYa.application.service.impl.MyUserDetailsService;
 import com.urgenciasYa.domain.model.UserEntity;
 import com.urgenciasYa.infrastructure.handleError.SuccessResponse;
 import com.urgenciasYa.application.exceptions.ErrorSimple;
@@ -22,9 +23,12 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping
@@ -36,6 +40,13 @@ public class UserController implements IModelUser {
     UserService userService;
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private JWTService jwtService;
+
+    @Autowired
+    private MyUserDetailsService userDetailsService;
+
 
     @PostMapping("/register")
     @Operation(
@@ -54,7 +65,7 @@ public class UserController implements IModelUser {
                             schema = @Schema(implementation = ErrorSimple.class)))
     })
     public ResponseEntity<?> create(
-            @Parameter(description = "Information of the new user") @RequestBody @Valid UserRegisterDTO userRegisterDTO) {
+            @Parameter(description = "Information of the new user") @RequestBody @Valid UserRegisterRequestDTO userRegisterDTO) {
         try {
             userService.create(userRegisterDTO);
             SuccessResponse successResponse = SuccessResponse.builder()
@@ -242,33 +253,35 @@ public class UserController implements IModelUser {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ErrorSimple.class)))
     })
-    public ResponseEntity<?> update(
-            @Parameter(description = "ID of the user to update") @PathVariable Long id,
-            @Parameter(description = "Updated information of the user") @RequestBody @Valid UserRegisterDTO userRegisterDTO) {
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody @Valid UserUpdateDTO userUpdateDTO) {
         try {
-            userService.update(id, userRegisterDTO);
+            UserEntity updatedUser = userService.update(id, userUpdateDTO);
 
-            SuccessResponse successResponse = SuccessResponse.builder()
-                    .code(HttpStatus.OK.value())
-                    .status(HttpStatus.OK.name())
-                    .message("User updated successfully")
-                    .build();
+            // Generar un nuevo token con la información actualizada
+            UserDetails userDetails = userDetailsService.loadUserByUsername(updatedUser.getName());
+            String newToken = jwtService.refreshToken(userDetails);
 
-            return ResponseEntity.ok(successResponse);
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "User updated successfully");
+            response.put("token", newToken);
+
+            return ResponseEntity.ok(response);
         } catch (IllegalArgumentException e) {
-            ErrorSimple errorSimple = ErrorSimple.builder()
-                    .code(HttpStatus.NOT_FOUND.value())
-                    .status(HttpStatus.NOT_FOUND.name())
-                    .message(e.getMessage())
-                    .build();
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorSimple);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
-            ErrorSimple errorSimple = ErrorSimple.builder()
-                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR.name())
-                    .message("Error updating the user: " + e.getMessage())
-                    .build();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorSimple);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating user: " + e.getMessage());
+        }
+    }
+
+    @PutMapping("/{id}/change-password")
+    public ResponseEntity<?> changePassword(@PathVariable Long id, @RequestBody @Valid ChangePasswordDTO passwordChangeDTO) {
+        try {
+            userService.changePassword(id, passwordChangeDTO);
+            return ResponseEntity.ok("Contraseña actualizada exitosamente");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error cambiando la contraseña: " + e.getMessage());
         }
     }
 }

@@ -33,17 +33,21 @@ public class JWTService {
     }
 
     public String generateToken(String username) {
-        Map<String, Object> claims = new HashMap<>();
+        return generateToken(username, new HashMap<>());
+    }
+
+    public String generateToken(String username, Map<String, Object> additionalClaims) {
         return Jwts.builder()
-                .claims()
-                .add(claims)
+                .claims(additionalClaims)
                 .subject(username)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + 60 * 60 * 300))
-                .and()
                 .signWith(getKey())
                 .compact();
+    }
 
+    public String refreshToken(UserDetails userDetails) {
+        return generateToken(userDetails.getUsername());
     }
 
     private SecretKey getKey() {
