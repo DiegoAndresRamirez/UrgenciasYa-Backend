@@ -1,5 +1,9 @@
 package com.urgenciasYa.application.controller.impl;
 
+import com.urgenciasYa.application.dto.request.EmergencyContactRequestDTO;
+import com.urgenciasYa.application.dto.response.RoleResponseDTO;
+import com.urgenciasYa.application.dto.response.UserResponseDTO;
+import com.urgenciasYa.application.dto.response.UserShiftResponseDTO;
 import com.urgenciasYa.application.exceptions.ErrorSimple;
 import com.urgenciasYa.domain.model.Shift;
 import com.urgenciasYa.application.service.impl.ShiftService;
@@ -49,7 +53,33 @@ public class ShiftController {
     ) {
         try {
             Shift shift = shiftService.createShift(document, hospitalId, epsId);
-            return ResponseEntity.status(HttpStatus.CREATED).body(shift);
+
+            UserResponseDTO userDTO = UserResponseDTO.builder()
+                    .id(shift.getUser().getId())
+                    .name(shift.getUser().getName())
+                    .eps(shift.getUser().getEps())
+                    .email(shift.getUser().getEmail())
+                    .document(shift.getUser().getDocument())
+                    .emergency(shift.getUser().getEmergency() != null ? EmergencyContactRequestDTO.builder()
+                            .name(shift.getUser().getEmergency().getName())
+                            .phone(shift.getUser().getEmergency().getPhone())
+                            .build() : null)
+                    .role(shift.getUser().getRole() != null ? RoleResponseDTO.builder()
+                            .code(shift.getUser().getRole().getCode())
+                            .build() : null)
+                    .build();
+
+            UserShiftResponseDTO shiftDTO = UserShiftResponseDTO.builder()
+                    .id(shift.getId())
+                    .shiftNumber(shift.getShiftNumber())
+                    .estimatedTime(shift.getEstimatedTime())
+                    .status(shift.getStatus().name())
+                    .user(userDTO)
+                    .hospitalId(shift.getHospital().getId()) // Solo ID del hospital
+                    .epsId(shift.getEps().getId()) // Solo ID de la EPS
+                    .build();
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(shiftDTO);
         } catch (IllegalArgumentException e) {
             ErrorSimple errorSimple = ErrorSimple.builder()
                     .code(HttpStatus.NOT_FOUND.value())

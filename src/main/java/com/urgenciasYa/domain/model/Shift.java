@@ -1,5 +1,6 @@
 package com.urgenciasYa.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.urgenciasYa.common.utils.enums.StatusShift;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
@@ -22,10 +23,10 @@ public class Shift {
 
     @NotNull(message = "The turn number is required.")
     @Column(nullable = false)
-    private String ShiftNumber;
+    private String shiftNumber;
 
     @NotNull(message = "The estimated time is required.")
-    @Future(message = "The estimated time must be a future date.")
+    @FutureOrPresent(message = "The estimated time must be a present or future date.")
     @Column(nullable = false)
     private LocalDateTime estimatedTime;
 
@@ -35,14 +36,17 @@ public class Shift {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnore // Omitir el objeto completo en la serialización
     private UserEntity user;
 
     @ManyToOne
     @JoinColumn(name = "hospital_id", nullable = false)
+    @JsonIgnore // Omitir el objeto completo en la serialización
     private Hospital hospital;
 
     @ManyToOne
     @JoinColumn(name = "eps_id", nullable = false)
+    @JsonIgnore // Omitir el objeto completo en la serialización
     private Eps eps;
 
 }

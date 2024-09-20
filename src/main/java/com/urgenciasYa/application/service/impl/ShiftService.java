@@ -13,12 +13,13 @@ import com.urgenciasYa.common.utils.enums.StatusShift;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.Random;
 
 @Service
 public class ShiftService implements IShiftModel {
-
 
     @Autowired
     private ShiftRepository shiftRepository;
@@ -42,24 +43,41 @@ public class ShiftService implements IShiftModel {
             throw new Exception("User not found");
         }
 
-        Hospital hospital = hospitalRepository.findById(hospitalId).orElseThrow(() -> new Exception("Hospital not found"));
-        Eps eps = epsRepository.findById(epsId).orElseThrow(() -> new Exception("EPS not found"));
+        Hospital hospital = hospitalRepository.findById(hospitalId)
+                .orElseThrow(() -> new Exception("Hospital not found"));
+        Eps eps = epsRepository.findById(epsId)
+                .orElseThrow(() -> new Exception("EPS not found"));
 
-        // Obtener el concurrency profile utilizando el nuevo método, sin latitud y longitud
-        Map<String, Integer> concurrencyProfile = hospitalService.getConcurrencyProfileByHospital(hospitalId, eps.getName(), hospital.getTown_id().getName(), null, null);
+        // Get concurrency profile
+        Map<String, Integer> concurrencyProfile = hospitalService.getConcurrencyProfileByHospital(
+                hospitalId, eps.getName(), hospital.getTown_id().getName(), null, null);
 
-        // Obtener la hora actual y el valor correspondiente
+        // Check concurrency profile content
+        System.out.println("Concurrency Profile: " + concurrencyProfile);
+
+        if (concurrencyProfile.isEmpty()) {
+            throw new Exception("No concurrency profile found for the specified hospital.");
+        }
+
         LocalDateTime now = LocalDateTime.now();
-        String hourKey = String.format("%02d", now.getHour());
+        String hourKey = String.format("%02d:00", now.getHour()); // Include ':00'
+
         Integer value = concurrencyProfile.get(hourKey);
 
-        // Generar shiftNumber
+        if (value == null) {
+            // Assign default value
+            value = 0; // Handle as needed
+        }
+
+        // Generate shift number
         char letter = (char) ('A' + value / 10);
         String number = String.format("%02d", value % 10);
         String shiftNumber = letter + number;
 
-        // Estimar el tiempo del turno
-        LocalDateTime estimatedTime = now.plusHours(1);
+        // Calculate estimated time with random multiplier
+        int multiplier = new Random().nextInt(3) + 3; // Generate random between 3 and 5
+        Duration estimatedTimeExtension = Duration.ofHours(multiplier);
+        LocalDateTime estimatedTime = now.plus(estimatedTimeExtension);
 
         Shift shift = new Shift();
         shift.setShiftNumber(shiftNumber);
