@@ -175,33 +175,16 @@ public class EmergencyContactController implements IModelEmergencyContact {
             @RequestParam @NotBlank String name,
             @RequestParam @NotBlank String phone) {
         try {
-            this.emergencyContactService.update(id, name, phone);
-
+            emergencyContactService.update(id, name, phone);
             Map<String, String> response = new HashMap<>();
             response.put("message", "Emergency contact updated successfully");
-
             return ResponseEntity.ok(response);
         } catch (IllegalArgumentException exception) {
-            ErrorSimple errorSimple = ErrorSimple.builder()
-                    .code(HttpStatus.BAD_REQUEST.value())
-                    .status(HttpStatus.BAD_REQUEST.name())
-                    .message(exception.getMessage())
-                    .build();
-            return ResponseEntity.badRequest().body(errorSimple);
+            return ResponseEntity.badRequest().body(exception.getMessage());
         } catch (EntityNotFoundException exception) {
-            ErrorSimple errorSimple = ErrorSimple.builder()
-                    .code(HttpStatus.NOT_FOUND.value())
-                    .status(HttpStatus.NOT_FOUND.name())
-                    .message("Contact with ID " + id + " not found")
-                    .build();
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorSimple);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Contact with ID " + id + " not found");
         } catch (Exception exception) {
-            ErrorSimple errorSimple = ErrorSimple.builder()
-                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR.name())
-                    .message("Internal server error. Please try again later.")
-                    .build();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorSimple);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal server error. Please try again later.");
         }
     }
 
