@@ -52,6 +52,13 @@ public class UserService implements IUserModel {
             throw new IllegalArgumentException("El correo ya existe");
         }
 
+        Eps epsExists = epsRepository.findByName(existUser.getEps());
+
+        EpsUserResponseDTO epsUserResponseDTO = EpsUserResponseDTO.builder()
+                .id(epsExists.getId())
+                .name(epsExists.getName())
+                .build();
+
         RoleEntity defaultRole = roleRepository.findRoleByCode("USER")
                 .orElseThrow(() -> new RuntimeException("Rol 'USER' no encontrado."));
 
@@ -59,7 +66,7 @@ public class UserService implements IUserModel {
                 .name(userRegisterDTO.getName())
                 .email(userRegisterDTO.getEmail())
                 .password(encoder.encode(userRegisterDTO.getPassword()))
-                .eps(userRegisterDTO.getEps())
+                .eps(epsUserResponseDTO.getName())
                 .role(defaultRole)
                 .document(userRegisterDTO.getDocument())
                 .build();
@@ -143,9 +150,16 @@ public class UserService implements IUserModel {
         UserEntity existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Usuario con ID " + id + " no encontrado"));
 
+        Eps epsExists = epsRepository.findByName(existingUser.getEps());
+
+        EpsUserResponseDTO epsUserResponseDTO = EpsUserResponseDTO.builder()
+                .id(epsExists.getId())
+                .name(epsExists.getName())
+                .build();
+
         existingUser.setName(userRegisterDTO.getName());
         existingUser.setEmail(userRegisterDTO.getEmail());
-        existingUser.setEps(userRegisterDTO.getEps());
+        existingUser.setEps(userRegisterDTO.getEps().getName());
         existingUser.setDocument(userRegisterDTO.getDocument());
 
         if (userRegisterDTO.getPassword() != null && !userRegisterDTO.getPassword().isEmpty()) {
