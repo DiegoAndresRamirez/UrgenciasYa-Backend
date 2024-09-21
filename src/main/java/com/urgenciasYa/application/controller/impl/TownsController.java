@@ -30,7 +30,7 @@ public class TownsController implements IModelTowns {
     @Autowired
     ITownsModel townsService;
 
-    @GetMapping
+    @GetMapping("/getAll")
     @Operation(
             summary = "Gets a list of all available cities",
             description = "Retrieves a list of all available cities from the service."
@@ -216,7 +216,7 @@ public class TownsController implements IModelTowns {
     }
 
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     @Operation(
             summary = "Delete a town by ID",
             description = "Deletes the town with the specified ID."
