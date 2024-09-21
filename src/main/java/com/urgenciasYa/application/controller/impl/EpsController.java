@@ -29,7 +29,7 @@ public class EpsController implements IModelEps {
     @Autowired
     IEpsModel epsService;
 
-    @GetMapping
+    @GetMapping("/getAll")
     @Operation(
             summary = "Retrieves a list of all EPS entities",
             description = "Returns a list of all EPS entities available in the system."
@@ -244,7 +244,7 @@ public class EpsController implements IModelEps {
 
 
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     @Operation(
             summary = "Delete an EPS entity by ID",
             description = "Deletes the EPS entity identified by the given ID."

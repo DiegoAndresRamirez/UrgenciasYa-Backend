@@ -42,15 +42,19 @@ public class SecurityConfig {
             "/api/v1/town/**", // Permite todas las rutas bajo /api/v1/town/
             "/api/v1/eps/**",  // Permite todas las rutas bajo /api/v1/eps/
             "/api/v1/hospitals/**", // Permite todas las rutas bajo /api/v1/hospitals/
-            "/api/shifts/**",  // Permite todas las rutas bajo /api/shifts/
+            "/api/shifts/**",
+            "/register",
+            "/login"// Permite todas las rutas bajo /api/shifts/
     };
 
     private final String[] USER_RESOURCES = {
             "/api/v1/contacts/**", // Permite todas las rutas bajo /api/v1/contacts/
-            "/api/v1/town",
+            "/api/v1/town/getAll",
             "/api/v1/hospitals/filter",
             "/api/v1/eps/getAll",
-            "/api/v1/eps/{id}" // Puedes dejarlo así si solo quieres que se permita un id específico
+            "/api/v1/eps/{id}",
+            "/register",
+            "/login"// Puedes dejarlo así si solo quieres que se permita un id específico
     };
 
     @Bean
