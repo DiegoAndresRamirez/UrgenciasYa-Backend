@@ -50,9 +50,9 @@
 		<dependency>
 			<groupId>com.twilio.sdk</groupId>
 			<artifactId>twilio</artifactId>
-			<version>10.5.0</version>
-			<scope>compile</scope>
+			<version>8.30.0</version>
 		</dependency>
+
 
 		<dependency>
 			<groupId>com.mysql</groupId>
