@@ -18,7 +18,8 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(new SimpleGrantedAuthority("USER"));
+        // Suponiendo que role es un objeto de RoleEntity y code es el nombre del rol
+        return List.of(new SimpleGrantedAuthority(user.getRole().getCode()));
     }
 
     @Override

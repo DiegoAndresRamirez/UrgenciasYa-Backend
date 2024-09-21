@@ -25,20 +25,48 @@ public class SecurityConfig {
     @Autowired
     private UserDetailsService userDetailsService;
 
+    private final String[] PUBLIC_RESOURCES = {
+            "/login",
+            "/register",
+            "/api/v1/town/getAll",
+            "/api/v1/eps/getAll",
+            "/api/v1/hospitals/filter",
+            "/swagger-ui.html",
+            "/swagger-ui/**",
+            "/v3/api-docs/**",
+            "/swagger-resources/**",
+            "/webjars/**"
+    };
+
+    private final String[] ADMIN_RESOURCES = {
+            "/api/v1/town/**", // Permite todas las rutas bajo /api/v1/town/
+            "/api/v1/eps/**",  // Permite todas las rutas bajo /api/v1/eps/
+            "/api/v1/hospitals/**", // Permite todas las rutas bajo /api/v1/hospitals/
+            "/api/shifts/**",  // Permite todas las rutas bajo /api/shifts/
+    };
+
+    private final String[] USER_RESOURCES = {
+            "/api/v1/contacts/**", // Permite todas las rutas bajo /api/v1/contacts/
+            "/api/v1/town",
+            "/api/v1/hospitals/filter",
+            "/api/v1/eps/getAll",
+            "/api/v1/eps/{id}" // Puedes dejarlo así si solo quieres que se permita un id específico
+    };
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
-        return http.csrf(customizer -> customizer.disable()).
-                authorizeHttpRequests(request -> request
-                        .requestMatchers("login", "register", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**").permitAll()
-                        .anyRequest().authenticated()).
-                httpBasic(Customizer.withDefaults()).
-                sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        return http.csrf(customizer -> customizer.disable())
+                .authorizeHttpRequests(request -> request
+                        .requestMatchers(PUBLIC_RESOURCES).permitAll()
+                        .requestMatchers(USER_RESOURCES).hasAuthority("USER") // Cambiar a hasAuthority
+                        .requestMatchers(ADMIN_RESOURCES).hasAuthority("ADMIN") // Cambiar a hasAuthority
+                        .anyRequest().authenticated())
+                .httpBasic(Customizer.withDefaults())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
-
-
     }
+
 
     @Bean
     public AuthenticationProvider authenticationProvider() {

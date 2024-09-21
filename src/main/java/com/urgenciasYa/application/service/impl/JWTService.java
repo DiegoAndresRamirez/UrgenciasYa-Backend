@@ -1,24 +1,29 @@
 package com.urgenciasYa.application.service.impl;
 
+import com.urgenciasYa.domain.model.UserEntity;
+import com.urgenciasYa.infrastructure.persistence.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 
 @Service
 public class JWTService {
+
+    @Autowired
+    UserRepository userRepository;
+
     private String secretkey = "";
 
     public JWTService() {
@@ -37,6 +42,15 @@ public class JWTService {
     }
 
     public String generateToken(String username, Map<String, Object> additionalClaims) {
+        UserEntity user = userRepository.findByName(username);
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found: " + username);
+        }
+
+        // Extraer el rol del usuario
+        String roleCode = user.getRole().getCode();
+        additionalClaims.put("roles", List.of(roleCode)); // Asegúrate de que sea una lista
+
         return Jwts.builder()
                 .claims(additionalClaims)
                 .subject(username)
@@ -45,6 +59,7 @@ public class JWTService {
                 .signWith(getKey())
                 .compact();
     }
+
 
     public String refreshToken(UserDetails userDetails) {
         return generateToken(userDetails.getUsername());
