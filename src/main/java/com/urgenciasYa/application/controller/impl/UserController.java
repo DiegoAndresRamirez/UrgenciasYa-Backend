@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping
+@RequestMapping("/api/v1/users")
 @Tag(name = "User")
 @CrossOrigin(origins = "http://localhost:3000")
 public class UserController implements IModelUser {

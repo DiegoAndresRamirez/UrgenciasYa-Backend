@@ -23,7 +23,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/v1/town")
+@RequestMapping("/api/v1/towns")
 @CrossOrigin(origins = "http://localhost:3000")
 public class TownsController implements IModelTowns {
 

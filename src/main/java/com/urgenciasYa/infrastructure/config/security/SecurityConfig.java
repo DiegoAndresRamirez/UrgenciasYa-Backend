@@ -26,9 +26,9 @@ public class SecurityConfig {
     private UserDetailsService userDetailsService;
 
     private final String[] PUBLIC_RESOURCES = {
-            "/login",
-            "/register",
-            "/api/v1/town/getAll",
+            "/api/v1/user/login",
+            "/api/v1/user/register",
+            "/api/v1/towns/getAll",
             "/api/v1/eps/getAll",
             "/api/v1/hospitals/filter",
             "/swagger-ui.html",
@@ -40,12 +40,12 @@ public class SecurityConfig {
     };
 
     private final String[] ADMIN_RESOURCES = {
-            "/api/v1/town/**", // Permite todas las rutas bajo /api/v1/town/
+            "/api/v1/towns/**", // Permite todas las rutas bajo /api/v1/town/
             "/api/v1/eps/**",  // Permite todas las rutas bajo /api/v1/eps/
             "/api/v1/hospitals/**", // Permite todas las rutas bajo /api/v1/hospitals/
             "/api/shifts/**",
-            "/register",
-            "/login"// Permite todas las rutas bajo /api/shifts/
+            "/api/v1/user/register",
+            "/api/v1/user/login"// Permite todas las rutas bajo /api/shifts/
     };
 
     private final String[] USER_RESOURCES = {
@@ -55,11 +55,11 @@ public class SecurityConfig {
             "/api/v1/hospitals/{id}",
             "/api/v1/eps/getAll",
             "/api/v1/eps/{id}",
-            "/get/{id}",
-            "/{id}/change-password",
+            "/api/v1/get/{id}",
+            "/api/v1/user/{id}/change-password",
             "/update/{id}",
-            "/register",
-            "/login"// Puedes dejarlo así si solo quieres que se permita un id específico
+            "/api/v1/user/register",
+            "/api/v1/user/login"// Puedes dejarlo así si solo quieres que se permita un id específico
     };
 
     @Bean
