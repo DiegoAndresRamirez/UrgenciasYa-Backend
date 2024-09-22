@@ -35,7 +35,8 @@ public class SecurityConfig {
             "/swagger-ui/**",
             "/v3/api-docs/**",
             "/swagger-resources/**",
-            "/webjars/**"
+            "/webjars/**",
+            "/api/v1/hospitals/{id}",
     };
 
     private final String[] ADMIN_RESOURCES = {
@@ -51,8 +52,12 @@ public class SecurityConfig {
             "/api/v1/contacts/**", // Permite todas las rutas bajo /api/v1/contacts/
             "/api/v1/town/getAll",
             "/api/v1/hospitals/filter",
+            "/api/v1/hospitals/{id}",
             "/api/v1/eps/getAll",
             "/api/v1/eps/{id}",
+            "/get/{id}",
+            "/{id}/change-password",
+            "/update/{id}",
             "/register",
             "/login"// Puedes dejarlo así si solo quieres que se permita un id específico
     };

@@ -196,7 +196,7 @@ public class UserController implements IModelUser {
     }
 
 
-    @GetMapping("/{id}")
+    @GetMapping("/get/{id}")
     @Operation(
             summary = "Retrieve a user by ID",
             description = "This endpoint allows you to obtain a specific user using their ID."
@@ -234,7 +234,7 @@ public class UserController implements IModelUser {
     }
 
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     @Operation(
             summary = "Update an existing user",
             description = "This endpoint allows you to update an existing user using their ID and the information provided in the DTO."
@@ -273,7 +273,7 @@ public class UserController implements IModelUser {
         }
     }
 
-    @PutMapping("/{id}/change-password")
+    @PutMapping("{id}/change-password")
     public ResponseEntity<?> changePassword(@PathVariable Long id, @RequestBody @Valid ChangePasswordDTO passwordChangeDTO) {
         try {
             userService.changePassword(id, passwordChangeDTO);
