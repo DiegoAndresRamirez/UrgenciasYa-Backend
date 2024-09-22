@@ -102,9 +102,10 @@ public class EmergencyContactController implements IModelEmergencyContact {
             @RequestParam @NotBlank String name,
             @RequestParam @NotBlank String phone) {
         try {
-            emergencyContactService.create(userId, name, phone);
+           EmergencyEntity emergencyEntity = emergencyContactService.create(userId, name, phone);
             Map<String, String> response = new HashMap<>();
             response.put("message", "Emergency contact created successfully");
+            response.put("idContact", emergencyEntity.getId().toString());
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());

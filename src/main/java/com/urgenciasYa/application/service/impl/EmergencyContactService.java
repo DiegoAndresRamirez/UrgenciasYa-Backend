@@ -47,6 +47,8 @@ public class EmergencyContactService implements IEmergencyContactModel {
         user.setEmergency(emergency);
         userRepository.save(user);
 
+
+
         return emergency;
     }
 
