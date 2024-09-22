@@ -196,7 +196,7 @@ public class UserController implements IModelUser {
     }
 
 
-    @GetMapping("/{id}")
+    @GetMapping("/get/{id}")
     @Operation(
             summary = "Retrieve a user by ID",
             description = "This endpoint allows you to obtain a specific user using their ID."
