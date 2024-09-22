@@ -37,6 +37,7 @@ public class SecurityConfig {
             "/swagger-resources/**",
             "/webjars/**",
             "/api/v1/hospitals/{id}",
+            "/api/v1/contacts/**"
     };
 
     private final String[] ADMIN_RESOURCES = {
