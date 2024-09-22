@@ -273,7 +273,7 @@ public class UserController implements IModelUser {
         }
     }
 
-    @PutMapping("/{id}/change-password")
+    @PutMapping("{id}/change-password")
     public ResponseEntity<?> changePassword(@PathVariable Long id, @RequestBody @Valid ChangePasswordDTO passwordChangeDTO) {
         try {
             userService.changePassword(id, passwordChangeDTO);
