@@ -234,7 +234,7 @@ public class UserController implements IModelUser {
     }
 
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     @Operation(
             summary = "Update an existing user",
             description = "This endpoint allows you to update an existing user using their ID and the information provided in the DTO."

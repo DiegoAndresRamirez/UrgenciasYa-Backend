@@ -55,6 +55,7 @@ public class SecurityConfig {
             "/api/v1/eps/{id}",
             "/get/{id}",
             "/{id}/change-password",
+            "/update/{id}",
             "/register",
             "/login"// Puedes dejarlo así si solo quieres que se permita un id específico
     };
