@@ -274,14 +274,32 @@ public class UserController implements IModelUser {
     }
 
     @PutMapping("{id}/change-password")
-    public ResponseEntity<?> changePassword(@PathVariable Long id, @RequestBody @Valid ChangePasswordDTO passwordChangeDTO) {
+    @Operation(summary = "Cambia la contraseña de un usuario",
+            description = "Este endpoint permite cambiar la contraseña del usuario especificado.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "Contraseña actualizada exitosamente",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ApiResponse.class))),
+            @ApiResponse(responseCode = "400",
+                    description = "Error de validación",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ApiResponse.class))),
+            @ApiResponse(responseCode = "500",
+                    description = "Error interno del servidor",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ApiResponse.class)))
+    })
+    public ResponseEntity<?> changePassword(@PathVariable Long id,
+                                            @RequestBody @Valid ChangePasswordDTO passwordChangeDTO) {
         try {
             userService.changePassword(id, passwordChangeDTO);
             return ResponseEntity.ok("Contraseña actualizada exitosamente");
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error cambiando la contraseña: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(e.getMessage());
         }
     }
 }
