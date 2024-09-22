@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EmergencyContactResponseDTO {
+    @Column(nullable = false)
     private Long id;
 
     @Column(nullable = false)

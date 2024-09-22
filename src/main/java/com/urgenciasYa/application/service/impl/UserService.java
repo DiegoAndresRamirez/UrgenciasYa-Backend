@@ -131,24 +131,29 @@ public class UserService implements IUserModel {
                     .name(epsExists.getName())
                     .build();
 
-            EmergencyContactResponseDTO emergencyContactResponseDTO = EmergencyContactResponseDTO.builder()
-                    .id(user.getEmergency().getId())
-                    .name(user.getEmergency().getName())
-                    .phone(user.getEmergency().getPhone())
-                    .build();
+            EmergencyContactResponseDTO emergencyContactResponseDTO = null; // Inicializamos como null
+
+            if (user.getEmergency() != null) { // Comprobamos si existe el contacto de emergencia
+                emergencyContactResponseDTO = EmergencyContactResponseDTO.builder()
+                        .id(user.getEmergency().getId())
+                        .name(user.getEmergency().getName())
+                        .phone(user.getEmergency().getPhone())
+                        .build();
+            }
 
             return UserRegisterDTO.builder()
                     .name(user.getName())
                     .email(user.getEmail())
                     .eps(epsUserResponseDTO)
                     .password(user.getPassword())
-                    .contact(emergencyContactResponseDTO)
+                    .contact(emergencyContactResponseDTO) // Puede ser null
                     .document(user.getDocument())
                     .build();
         } else {
             throw new IllegalArgumentException("Usuario con ID " + id + " no encontrado");
         }
     }
+
 
     @Override
     public UserEntity update(Long id, UserUpdateDTO userUpdateDTO) {
