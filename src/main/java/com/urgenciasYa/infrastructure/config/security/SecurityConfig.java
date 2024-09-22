@@ -55,9 +55,9 @@ public class SecurityConfig {
             "/api/v1/hospitals/{id}",
             "/api/v1/eps/getAll",
             "/api/v1/eps/{id}",
-            "/api/v1/get/{id}",
+            "/api/v1/users/{id}",
             "/api/v1/users/{id}/change-password",
-            "/update/{id}",
+            "/api/v1/users/update/{id}",
             "/api/v1/users/register",
             "/api/v1/users/login"// Puedes dejarlo así si solo quieres que se permita un id específico
     };
