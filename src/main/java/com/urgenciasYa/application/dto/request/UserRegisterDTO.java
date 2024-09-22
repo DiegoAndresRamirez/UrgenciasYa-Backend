@@ -1,5 +1,6 @@
 package com.urgenciasYa.application.dto.request;
 
+import com.urgenciasYa.application.dto.response.EmergencyContactResponseDTO;
 import com.urgenciasYa.application.dto.response.EpsResponseDTO;
 import com.urgenciasYa.application.dto.response.EpsUserResponseDTO;
 import jakarta.persistence.Column;
@@ -25,6 +26,7 @@ public class UserRegisterDTO {
     private EpsUserResponseDTO eps;
     @NotBlank(message = "Contraseña es requerida")
     private String password;
+    private EmergencyContactResponseDTO contact;
     @NotBlank(message = "Documento requerido")
     private String document;
 }

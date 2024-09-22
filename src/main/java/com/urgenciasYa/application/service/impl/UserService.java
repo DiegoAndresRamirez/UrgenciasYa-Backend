@@ -131,11 +131,18 @@ public class UserService implements IUserModel {
                     .name(epsExists.getName())
                     .build();
 
+            EmergencyContactResponseDTO emergencyContactResponseDTO = EmergencyContactResponseDTO.builder()
+                    .id(user.getEmergency().getId())
+                    .name(user.getEmergency().getName())
+                    .phone(user.getEmergency().getPhone())
+                    .build();
+
             return UserRegisterDTO.builder()
                     .name(user.getName())
                     .email(user.getEmail())
                     .eps(epsUserResponseDTO)
                     .password(user.getPassword())
+                    .contact(emergencyContactResponseDTO)
                     .document(user.getDocument())
                     .build();
         } else {
