@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Getter
@@ -24,6 +25,6 @@ public class HospitalCreateResponseDTO {
     private String howtogetthere;
     private Towns town_id; 
     private List<Eps> eps_id;
-    private Float latitude;
-    private Float longitude;
+    private BigDecimal latitude;
+    private BigDecimal longitude;
 }

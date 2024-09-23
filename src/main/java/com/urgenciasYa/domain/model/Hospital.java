@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 
@@ -42,8 +43,8 @@ public class Hospital {
     private Towns town_id;
     @OneToMany(mappedBy = "hospital")
     private List<HospitalEps> eps_id;
-    @Column(nullable = false)
-    private Float latitude;
-    @Column(nullable = false)
-    private Float longitude;
+    @Column(nullable = false,precision = 17,scale = 16)
+    private BigDecimal latitude;
+    @Column(nullable = false,precision = 18,scale = 16)
+    private BigDecimal longitude;
 }

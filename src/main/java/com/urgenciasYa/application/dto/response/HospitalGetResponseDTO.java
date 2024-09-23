@@ -5,6 +5,7 @@ import com.urgenciasYa.domain.model.HospitalEps;
 import com.urgenciasYa.domain.model.Towns;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 
@@ -25,6 +26,6 @@ public class HospitalGetResponseDTO {
     private String howtogetthere;
     private TownsDTO town_id;
     private List<String> eps_id;
-    private Float latitude;
-    private Float longitude;
+    private BigDecimal latitude;
+    private BigDecimal longitude;
 }

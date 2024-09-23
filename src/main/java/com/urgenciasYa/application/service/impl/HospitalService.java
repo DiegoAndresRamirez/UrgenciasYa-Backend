@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.urgenciasYa.domain.model.Eps;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -40,8 +41,8 @@ public class HospitalService implements IHospitalModel {
     public List<HospitalCardDTO> getHospitalsNearby(HospitalSearchRequestDTO requestDTO) {
         String epsName = requestDTO.getEps();
         String townName = requestDTO.getTown();
-        Double userLatitude = requestDTO.getLatitude(); // Cambiado a Double para poder ser null
-        Double userLongitude = requestDTO.getLongitude(); // Cambiado a Double para poder ser null
+        BigDecimal userLatitude = requestDTO.getLatitude(); // Cambiado a Double para poder ser null
+        BigDecimal userLongitude = requestDTO.getLongitude(); // Cambiado a Double para poder ser null
 
         // Encuentra los hospitales basados en EPS y town
         List<Hospital> hospitals = hospitalRepository.findByEpsNameAndTown(epsName, townName);
@@ -49,9 +50,19 @@ public class HospitalService implements IHospitalModel {
         if (userLatitude != null && userLongitude != null) {
             // Si latitud y longitud están disponibles, calcula la distancia
             hospitals.sort((h1, h2) -> {
-                double distanceToH1 = calculateDistance(userLatitude, userLongitude, h1.getLatitude(), h1.getLongitude());
-                double distanceToH2 = calculateDistance(userLatitude, userLongitude, h2.getLatitude(), h2.getLongitude());
-                return Double.compare(distanceToH1, distanceToH2);
+                BigDecimal distanceToH1 = calculateDistance(
+                        userLatitude,
+                        userLongitude,
+                        h1.getLatitude(),
+                        h1.getLongitude()
+                );
+                BigDecimal distanceToH2 = calculateDistance(
+                        userLatitude,
+                        userLongitude,
+                        h2.getLatitude(),
+                        h2.getLongitude()
+                );
+                return distanceToH1.compareTo(distanceToH2);
             });
         }
 
@@ -76,16 +87,20 @@ public class HospitalService implements IHospitalModel {
         }).collect(Collectors.toList());
     }
 
-    private double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
-        double dLat = Math.toRadians(lat2 - lat1);
-        double dLon = Math.toRadians(lon2 - lon1);
-        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
-                        Math.sin(dLon / 2) * Math.sin(dLon / 2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        return EARTH_RADIUS * c;
-    }
+    private BigDecimal calculateDistance(BigDecimal lat1, BigDecimal lon1, BigDecimal lat2, BigDecimal lon2) {
+        // Convertimos BigDecimal a double para el cálculo
+        double dLat = Math.toRadians(lat2.doubleValue() - lat1.doubleValue());
+        double dLon = Math.toRadians(lon2.doubleValue() - lon1.doubleValue());
 
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(Math.toRadians(lat1.doubleValue())) * Math.cos(Math.toRadians(lat2.doubleValue())) *
+                        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        // Calculamos la distancia y convertimos el resultado de nuevo a BigDecimal
+        return BigDecimal.valueOf(EARTH_RADIUS * c);
+    }
     @Override
     public Hospital create(HospitalCreateResponseDTO dto) {
         Hospital hospital = Hospital.builder()
@@ -235,7 +250,7 @@ public class HospitalService implements IHospitalModel {
         return hospitals;
     }
 
-    public Map<String, Integer> getConcurrencyProfileByHospital(Long hospitalId, String eps, String town, Double latitude, Double longitude) {
+    public Map<String, Integer> getConcurrencyProfileByHospital(Long hospitalId, String eps, String town, BigDecimal latitude, BigDecimal longitude) {
         HospitalSearchRequestDTO requestDTO = new HospitalSearchRequestDTO(eps, town, latitude, longitude);
         List<HospitalCardDTO> hospitals = getHospitalsNearby(requestDTO);
 
