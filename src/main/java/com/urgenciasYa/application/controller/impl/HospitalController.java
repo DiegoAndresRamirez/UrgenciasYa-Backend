@@ -21,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -56,8 +57,8 @@ public class HospitalController implements IModelHospital {
     public ResponseEntity<?> getHospitalByEpsAndTown(
             @RequestParam String eps,
             @RequestParam String town,
-            @RequestParam(required = false) Double latitude,
-            @RequestParam(required = false) Double longitude
+            @RequestParam(required = false) BigDecimal latitude,
+            @RequestParam(required = false) BigDecimal longitude
     ) {
         HospitalSearchRequestDTO requestDTO;
 
@@ -65,6 +66,7 @@ public class HospitalController implements IModelHospital {
             requestDTO = new HospitalSearchRequestDTO(eps, town, latitude, longitude);
         } else {
             requestDTO = new HospitalSearchRequestDTO(eps, town, null, null);
+
         }
 
         try {
