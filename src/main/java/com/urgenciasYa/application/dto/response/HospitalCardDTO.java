@@ -26,5 +26,7 @@ public class HospitalCardDTO {
     private String nameTown;
     private String nameEps;
     private Map<String, Integer> concurrencyProfile;
+    private double latitude;
+    private double longitude;
 
 }

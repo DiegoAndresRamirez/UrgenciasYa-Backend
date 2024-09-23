@@ -78,6 +78,8 @@ public class HospitalService implements IHospitalModel {
                 .nameTown(hospital.getTown_id().getName())
                 .nameEps(hospital.getEps_id().stream().map(hospitalEps -> hospitalEps.getEps().getName()).collect(Collectors.joining(", ")))
                 .concurrencyProfile(concurrencyProfile)
+                .latitude(hospital.getLatitude())
+                .longitude(hospital.getLongitude())
                 .build();
     }
 
@@ -182,6 +184,13 @@ public class HospitalService implements IHospitalModel {
             epsName.add(epsInstance.getName());;
         }
 
+        Map<String, Integer> concurrencyProfile = ConcurrencyAlgorithm.generateConcurrencyProfile(
+                hospitalExists.getMorning_peak(),
+                hospitalExists.getAfternoon_peak(),
+                hospitalExists.getNight_peak()
+        );
+
+
         HospitalGetResponseDTO hospitalGetResponseDTO = HospitalGetResponseDTO.builder()
                 .id(hospitalExists.getId())
                 .url_image(hospitalExists.getUrl_image())
@@ -196,6 +205,7 @@ public class HospitalService implements IHospitalModel {
                 .eps_id(epsName)
                 .latitude(hospitalExists.getLatitude())
                 .longitude(hospitalExists.getLongitude())
+                .concurrencyProfile(concurrencyProfile)
                 .build();
 
         return hospitalGetResponseDTO;

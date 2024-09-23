@@ -6,6 +6,7 @@ import com.urgenciasYa.domain.model.Towns;
 import lombok.*;
 
 import java.util.List;
+import java.util.Map;
 
 
 @Getter
@@ -25,6 +26,7 @@ public class HospitalGetResponseDTO {
     private String howtogetthere;
     private TownsDTO town_id;
     private List<String> eps_id;
+    private Map<String, Integer> concurrencyProfile;
     private Float latitude;
     private Float longitude;
 }
