@@ -55,14 +55,14 @@ public class HospitalController implements IModelHospital {
     @GetMapping("/filter")
     public ResponseEntity<?> getHospitalByEpsAndTown(
             @RequestParam String eps,
-            @RequestParam String town,
+            @RequestParam(required = false) String town,
             @RequestParam(required = false) Double latitude,
             @RequestParam(required = false) Double longitude
     ) {
         HospitalSearchRequestDTO requestDTO;
 
         if (latitude != null && longitude != null) {
-            requestDTO = new HospitalSearchRequestDTO(eps, town, latitude, longitude);
+            requestDTO = new HospitalSearchRequestDTO(eps, null, latitude, longitude); // Town es null
         } else {
             requestDTO = new HospitalSearchRequestDTO(eps, town, null, null);
         }
@@ -80,7 +80,6 @@ public class HospitalController implements IModelHospital {
             }
 
             return ResponseEntity.ok(hospitals);
-
         } catch (Exception e) {
             ErrorSimple error = ErrorSimple.builder()
                     .code(HttpStatus.INTERNAL_SERVER_ERROR.value())

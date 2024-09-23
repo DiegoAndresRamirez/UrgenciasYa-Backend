@@ -14,4 +14,7 @@ public interface HospitalRepository extends JpaRepository<Hospital, Long> {
     @Query("SELECT h FROM Hospital h JOIN h.eps_id he JOIN he.eps e JOIN h.town_id t WHERE e.name = :epsName AND t.name = :townName")
     List<Hospital> findByEpsNameAndTown(@Param("epsName") String epsName, @Param("townName") String townName);
 
+    @Query("SELECT h FROM Hospital h JOIN h.eps_id he WHERE he.eps.name = :epsName")
+    List<Hospital> findByEpsName(@Param("epsName") String epsName);
+
 }

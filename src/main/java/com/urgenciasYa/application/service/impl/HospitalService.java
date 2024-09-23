@@ -36,23 +36,27 @@ public class HospitalService implements IHospitalModel {
     private EpsRepository epsRepository;
 
     private static final double EARTH_RADIUS = 6371;
+    private static final double SOME_RADIUS = 10.0; // en kilómetros
+
 
     public List<HospitalCardDTO> getHospitalsNearby(HospitalSearchRequestDTO requestDTO) {
         String epsName = requestDTO.getEps();
-        String townName = requestDTO.getTown();
-        Double userLatitude = requestDTO.getLatitude(); // Cambiado a Double para poder ser null
-        Double userLongitude = requestDTO.getLongitude(); // Cambiado a Double para poder ser null
+        String townName = requestDTO.getTown(); // Puede ser null
+        Double userLatitude = requestDTO.getLatitude();
+        Double userLongitude = requestDTO.getLongitude();
 
-        // Encuentra los hospitales basados en EPS y town
-        List<Hospital> hospitals = hospitalRepository.findByEpsNameAndTown(epsName, townName);
+        List<Hospital> hospitals;
 
         if (userLatitude != null && userLongitude != null) {
-            // Si latitud y longitud están disponibles, calcula la distancia
-            hospitals.sort((h1, h2) -> {
-                double distanceToH1 = calculateDistance(userLatitude, userLongitude, h1.getLatitude(), h1.getLongitude());
-                double distanceToH2 = calculateDistance(userLatitude, userLongitude, h2.getLatitude(), h2.getLongitude());
-                return Double.compare(distanceToH1, distanceToH2);
-            });
+            // Busca hospitales por EPS y filtra por proximidad
+            hospitals = hospitalRepository.findByEpsName(epsName); // Primero, busca por EPS
+            // Aquí filtra hospitales por cercanía, puedes usar una función personalizada o lógica adicional.
+            hospitals = hospitals.stream()
+                    .filter(h -> calculateDistance(userLatitude, userLongitude, h.getLatitude(), h.getLongitude()) <= SOME_RADIUS) // Define tu radio
+                    .collect(Collectors.toList());
+        } else {
+            // Si no hay coordenadas, busca por EPS y town (si town está presente)
+            hospitals = townName != null ? hospitalRepository.findByEpsNameAndTown(epsName, townName) : hospitalRepository.findByEpsName(epsName);
         }
 
         return hospitals.stream().map(hospital -> {
