@@ -36,48 +36,49 @@ public class HospitalService implements IHospitalModel {
     private EpsRepository epsRepository;
 
     private static final double EARTH_RADIUS = 6371;
-    private static final double SOME_RADIUS = 10.0; // en kilómetros
-
+    private static final double SEARCH_RADIUS = 3.0; // en kilómetros
 
     public List<HospitalCardDTO> getHospitalsNearby(HospitalSearchRequestDTO requestDTO) {
         String epsName = requestDTO.getEps();
-        String townName = requestDTO.getTown(); // Puede ser null
+        String townName = requestDTO.getTown();
         Double userLatitude = requestDTO.getLatitude();
         Double userLongitude = requestDTO.getLongitude();
 
         List<Hospital> hospitals;
 
         if (userLatitude != null && userLongitude != null) {
-            // Busca hospitales por EPS y filtra por proximidad
-            hospitals = hospitalRepository.findByEpsName(epsName); // Primero, busca por EPS
-            // Aquí filtra hospitales por cercanía, puedes usar una función personalizada o lógica adicional.
+            hospitals = hospitalRepository.findByEpsName(epsName);
             hospitals = hospitals.stream()
-                    .filter(h -> calculateDistance(userLatitude, userLongitude, h.getLatitude(), h.getLongitude()) <= SOME_RADIUS) // Define tu radio
+                    .filter(h -> calculateDistance(userLatitude, userLongitude, h.getLatitude(), h.getLongitude()) <= SEARCH_RADIUS)
+                    .sorted(Comparator.comparingDouble(h -> calculateDistance(userLatitude, userLongitude, h.getLatitude(), h.getLongitude())))
                     .collect(Collectors.toList());
         } else {
-            // Si no hay coordenadas, busca por EPS y town (si town está presente)
             hospitals = townName != null ? hospitalRepository.findByEpsNameAndTown(epsName, townName) : hospitalRepository.findByEpsName(epsName);
         }
 
-        return hospitals.stream().map(hospital -> {
-            Map<String, Integer> concurrencyProfile = ConcurrencyAlgorithm.generateConcurrencyProfile(
-                    hospital.getMorning_peak(),
-                    hospital.getAfternoon_peak(),
-                    hospital.getNight_peak()
-            );
+        return hospitals.stream()
+                .map(this::mapToHospitalCardDTO)
+                .collect(Collectors.toList());
+    }
 
-            return HospitalCardDTO.builder()
-                    .id(hospital.getId())
-                    .url_image(hospital.getUrl_image())
-                    .phone_number(hospital.getPhone_number())
-                    .name(hospital.getName())
-                    .rating(hospital.getRating())
-                    .howtogetthere(hospital.getHowtogetthere())
-                    .nameTown(hospital.getTown_id().getName())
-                    .nameEps(hospital.getEps_id().stream().map(hospitalEps -> hospitalEps.getEps().getName()).collect(Collectors.joining(", ")))
-                    .concurrencyProfile(concurrencyProfile)
-                    .build();
-        }).collect(Collectors.toList());
+    private HospitalCardDTO mapToHospitalCardDTO(Hospital hospital) {
+        Map<String, Integer> concurrencyProfile = ConcurrencyAlgorithm.generateConcurrencyProfile(
+                hospital.getMorning_peak(),
+                hospital.getAfternoon_peak(),
+                hospital.getNight_peak()
+        );
+
+        return HospitalCardDTO.builder()
+                .id(hospital.getId())
+                .url_image(hospital.getUrl_image())
+                .phone_number(hospital.getPhone_number())
+                .name(hospital.getName())
+                .rating(hospital.getRating())
+                .howtogetthere(hospital.getHowtogetthere())
+                .nameTown(hospital.getTown_id().getName())
+                .nameEps(hospital.getEps_id().stream().map(hospitalEps -> hospitalEps.getEps().getName()).collect(Collectors.joining(", ")))
+                .concurrencyProfile(concurrencyProfile)
+                .build();
     }
 
     private double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
