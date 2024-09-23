@@ -36,7 +36,7 @@ public class HospitalController implements IModelHospital {
             description = "Fetches a list of hospitals that match the specified EPS, town, latitude, and longitude parameters. Returns a list of hospitals as cards with details.",
             parameters = {
                     @Parameter(name = "eps", description = "EPS code to filter hospitals", required = true),
-                    @Parameter(name = "town", description = "Town to filter hospitals", required = true),
+                    @Parameter(name = "town", description = "Town to filter hospitals", required = false), // Cambiado a false
                     @Parameter(name = "latitude", description = "Latitude for location-based search", required = false),
                     @Parameter(name = "longitude", description = "Longitude for location-based search", required = false)
             }
@@ -55,7 +55,7 @@ public class HospitalController implements IModelHospital {
     @GetMapping("/filter")
     public ResponseEntity<?> getHospitalByEpsAndTown(
             @RequestParam String eps,
-            @RequestParam(required = false) String town,
+            @RequestParam(required = false) String town, // No requerido
             @RequestParam(required = false) Double latitude,
             @RequestParam(required = false) Double longitude
     ) {
@@ -89,6 +89,7 @@ public class HospitalController implements IModelHospital {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
         }
     }
+
 
 
     @Operation(
