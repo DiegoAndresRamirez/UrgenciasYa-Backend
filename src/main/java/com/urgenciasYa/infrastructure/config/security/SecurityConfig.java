@@ -35,24 +35,24 @@ public class SecurityConfig {
             "/api/v1/eps/getAll",
             "/api/v1/hospitals/filter",
             "/swagger-ui.html",
-            "/swagger-ui/**",
-            "/v3/api-docs/**",
-            "/swagger-resources/**",
-            "/webjars/**",
-            "/api/v1/hospitals/{id}",
+            "/swagger-ui/",
+            "/v3/api-docs/",
+            "/swagger-resources/",
+            "/webjars/",
+            "/api/v1/hospitals/{id}"
     };
 
     private final String[] ADMIN_RESOURCES = {
-            "/api/v1/towns/**",
-            "/api/v1/eps/**",
-            "/api/v1/hospitals/**",
-            "/api/shifts/**",
+            "/api/v1/towns/",
+            "/api/v1/eps/",
+            "/api/v1/hospitals/",
+            "/api/shifts/",
             "/api/v1/users/register",
             "/api/v1/users/login"
     };
 
     private final String[] USER_RESOURCES = {
-            "/api/v1/contacts/**",
+            "/api/v1/contacts/{id}",
             "/api/v1/towns/getAll",
             "/api/v1/hospitals/filter",
             "/api/v1/hospitals/{id}",
@@ -62,7 +62,8 @@ public class SecurityConfig {
             "/api/v1/users/{id}/change-password",
             "/api/v1/users/update/{id}",
             "/api/v1/users/register",
-            "/api/v1/users/login"
+            "/api/v1/users/login",
+            "/api/v1/contacts/create/{userId}"
     };
 
     @Bean
