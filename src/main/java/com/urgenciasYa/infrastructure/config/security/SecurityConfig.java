@@ -71,7 +71,7 @@ public class SecurityConfig {
         http
                 .cors(cors -> cors.configurationSource(request -> {
                     var source = new org.springframework.web.cors.CorsConfiguration();
-                    source.setAllowedOrigins(List.of("http://localhost:3000")); // Agrega aquí tus orígenes permitidos
+                    source.setAllowedOrigins(List.of("https://urgenciasya-frontend-3.onrender.com")); // Agrega aquí tus orígenes permitidos
                     source.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                     source.setAllowedHeaders(List.of("Authorization", "Content-Type"));
                     return source;
