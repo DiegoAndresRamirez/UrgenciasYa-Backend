@@ -78,6 +78,7 @@ public class UserService implements IUserModel {
         if (authentication.isAuthenticated()) {
             LoginDTO loginDTO = LoginDTO.builder()
                     .id(userRepository.findByName(user.getName()).getId())
+                    .role_id(userRepository.findByName(user.getName()).getRole().getId())
                     .token(jwtService.generateToken(user.getName()))
                     .build();
             return loginDTO;

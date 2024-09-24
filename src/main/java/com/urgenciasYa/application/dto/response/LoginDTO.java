@@ -12,6 +12,8 @@ import lombok.Setter;
 public class LoginDTO {
     @NotBlank(message = "Id requerido")
     private Long id;
+    @NotBlank(message = "Id requerido")
+    private Long role_id;
     @NotBlank(message = "token es requerida")
     private String token;
 }
