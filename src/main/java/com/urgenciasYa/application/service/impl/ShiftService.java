@@ -2,6 +2,7 @@ package com.urgenciasYa.application.service.impl;
 
 import com.urgenciasYa.application.dto.request.EmergencyContactRequestDTO;
 import com.urgenciasYa.application.dto.response.*;
+import com.urgenciasYa.application.mappers.ShiftMapper;
 import com.urgenciasYa.application.service.IModel.IShiftModel;
 import com.urgenciasYa.domain.model.Eps;
 import com.urgenciasYa.domain.model.Hospital;
@@ -39,6 +40,9 @@ public class ShiftService implements IShiftModel {
 
     @Autowired
     private HospitalService hospitalService;
+
+    @Autowired
+    private ShiftMapper shiftMapper;
 
     @Override
     public Shift createShift(String document, Long hospitalId, Integer epsId) throws Exception {
@@ -95,6 +99,11 @@ public class ShiftService implements IShiftModel {
     }
 
     public UserShiftResponseDTO convertShiftToDTO(Shift shift) {
+
+        UserShiftResponseDTO userShiftResponseDTO = shiftMapper.shiftToUserShiftResponseDTO(shift);
+        return userShiftResponseDTO;
+
+        /*
         UserResponseDTO userDTO = UserResponseDTO.builder()
                 .id(shift.getUser().getId())
                 .name(shift.getUser().getName())
@@ -109,7 +118,9 @@ public class ShiftService implements IShiftModel {
                         .code(shift.getUser().getRole().getCode())
                         .build() : null)
                 .build();
+*/
 
+       /*
         return UserShiftResponseDTO.builder()
                 .id(shift.getId())
                 .shiftNumber(shift.getShiftNumber())
@@ -127,16 +138,18 @@ public class ShiftService implements IShiftModel {
                 .build();
     }
 
-
-    public List<UserShiftResponseDTO> getAllShiftsByUser(String document) throws Exception {
-        UserEntity user = userRepository.findByDocument(document);
-
-        List<Shift> shifts = shiftRepository.findByUser(user);
-
-        return shifts.stream()
-                .map(this::convertShiftToDTO)
-                .collect(Collectors.toList());
+        */
     }
 
 
-}
+        public List<UserShiftResponseDTO> getAllShiftsByUser (String document) throws Exception {
+            UserEntity user = userRepository.findByDocument(document);
+
+            List<Shift> shifts = shiftRepository.findByUser(user);
+
+            return shifts.stream()
+                    .map(this::convertShiftToDTO)
+                    .collect(Collectors.toList());
+        }
+
+    }
