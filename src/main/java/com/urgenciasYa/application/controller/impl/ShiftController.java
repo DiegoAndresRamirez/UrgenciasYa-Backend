@@ -1,9 +1,7 @@
 package com.urgenciasYa.application.controller.impl;
 
 import com.urgenciasYa.application.dto.request.EmergencyContactRequestDTO;
-import com.urgenciasYa.application.dto.response.RoleResponseDTO;
-import com.urgenciasYa.application.dto.response.UserResponseDTO;
-import com.urgenciasYa.application.dto.response.UserShiftResponseDTO;
+import com.urgenciasYa.application.dto.response.*;
 import com.urgenciasYa.application.exceptions.ErrorSimple;
 import com.urgenciasYa.domain.model.Shift;
 import com.urgenciasYa.application.service.impl.ShiftService;
@@ -77,8 +75,14 @@ public class ShiftController {
                     .estimatedTime(shift.getEstimatedTime())
                     .status(shift.getStatus().name())
                     .user(userDTO)
-                    .hospitalId(shift.getHospital().getId()) // Solo ID del hospital
-                    .epsId(shift.getEps().getId()) // Solo ID de la EPS
+                    .hospitalId(HospitalShiftResponseDTO.builder()
+                            .id(shift.getHospital().getId())
+                            .name(shift.getHospital().getName())
+                            .build())
+                    .epsId(EpsShiftResponseDTO.builder()
+                            .id(shift.getEps().getId())
+                            .name(shift.getEps().getName())
+                            .build()) // Solo ID de la EPS
                     .build();
 
             return ResponseEntity.status(HttpStatus.CREATED).body(shiftDTO);
