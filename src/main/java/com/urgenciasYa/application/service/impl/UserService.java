@@ -106,31 +106,25 @@ public class UserService implements IUserModel {
         if (optionalUser.isPresent()) {
             UserEntity user = optionalUser.get();
 
-            Eps epsExists = epsRepository.findByName(user.getEps());
+            // Usar el mapeador para convertir la entidad UserEntity a UserRegisterDTO
+            UserRegisterDTO userRegisterDTO = UserMapper.INSTANCE.userEntityToUserRegisterDTO(user);
 
-            EpsUserResponseDTO epsUserResponseDTO = EpsUserResponseDTO.builder()
+            // Establecer los campos adicionales
+            Eps epsExists = epsRepository.findByName(user.getEps());
+            userRegisterDTO.setEps(EpsUserResponseDTO.builder()
                     .id(epsExists.getId())
                     .name(epsExists.getName())
-                    .build();
+                    .build());
 
-            EmergencyContactResponseDTO emergencyContactResponseDTO = null; // Inicializamos como null
-
-            if (user.getEmergency() != null) { // Comprobamos si existe el contacto de emergencia
-                emergencyContactResponseDTO = EmergencyContactResponseDTO.builder()
+            if (user.getEmergency() != null) {
+                userRegisterDTO.setContact(EmergencyContactResponseDTO.builder()
                         .id(user.getEmergency().getId())
                         .name(user.getEmergency().getName())
                         .phone(user.getEmergency().getPhone())
-                        .build();
+                        .build());
             }
 
-            return UserRegisterDTO.builder()
-                    .name(user.getName())
-                    .email(user.getEmail())
-                    .eps(epsUserResponseDTO)
-                    .password(user.getPassword())
-                    .contact(emergencyContactResponseDTO) // Puede ser null
-                    .document(user.getDocument())
-                    .build();
+            return userRegisterDTO;
         } else {
             throw new IllegalArgumentException("Usuario con ID " + id + " no encontrado");
         }
