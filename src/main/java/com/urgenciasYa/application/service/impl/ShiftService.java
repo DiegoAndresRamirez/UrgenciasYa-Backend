@@ -134,7 +134,7 @@ public class ShiftService implements IShiftModel {
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new Exception("User not found"));
 
-        List<Shift> shifts = shiftRepository.findAllByUserId(user);
+        List<Shift> shifts = shiftRepository.findByUser(user);
 
         return shifts.stream()
                 .map(this::convertShiftToDTO)
