@@ -2,6 +2,7 @@ package com.urgenciasYa.application.service.impl;
 
 import com.urgenciasYa.application.dto.request.*;
 import com.urgenciasYa.application.dto.response.*;
+import com.urgenciasYa.application.mappers.UserMapper;
 import com.urgenciasYa.application.service.IModel.IUserModel;
 import com.urgenciasYa.domain.model.Eps;
 import com.urgenciasYa.domain.model.RoleEntity;
@@ -59,14 +60,10 @@ public class UserService implements IUserModel {
         RoleEntity defaultRole = roleRepository.findRoleByCode("USER")
                 .orElseThrow(() -> new RuntimeException("Rol 'USER' no encontrado."));
 
-        UserEntity user = UserEntity.builder()
-                .name(userRegisterDTO.getName())
-                .email(userRegisterDTO.getEmail())
-                .password(encoder.encode(userRegisterDTO.getPassword()))
-                .eps(epsExists.getName()) // Usar el nombre de EPS encontrado
-                .role(defaultRole)
-                .document(userRegisterDTO.getDocument())
-                .build();
+        UserEntity user = UserMapper.INSTANCE.userRegisterRequestDTOtoUserEntity(userRegisterDTO);
+        user.setEps(epsExists.getName()); // Usar el nombre de EPS encontrado
+        user.setRole(defaultRole);
+        user.setPassword(encoder.encode(userRegisterDTO.getPassword()));
 
         return userRepository.save(user);
     }
