@@ -175,6 +175,5 @@ public class UserService implements IUserModel {
         userRepository.save(user);
     }
 
-
 }
 
