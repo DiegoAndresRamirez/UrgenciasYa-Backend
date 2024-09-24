@@ -1,9 +1,7 @@
 package com.urgenciasYa.application.service.impl;
 
 import com.urgenciasYa.application.dto.request.EmergencyContactRequestDTO;
-import com.urgenciasYa.application.dto.response.RoleResponseDTO;
-import com.urgenciasYa.application.dto.response.UserResponseDTO;
-import com.urgenciasYa.application.dto.response.UserShiftResponseDTO;
+import com.urgenciasYa.application.dto.response.*;
 import com.urgenciasYa.application.service.IModel.IShiftModel;
 import com.urgenciasYa.domain.model.Eps;
 import com.urgenciasYa.domain.model.Hospital;
@@ -118,8 +116,14 @@ public class ShiftService implements IShiftModel {
                 .estimatedTime(shift.getEstimatedTime())
                 .status(shift.getStatus().name())
                 .user(userDTO)
-                .hospitalId(shift.getHospital().getId())
-                .epsId(shift.getEps().getId())
+                .hospitalId(HospitalShiftResponseDTO.builder()
+                        .id(shift.getHospital().getId())
+                        .name(shift.getHospital().getName())
+                        .build())
+                .epsId(EpsShiftResponseDTO.builder()
+                        .id(shift.getEps().getId())
+                        .name(shift.getEps().getName())
+                        .build())
                 .build();
     }
 

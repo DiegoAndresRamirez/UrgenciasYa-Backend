@@ -13,6 +13,6 @@ public class UserShiftResponseDTO {
     private LocalDateTime estimatedTime;
     private String status;
     private UserResponseDTO user; // Solo el usuario simplificado
-    private Long hospitalId; // Solo ID del hospital
-    private Integer epsId; // Solo ID de la EPS
+    private HospitalShiftResponseDTO hospitalId; // Solo ID del hospital
+    private EpsShiftResponseDTO epsId; // Solo ID de la EPS
 }
