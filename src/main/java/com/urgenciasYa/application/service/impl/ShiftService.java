@@ -123,12 +123,6 @@ public class ShiftService implements IShiftModel {
                 .build();
     }
 
-    public UserShiftResponseDTO getShiftById(Long id) throws Exception {
-        Shift shift = shiftRepository.findById(id)
-                .orElseThrow(() -> new Exception("Shift not found"));
-
-        return convertShiftToDTO(shift);
-    }
 
     public List<UserShiftResponseDTO> getAllShiftsByUser(Long userId) throws Exception {
         UserEntity user = userRepository.findById(userId)

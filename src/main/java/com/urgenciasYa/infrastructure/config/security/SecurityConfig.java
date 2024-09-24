@@ -46,7 +46,7 @@ public class SecurityConfig {
             "/api/v1/towns/**",
             "/api/v1/eps/**",
             "/api/v1/hospitals/**",
-            "/api/shifts/**",
+            "/api/v1/shifts/**",
             "/api/v1/users/register",
             "/api/v1/users/login"
     };
@@ -64,6 +64,8 @@ public class SecurityConfig {
             "/api/v1/users/register",
             "/api/v1/users/login",
             "/api/v1/contacts/create/{userId}",
+            "/api/v1/shifts/create",
+            "/api/v1/shifts/user/{document}",
     };
 
     @Bean
