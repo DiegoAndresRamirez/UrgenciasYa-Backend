@@ -18,6 +18,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/shifts")
 @CrossOrigin(origins = "https://urgenciasya-frontend-3.onrender.com")
@@ -94,6 +96,38 @@ public class ShiftController {
                     .message(e.getMessage())
                     .build();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorSimple);
+        } catch (Exception e) {
+            ErrorSimple errorSimple = ErrorSimple.builder()
+                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR.name())
+                    .message("Internal server error: " + e.getMessage())
+                    .build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorSimple);
+        }
+    }
+
+    @GetMapping("/user/{document}")
+    @Operation(
+            summary = "Get all shifts for a specific user",
+            description = "Retrieve all shifts associated with a specific user identified by their document number.",
+            tags = {"Shift"}
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Shifts retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "User or shifts not found"),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error")
+    })
+    public ResponseEntity<?> getAllShiftsByUser(@PathVariable String document) {
+        try {
+            List<UserShiftResponseDTO> shiftsDTO = shiftService.getAllShiftsByUser(document);
+            return ResponseEntity.ok(shiftsDTO);
+        } catch (IllegalArgumentException e) {
+            ErrorSimple errorSimple = ErrorSimple.builder()
+                    .code(HttpStatus.NOT_FOUND.value())
+                    .status(HttpStatus.NOT_FOUND.name())
+                    .message(e.getMessage())
+                    .build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorSimple);
         } catch (Exception e) {
             ErrorSimple errorSimple = ErrorSimple.builder()
                     .code(HttpStatus.INTERNAL_SERVER_ERROR.value())

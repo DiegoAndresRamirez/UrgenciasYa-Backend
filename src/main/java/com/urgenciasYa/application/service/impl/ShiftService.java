@@ -1,5 +1,9 @@
 package com.urgenciasYa.application.service.impl;
 
+import com.urgenciasYa.application.dto.request.EmergencyContactRequestDTO;
+import com.urgenciasYa.application.dto.response.RoleResponseDTO;
+import com.urgenciasYa.application.dto.response.UserResponseDTO;
+import com.urgenciasYa.application.dto.response.UserShiftResponseDTO;
 import com.urgenciasYa.application.service.IModel.IShiftModel;
 import com.urgenciasYa.domain.model.Eps;
 import com.urgenciasYa.domain.model.Hospital;
@@ -15,8 +19,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Service
 public class ShiftService implements IShiftModel {
@@ -89,4 +95,44 @@ public class ShiftService implements IShiftModel {
 
         return shiftRepository.save(shift);
     }
+
+    public UserShiftResponseDTO convertShiftToDTO(Shift shift) {
+        UserResponseDTO userDTO = UserResponseDTO.builder()
+                .id(shift.getUser().getId())
+                .name(shift.getUser().getName())
+                .eps(shift.getUser().getEps())
+                .email(shift.getUser().getEmail())
+                .document(shift.getUser().getDocument())
+                .emergency(shift.getUser().getEmergency() != null ? EmergencyContactRequestDTO.builder()
+                        .name(shift.getUser().getEmergency().getName())
+                        .phone(shift.getUser().getEmergency().getPhone())
+                        .build() : null)
+                .role(shift.getUser().getRole() != null ? RoleResponseDTO.builder()
+                        .code(shift.getUser().getRole().getCode())
+                        .build() : null)
+                .build();
+
+        return UserShiftResponseDTO.builder()
+                .id(shift.getId())
+                .shiftNumber(shift.getShiftNumber())
+                .estimatedTime(shift.getEstimatedTime())
+                .status(shift.getStatus().name())
+                .user(userDTO)
+                .hospitalId(shift.getHospital().getId())
+                .epsId(shift.getEps().getId())
+                .build();
+    }
+
+
+    public List<UserShiftResponseDTO> getAllShiftsByUser(String document) throws Exception {
+        UserEntity user = userRepository.findByDocument(document);
+
+        List<Shift> shifts = shiftRepository.findByUser(user);
+
+        return shifts.stream()
+                .map(this::convertShiftToDTO)
+                .collect(Collectors.toList());
+    }
+
+
 }
