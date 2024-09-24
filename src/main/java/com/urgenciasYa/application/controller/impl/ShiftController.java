@@ -117,9 +117,9 @@ public class ShiftController {
             @ApiResponse(responseCode = "404", description = "User or shifts not found"),
             @ApiResponse(responseCode = "500", description = "Internal Server Error")
     })
-    public ResponseEntity<?> getAllShiftsByUser(@PathVariable Long userId) {
+    public ResponseEntity<?> getAllShiftsByUser(@PathVariable String document) {
         try {
-            List<UserShiftResponseDTO> shiftsDTO = shiftService.getAllShiftsByUser(userId);
+            List<UserShiftResponseDTO> shiftsDTO = shiftService.getAllShiftsByUser(document);
             return ResponseEntity.ok(shiftsDTO);
         } catch (IllegalArgumentException e) {
             ErrorSimple errorSimple = ErrorSimple.builder()

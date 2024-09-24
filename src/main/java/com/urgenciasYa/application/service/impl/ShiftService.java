@@ -124,9 +124,8 @@ public class ShiftService implements IShiftModel {
     }
 
 
-    public List<UserShiftResponseDTO> getAllShiftsByUser(Long userId) throws Exception {
-        UserEntity user = userRepository.findById(userId)
-                .orElseThrow(() -> new Exception("User not found"));
+    public List<UserShiftResponseDTO> getAllShiftsByUser(String document) throws Exception {
+        UserEntity user = userRepository.findByDocument(document);
 
         List<Shift> shifts = shiftRepository.findByUser(user);
 
@@ -134,5 +133,6 @@ public class ShiftService implements IShiftModel {
                 .map(this::convertShiftToDTO)
                 .collect(Collectors.toList());
     }
+
 
 }
