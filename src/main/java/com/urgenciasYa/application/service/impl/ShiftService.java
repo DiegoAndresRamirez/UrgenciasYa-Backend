@@ -19,8 +19,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Service
 public class ShiftService implements IShiftModel {
@@ -119,6 +121,24 @@ public class ShiftService implements IShiftModel {
                 .hospitalId(shift.getHospital().getId())
                 .epsId(shift.getEps().getId())
                 .build();
+    }
+
+    public UserShiftResponseDTO getShiftById(Long id) throws Exception {
+        Shift shift = shiftRepository.findById(id)
+                .orElseThrow(() -> new Exception("Shift not found"));
+
+        return convertShiftToDTO(shift);
+    }
+
+    public List<UserShiftResponseDTO> getAllShiftsByUser(Long userId) throws Exception {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new Exception("User not found"));
+
+        List<Shift> shifts = shiftRepository.findAllByUserId(user);
+
+        return shifts.stream()
+                .map(this::convertShiftToDTO)
+                .collect(Collectors.toList());
     }
 
 }
