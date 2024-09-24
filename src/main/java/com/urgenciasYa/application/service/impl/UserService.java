@@ -73,10 +73,8 @@ public class UserService implements IUserModel {
     public LoginDTO verify(UserEntity user) {
         Authentication authentication = authManager.authenticate(new UsernamePasswordAuthenticationToken(user.getName(), user.getPassword()));
         if (authentication.isAuthenticated()) {
-            LoginDTO loginDTO = LoginDTO.builder()
-                    .id(userRepository.findByName(user.getName()).getId())
-                    .token(jwtService.generateToken(user.getName()))
-                    .build();
+            LoginDTO loginDTO = UserMapper.INSTANCE.userEntityToLoginDTO(user);
+            loginDTO.setToken(jwtService.generateToken(user.getName()));
             return loginDTO;
         } else {
             return LoginDTO.builder().build();
@@ -88,20 +86,7 @@ public class UserService implements IUserModel {
         List<UserEntity> users = userRepository.findAll();
 
         return users.stream()
-                .map(userEntity -> UserResponseDTO.builder()
-                        .id(userEntity.getId())
-                        .name(userEntity.getName())
-                        .eps(userEntity.getEps())
-                        .email(userEntity.getEmail())
-                        .document(userEntity.getDocument())
-                        .emergency(userEntity.getEmergency() != null ? EmergencyContactRequestDTO.builder()
-                                .name(userEntity.getEmergency().getName())
-                                .phone(userEntity.getEmergency().getPhone())
-                                .build() : null)
-                        .role(userEntity.getRole() != null ? RoleResponseDTO.builder()
-                                .code(userEntity.getRole().getCode())
-                                .build() : null)
-                        .build())
+                .map(UserMapper.INSTANCE::userEntityToUserResponseDTO)
                 .collect(Collectors.toList());
     }
 
