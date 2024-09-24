@@ -1,5 +1,9 @@
 package com.urgenciasYa.application.service.impl;
 
+import com.urgenciasYa.application.dto.request.EmergencyContactRequestDTO;
+import com.urgenciasYa.application.dto.response.RoleResponseDTO;
+import com.urgenciasYa.application.dto.response.UserResponseDTO;
+import com.urgenciasYa.application.dto.response.UserShiftResponseDTO;
 import com.urgenciasYa.application.service.IModel.IShiftModel;
 import com.urgenciasYa.domain.model.Eps;
 import com.urgenciasYa.domain.model.Hospital;
@@ -89,4 +93,32 @@ public class ShiftService implements IShiftModel {
 
         return shiftRepository.save(shift);
     }
+
+    public UserShiftResponseDTO convertShiftToDTO(Shift shift) {
+        UserResponseDTO userDTO = UserResponseDTO.builder()
+                .id(shift.getUser().getId())
+                .name(shift.getUser().getName())
+                .eps(shift.getUser().getEps())
+                .email(shift.getUser().getEmail())
+                .document(shift.getUser().getDocument())
+                .emergency(shift.getUser().getEmergency() != null ? EmergencyContactRequestDTO.builder()
+                        .name(shift.getUser().getEmergency().getName())
+                        .phone(shift.getUser().getEmergency().getPhone())
+                        .build() : null)
+                .role(shift.getUser().getRole() != null ? RoleResponseDTO.builder()
+                        .code(shift.getUser().getRole().getCode())
+                        .build() : null)
+                .build();
+
+        return UserShiftResponseDTO.builder()
+                .id(shift.getId())
+                .shiftNumber(shift.getShiftNumber())
+                .estimatedTime(shift.getEstimatedTime())
+                .status(shift.getStatus().name())
+                .user(userDTO)
+                .hospitalId(shift.getHospital().getId())
+                .epsId(shift.getEps().getId())
+                .build();
+    }
+
 }
