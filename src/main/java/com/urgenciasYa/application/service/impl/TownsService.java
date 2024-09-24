@@ -1,6 +1,7 @@
 package com.urgenciasYa.application.service.impl;
 
 import com.urgenciasYa.application.dto.request.TownCreateDTO;
+import com.urgenciasYa.application.mappers.TownMapper;
 import com.urgenciasYa.domain.model.Towns;
 import com.urgenciasYa.infrastructure.persistence.TownsRepository;
 import com.urgenciasYa.application.service.IModel.ITownsModel;
@@ -17,6 +18,9 @@ public class TownsService implements ITownsModel {
     @Autowired
     TownsRepository townsRepository;
 
+    @Autowired
+    TownMapper townMapper;
+
     @Override
     public List<Towns> readALl() {
         return townsRepository.findAll();
@@ -27,8 +31,10 @@ public class TownsService implements ITownsModel {
             if(townsRepository.existsByName(entity.getName())){
                 throw new IllegalArgumentException("El municipio ya existe en la base de datos");
             }
-        Towns town = new Towns();
-        town.setName(entity.getName());
+       // Towns town = new Towns();
+       // town.setName(entity.getName());
+
+        Towns town = townMapper.createDTOToTown(entity);
 
         return townsRepository.save(town);
     }
