@@ -136,17 +136,22 @@ public class UserService implements IUserModel {
         UserEntity existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Usuario con ID " + id + " no encontrado"));
 
-        // Usar el EPS del DTO
-        String epsName = userUpdateDTO.getEps().getName();
+        // Usar el mapeador para convertir el UserUpdateDTO a la entidad UserEntity
+        UserEntity updatedUser = UserMapper.INSTANCE.userUpdateDTOToUserEntity(userUpdateDTO);
+
+        // Establecer los campos adicionales
+        String epsName = updatedUser.getEps();
         Eps epsExists = epsRepository.findByName(epsName);
         if (epsExists == null) {
             throw new IllegalArgumentException("La EPS no existe");
         }
+        updatedUser.setEps(epsExists.getName());
 
-        existingUser.setName(userUpdateDTO.getName());
-        existingUser.setEmail(userUpdateDTO.getEmail());
-        existingUser.setEps(epsExists.getName());
-        existingUser.setDocument(userUpdateDTO.getDocument());
+        // Actualizar los campos en la entidad existente
+        existingUser.setName(updatedUser.getName());
+        existingUser.setEmail(updatedUser.getEmail());
+        existingUser.setEps(updatedUser.getEps());
+        existingUser.setDocument(updatedUser.getDocument());
 
         return userRepository.save(existingUser);
     }
