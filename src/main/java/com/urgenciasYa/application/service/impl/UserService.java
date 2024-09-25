@@ -11,6 +11,8 @@ import com.urgenciasYa.infrastructure.persistence.EpsRepository;
 import com.urgenciasYa.infrastructure.persistence.RoleRepository;
 import com.urgenciasYa.infrastructure.persistence.UserRepository;
 import jakarta.transaction.Transactional;
+import org.apache.catalina.User;
+import org.mapstruct.control.MappingControl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,6 +20,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -39,6 +42,9 @@ public class UserService implements IUserModel {
 
     @Autowired
     EpsRepository epsRepository;
+
+    @Autowired
+    UserMapper userMapper;
 
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
@@ -87,23 +93,23 @@ public class UserService implements IUserModel {
     @Override
     public List<UserResponseDTO> readAll() {
         List<UserEntity> users = userRepository.findAll();
+        List<UserResponseDTO> userResponseDTOS = new ArrayList<>();
 
-        return users.stream()
-                .map(userEntity -> UserResponseDTO.builder()
-                        .id(userEntity.getId())
-                        .name(userEntity.getName())
-                        .eps(userEntity.getEps())
-                        .email(userEntity.getEmail())
-                        .document(userEntity.getDocument())
-                        .emergency(userEntity.getEmergency() != null ? EmergencyContactRequestDTO.builder()
-                                .name(userEntity.getEmergency().getName())
-                                .phone(userEntity.getEmergency().getPhone())
-                                .build() : null)
-                        .role(userEntity.getRole() != null ? RoleResponseDTO.builder()
-                                .code(userEntity.getRole().getCode())
-                                .build() : null)
-                        .build())
-                .collect(Collectors.toList());
+        users.forEach(e -> {
+                    UserResponseDTO userResponse = userMapper.userEntityToUserResponseDTO(e);
+                    userResponse.setEmergency(e.getEmergency() != null ? EmergencyContactRequestDTO.builder()
+                                .name(e.getEmergency().getName())
+                                .phone(e.getEmergency().getPhone())
+                                .build() : null);
+                    userResponse.setRole(e.getRole() != null ? RoleResponseDTO.builder()
+                            .code(e.getRole().getCode())
+                            .build() : null);
+                    userResponseDTOS.add(userResponse);
+        }
+
+                );
+
+        return userResponseDTOS;
     }
 
     @Override
