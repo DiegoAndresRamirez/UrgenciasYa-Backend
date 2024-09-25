@@ -32,7 +32,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1/users")
 @Tag(name = "User")
-@CrossOrigin(origins = "https://localhost:3000")
+@CrossOrigin(origins = "https://urgenciasya-frontend-3.onrender.com")
 public class UserController implements IModelUser {
 
     @Autowired

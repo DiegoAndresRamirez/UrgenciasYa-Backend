@@ -65,7 +65,7 @@ public class SecurityConfig {
             "/api/v1/users/update/{id}",
             "/api/v1/users/register",
             "/api/v1/users/login",
-            "/api/v1/users/",
+            "/api/v1/users",
             "/api/v1/contacts/create/{userId}",
             "/api/v1/shifts/create",
             "/api/v1/shifts/user/{document}",
@@ -77,7 +77,7 @@ public class SecurityConfig {
         http
                 .cors(cors -> cors.configurationSource(request -> {
                     var source = new org.springframework.web.cors.CorsConfiguration();
-                    source.setAllowedOrigins(List.of("http://localhost:3000")); // Agrega aquí tus orígenes permitidos
+                    source.setAllowedOrigins(List.of("https://urgenciasya-frontend-3.onrender.com")); // Agrega aquí tus orígenes permitidos
                     source.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                     source.setAllowedHeaders(List.of("Authorization", "Content-Type"));
                     return source;

@@ -24,7 +24,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/shifts")
-@CrossOrigin(origins = "https://localhost:3000")
+@CrossOrigin(origins = "https://urgenciasya-frontend-3.onrender.com")
 public class ShiftController {
 
     @Autowired
