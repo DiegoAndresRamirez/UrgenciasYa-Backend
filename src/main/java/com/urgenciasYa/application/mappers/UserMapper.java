@@ -20,20 +20,13 @@ public interface UserMapper {
 
     UserEntity userRegisterRequestDTOtoUserEntity(UserRegisterRequestDTO userRegisterRequestDTO);
 
-//    @Mapping(source = "id", target = "id")
-//    @Mapping(source = "role.id", target = "role_id")
-//    @Mapping(target = "token", ignore = true) // El token se generará en el servicio
-//    LoginDTO userEntityToLoginDTO(UserEntity user);
-
 //    UserResponseDTO userEntityToUserResponseDTO(UserEntity userEntity);
 
-    UserRegisterDTO userEntityToUserRegisterDTO(UserEntity userEntity);
-
-    UserEntity userUpdateDTOToUserEntity(UserUpdateDTO userUpdateDTO);
+//    UserRegisterDTO userEntityToUserRegisterDTO(UserEntity userEntity);
+//
+//    UserEntity userUpdateDTOToUserEntity(UserUpdateDTO userUpdateDTO);
 
     String epsResponseDTOToUserEntity(EpsResponseDTO epsResponseDTO);
-
-//    Long roleEntityToLong(RoleEntity roleEntity);
 
     UserResponseDTO userEntityToUserResponseDTO(UserEntity user);
 
