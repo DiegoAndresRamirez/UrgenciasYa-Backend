@@ -25,7 +25,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,16 +36,20 @@ import java.util.Map;
 public class UserController implements IModelUser {
 
     @Autowired
-    UserService userService;
+    UserService userService; // Service handling user-related logic.
     @Autowired
-    private UserRepository userRepository;
+    private UserRepository userRepository; // Repository for accessing the user database.
+
 
     @Autowired
-    private JWTService jwtService;
+    private JWTService jwtService; // Service for generating and handling JWT tokens.
 
     @Autowired
-    private MyUserDetailsService userDetailsService;
+    private MyUserDetailsService userDetailsService; // Service for loading user details.
 
+    /*
+     * Endpoint to register a new user.
+     */
 
     @PostMapping("/register")
     @Operation(
@@ -67,7 +70,7 @@ public class UserController implements IModelUser {
     public ResponseEntity<?> create(
             @Parameter(description = "Information of the new user") @RequestBody @Valid UserRegisterRequestDTO userRegisterDTO) {
         try {
-            userService.create(userRegisterDTO);
+            userService.create(userRegisterDTO); // Logic for creating the new user.
             SuccessResponse successResponse = SuccessResponse.builder()
                     .code(HttpStatus.CREATED.value())
                     .status(HttpStatus.CREATED.name())
@@ -75,6 +78,7 @@ public class UserController implements IModelUser {
                     .build();
             return ResponseEntity.status(HttpStatus.CREATED).body(successResponse);
         } catch (IllegalArgumentException exception) {
+            // Handling exceptions when input data is invalid.
             ErrorSimple errorSimple = ErrorSimple.builder()
                     .code(HttpStatus.BAD_REQUEST.value())
                     .status(HttpStatus.BAD_REQUEST.name())
@@ -82,6 +86,7 @@ public class UserController implements IModelUser {
                     .build();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorSimple);
         } catch (Exception exception) {
+            // Handling unexpected errors during user creation.
             ErrorSimple errorSimple = ErrorSimple.builder()
                     .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
                     .status(HttpStatus.INTERNAL_SERVER_ERROR.name())
@@ -91,7 +96,9 @@ public class UserController implements IModelUser {
         }
     }
 
-
+    /*
+     * Endpoint to authenticate a user.
+     */
 
 
     @PostMapping("/login")
@@ -114,12 +121,15 @@ public class UserController implements IModelUser {
             @Parameter(description = "User credentials") @RequestBody LoginRequestDTO loginRequestDTO) {
         try {
             UserEntity userEntity = new UserEntity();
+            // Retrieve user by email and set the credentials.
             userEntity.setName(userRepository.findByEmail(loginRequestDTO.getEmail()).getName());
             userEntity.setPassword(loginRequestDTO.getPassword());
 
+            // Verify user credentials and return login data.
             LoginDTO loginDTO = userService.verify(userEntity);
             return ResponseEntity.status(HttpStatus.OK).body(loginDTO);
         } catch (Exception e) {
+            // Handle authentication failure.
             ErrorSimple errorSimple = ErrorSimple.builder()
                     .code(HttpStatus.UNAUTHORIZED.value())
                     .status(HttpStatus.UNAUTHORIZED.name())
@@ -129,6 +139,9 @@ public class UserController implements IModelUser {
         }
     }
 
+    /*
+     * Endpoint to retrieve all users.
+     */
 
     @GetMapping
     @Operation(
@@ -146,9 +159,11 @@ public class UserController implements IModelUser {
     })
     public ResponseEntity<?> getAll() {
         try {
+            // Retrieve all users using the service.
             List<UserResponseDTO> users = userService.readAll();
             return ResponseEntity.ok(users);
         } catch (Exception e) {
+            // Handle error while fetching users.
             ErrorSimple errorSimple = ErrorSimple.builder()
                     .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
                     .status(HttpStatus.INTERNAL_SERVER_ERROR.name())
@@ -158,7 +173,9 @@ public class UserController implements IModelUser {
         }
     }
 
-
+    /*
+     * Endpoint to delete a user by their ID.
+     */
 
     @DeleteMapping("/{id}")
     @Operation(
@@ -176,9 +193,10 @@ public class UserController implements IModelUser {
     })
     public ResponseEntity<?> delete(@PathVariable Long id) {
         try {
-            userService.delete(id);
+            userService.delete(id); // Delete user by ID.
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } catch (RuntimeException e) {
+            // Handle case where user is not found.
             ErrorSimple errorSimple = ErrorSimple.builder()
                     .code(HttpStatus.NOT_FOUND.value())
                     .status(HttpStatus.NOT_FOUND.name())
@@ -186,6 +204,7 @@ public class UserController implements IModelUser {
                     .build();
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorSimple);
         } catch (Exception e) {
+            // Handle any other errors.
             ErrorSimple errorSimple = ErrorSimple.builder()
                     .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
                     .status(HttpStatus.INTERNAL_SERVER_ERROR.name())

@@ -17,9 +17,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.stream.Collectors;
+
+/*
+ * EpsController is a REST controller responsible for managing EPS (Entidad Promotora de Salud) entities.
+ * This class provides endpoints for creating, retrieving, updating, and deleting EPS entries.
+ *
+ * <p>Endpoints include:</p>
+ * <ul>
+ *     <li><b>GET /api/v1/eps/getAll</b> - Retrieve all EPS entities.</li>
+ *     <li><b>GET /api/v1/eps/{id}</b> - Retrieve a specific EPS entity by its ID.</li>
+ *     <li><b>POST /api/v1/eps</b> - Create a new EPS entity.</li>
+ *     <li><b>DELETE /api/v1/eps/delete/{id}</b> - Delete an EPS entity by its ID.</li>
+ *     <li><b>PUT /api/v1/eps/{id}</b> - Update an existing EPS entity.</li>
+ * </ul>
+ *
+ * <p>This controller ensures proper error handling and responds with appropriate HTTP status codes
+ * and messages for each operation.</p>
+ */
 
 @RestController
 @RequestMapping("/api/v1/eps")
@@ -28,6 +44,8 @@ public class EpsController implements IModelEps {
 
     @Autowired
     IEpsModel epsService;
+
+    //Retrieves a list of all EPS entities.
 
     @GetMapping("/getAll")
     @Operation(
@@ -363,6 +381,7 @@ public class EpsController implements IModelEps {
     })
     public ResponseEntity<?> update(@RequestBody @Valid Eps eps, @PathVariable Integer id) {
         try {
+            //Updates an existing EPS entity with the provided details.
             epsService.update(id, eps);
             SuccessResponse successResponse = SuccessResponse.builder()
                     .code(HttpStatus.OK.value())

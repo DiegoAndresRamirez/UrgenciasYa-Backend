@@ -6,7 +6,6 @@ import com.urgenciasYa.domain.model.Towns;
 import com.urgenciasYa.infrastructure.persistence.TownsRepository;
 import com.urgenciasYa.application.service.IModel.ITownsModel;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

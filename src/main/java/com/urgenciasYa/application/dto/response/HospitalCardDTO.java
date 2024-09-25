@@ -9,6 +9,12 @@ import lombok.Setter;
 
 import java.util.Map;
 
+/*
+ * Data Transfer Object (DTO) representing a Hospital's summary card.
+ * It contains essential information about a hospital such as its ID, image URL, contact details, name,
+ * rating, location, associated town, EPS, and concurrency profile.
+ */
+
 @Builder
 @Getter
 @Setter

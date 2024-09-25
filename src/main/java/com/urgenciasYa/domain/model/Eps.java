@@ -5,10 +5,9 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.util.List;
-import java.util.Set;
 
+// Entity representing a health insurance company (EPS)
 @Entity
 @Data
 @NoArgsConstructor
@@ -21,6 +20,6 @@ public class Eps {
     private Integer id;
     @Column(nullable = false)
     private String name;
-    @OneToMany(mappedBy = "eps")
-    private List<HospitalEps> hospitalsEps;
+    @OneToMany(mappedBy = "eps") // Defines a one-to-many relationship with HospitalEps
+    private List<HospitalEps> hospitalsEps; // List of hospitals associated with this health insurance company
 }

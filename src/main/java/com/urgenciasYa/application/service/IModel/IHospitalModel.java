@@ -5,7 +5,18 @@ import com.urgenciasYa.application.dto.response.HospitalGetResponseDTO;
 import com.urgenciasYa.application.service.crud.*;
 import com.urgenciasYa.domain.model.Hospital;
 
-public interface IHospitalModel extends CreateDTO<HospitalCreateResponseDTO, Hospital>, Delete<Long>, ReadById<HospitalGetResponseDTO, Long>, ReadAll<HospitalGetResponseDTO> {
+/*
+ * Interface for operations related to Hospital management.
+ * This interface defines the contract for CRUD operations on Hospital entities.
+ */
+
+public interface IHospitalModel extends
+        CreateDTO<HospitalCreateResponseDTO, Hospital>, // For creating a Hospital
+        Delete<Long>, // For deleting a Hospital by its ID
+        ReadById<HospitalGetResponseDTO, Long>, // For retrieving a Hospital by its ID
+        ReadAll<HospitalGetResponseDTO> { // For retrieving all Hospitals
+
+    // Updates an existing Hospital entity with new information.
     Hospital update (Long id, HospitalCreateResponseDTO entity);
 
 }

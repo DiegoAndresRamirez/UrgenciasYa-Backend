@@ -6,7 +6,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
-
 import java.time.LocalDateTime;
 
 @Getter
@@ -36,17 +35,17 @@ public class Shift {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    @JsonIgnore // Omitir el objeto completo en la serialización
+    @JsonIgnore  // Ignores this field during JSON serialization to prevent circular references
     private UserEntity user;
 
     @ManyToOne
     @JoinColumn(name = "hospital_id", nullable = false)
-    @JsonIgnore // Omitir el objeto completo en la serialización
+    @JsonIgnore  // Ignores this field during JSON serialization to prevent circular references
     private Hospital hospital;
 
     @ManyToOne
     @JoinColumn(name = "eps_id", nullable = false)
-    @JsonIgnore // Omitir el objeto completo en la serialización
+    @JsonIgnore // Ignores this field during JSON serialization to prevent circular references
     private Eps eps;
 
 }
