@@ -13,7 +13,6 @@ import com.urgenciasYa.infrastructure.persistence.HospitalEpsRepository;
 import com.urgenciasYa.infrastructure.persistence.HospitalRepository;
 import com.urgenciasYa.application.service.IModel.IHospitalModel;
 import com.urgenciasYa.common.utils.ConcurrencyAlgorithm;
-import com.urgenciasYa.infrastructure.persistence.TownsRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,23 +25,24 @@ import java.util.stream.Collectors;
 public class HospitalService implements IHospitalModel {
 
     @Autowired
-    private HospitalRepository hospitalRepository;
+    private HospitalRepository hospitalRepository; // Injects the Hospital repository to interact with the database
 
     @Autowired
-    private HospitalEpsRepository hospitalEpsRepository;
+    private HospitalEpsRepository hospitalEpsRepository; // Injects the HospitalEps repository for managing hospital-EPS relationships
 
     @Autowired
-    private EpsRepository epsRepository;
+    private EpsRepository epsRepository; // Injects the EPS repository to fetch EPS details
 
     @Autowired
-    private HospitalMapper hospitalMapper;
+    private HospitalMapper hospitalMapper; // Injects the mapper to convert entities to DTOs and vice versa
 
     @Autowired
-    private HospitalHelperMapper hospitalHelperMapper;
+    private HospitalHelperMapper hospitalHelperMapper; // Injects a helper mapper for additional hospital mapping operations
 
-    private static final double EARTH_RADIUS = 6371;
-    private static final double SEARCH_RADIUS = 3.0; // en kilómetros
+    private static final double EARTH_RADIUS = 6371; // Earth's radius in kilometers for distance calculation
+    private static final double SEARCH_RADIUS = 3.0; // Maximum search radius in kilometers for nearby hospitals
 
+    // Method to find hospitals nearby based on EPS, town, and user location
     public List<HospitalCardDTO> getHospitalsNearby(HospitalSearchRequestDTO requestDTO) {
         String epsName = requestDTO.getEps();
         String townName = requestDTO.getTown();
@@ -51,21 +51,23 @@ public class HospitalService implements IHospitalModel {
 
         List<Hospital> hospitals;
 
+        // If the user's location is provided, filter hospitals by distance
         if (userLatitude != null && userLongitude != null) {
-            hospitals = hospitalRepository.findByEpsName(epsName);
+            hospitals = hospitalRepository.findByEpsName(epsName); // Fetch hospitals by EPS
             hospitals = hospitals.stream()
                     .filter(h -> calculateDistance(userLatitude, userLongitude, h.getLatitude(), h.getLongitude()) <= SEARCH_RADIUS)
                     .sorted(Comparator.comparingDouble(h -> calculateDistance(userLatitude, userLongitude, h.getLatitude(), h.getLongitude())))
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toList()); // Filter and sort hospitals by proximity
         } else {
-            hospitals = townName != null ? hospitalRepository.findByEpsNameAndTown(epsName, townName) : hospitalRepository.findByEpsName(epsName);
+            hospitals = townName != null ? hospitalRepository.findByEpsNameAndTown(epsName, townName) : hospitalRepository.findByEpsName(epsName); // Fetch hospitals by EPS and town
         }
 
         return hospitals.stream()
-                .map(this::mapToHospitalCardDTO)
+                .map(this::mapToHospitalCardDTO) // Convert each hospital to a DTO
                 .collect(Collectors.toList());
     }
 
+    // Maps a Hospital entity to a HospitalCardDTO and adds concurrency data
     private HospitalCardDTO mapToHospitalCardDTO(Hospital hospital) {
         Map<String, Integer> concurrencyProfile = ConcurrencyAlgorithm.generateConcurrencyProfile(
                 hospital.getMorning_peak(),
@@ -73,12 +75,12 @@ public class HospitalService implements IHospitalModel {
                 hospital.getNight_peak()
         );
 
-        HospitalCardDTO cardDTO = hospitalHelperMapper.hospitalToHospitalCardDTO(hospital);
-        cardDTO.setConcurrencyProfile(concurrencyProfile);
+        HospitalCardDTO cardDTO = hospitalHelperMapper.hospitalToHospitalCardDTO(hospital); // Convert hospital to DTO
+        cardDTO.setConcurrencyProfile(concurrencyProfile); // Add concurrency profile to DTO
         return cardDTO;
     }
 
-
+    // Calculates the distance between two geographical points using the Haversine formula
     private double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
         double dLat = Math.toRadians(lat2 - lat1);
         double dLon = Math.toRadians(lon2 - lon1);
@@ -86,145 +88,127 @@ public class HospitalService implements IHospitalModel {
                 Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
                         Math.sin(dLon / 2) * Math.sin(dLon / 2);
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        return EARTH_RADIUS * c;
+        return EARTH_RADIUS * c; // Returns the distance in kilometers
     }
 
+    // Creates a new hospital and its associated EPS records
     @Override
     public Hospital create(HospitalCreateResponseDTO dto) {
-        // Mapeo de DTO a Hospital
-        Hospital hospital = hospitalHelperMapper.toHospital(dto);
+        Hospital hospital = hospitalHelperMapper.toHospital(dto); // Convert DTO to Hospital entity
+        Hospital savedHospital = hospitalRepository.save(hospital); // Save the hospital in the database
 
-        // Guardar el hospital en la base de datos
-        Hospital savedHospital = hospitalRepository.save(hospital);
-
-        // Crear la lista de HospitalEps
         List<HospitalEps> hospitalEpsList = dto.getEps_id().stream()
                 .map(eps -> {
                     Eps epsEntity = epsRepository.findById(eps.getId())
-                            .orElseThrow(() -> new RuntimeException("EPS not found with ID: " + eps.getId()));
-                    return new HospitalEps(new HospitalEpsId(savedHospital.getId(), eps.getId()), savedHospital, epsEntity);
+                            .orElseThrow(() -> new RuntimeException("EPS not found with ID: " + eps.getId())); // Fetch EPS entity or throw an error if not found
+                    return new HospitalEps(new HospitalEpsId(savedHospital.getId(), eps.getId()), savedHospital, epsEntity); // Create a HospitalEps record
                 })
                 .collect(Collectors.toList());
 
-        // Guardar la lista de HospitalEps
-        hospitalEpsRepository.saveAll(hospitalEpsList);
-
+        hospitalEpsRepository.saveAll(hospitalEpsList); // Save the hospital-EPS associations
         return savedHospital;
     }
 
+    // Updates an existing hospital and its associated EPS records
     @Override
     public Hospital update(Long id, HospitalCreateResponseDTO dto) {
-        // Buscar el hospital existente
         Hospital existingHospital = hospitalRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Hospital with id " + id + " not found"));
+                .orElseThrow(() -> new RuntimeException("Hospital with id " + id + " not found")); // Fetch existing hospital or throw error
 
-        // Usar el mapeador para actualizar los atributos del hospital existente
-        hospitalHelperMapper.hospitalCreateResponseDTOtoHospital(dto, existingHospital);
+        hospitalHelperMapper.hospitalCreateResponseDTOtoHospital(dto, existingHospital); // Update hospital attributes
+        Hospital updatedHospital = hospitalRepository.save(existingHospital); // Save the updated hospital
 
-        // Guardar el hospital actualizado en la base de datos
-        Hospital updatedHospital = hospitalRepository.save(existingHospital);
-
-        // Manejo de HospitalEps
-        Set<HospitalEps> existingHospitalEps = new HashSet<>(hospitalEpsRepository.findAllByHospitalId(id));
+        Set<HospitalEps> existingHospitalEps = new HashSet<>(hospitalEpsRepository.findAllByHospitalId(id)); // Fetch current EPS associations
 
         Set<HospitalEps> newHospitalEps = dto.getEps_id().stream()
                 .map(eps -> {
                     Eps epsEntity = epsRepository.findById(eps.getId())
-                            .orElseThrow(() -> new RuntimeException("EPS not found with ID: " + eps.getId()));
-                    return new HospitalEps(new HospitalEpsId(id, eps.getId()), updatedHospital, epsEntity);
+                            .orElseThrow(() -> new RuntimeException("EPS not found with ID: " + eps.getId())); // Fetch EPS entity or throw an error
+                    return new HospitalEps(new HospitalEpsId(id, eps.getId()), updatedHospital, epsEntity); // Create new HospitalEps record
                 })
                 .collect(Collectors.toSet());
 
-        // Eliminar las EPS que ya no están asociadas
-        existingHospitalEps.removeAll(newHospitalEps);
-        hospitalEpsRepository.deleteAll(existingHospitalEps);
-
-        // Guardar las nuevas EPS
-        hospitalEpsRepository.saveAll(newHospitalEps);
+        existingHospitalEps.removeAll(newHospitalEps); // Remove old associations
+        hospitalEpsRepository.deleteAll(existingHospitalEps); // Delete old EPS records
+        hospitalEpsRepository.saveAll(newHospitalEps); // Save new EPS records
 
         return updatedHospital;
     }
 
+    // Deletes a hospital by its ID
     @Override
     public void delete(Long id) {
         if (!hospitalRepository.existsById(id)) {
-            throw new RuntimeException("Hospital with id " + id + " not found");
+            throw new RuntimeException("Hospital with id " + id + " not found"); // Throw error if hospital not found
         }
-        hospitalRepository.deleteById(id);
+        hospitalRepository.deleteById(id); // Delete the hospital
     }
 
+    // Fetches a hospital by its ID and returns it as a DTO
     @Override
     public HospitalGetResponseDTO getById(Long id) {
-        // Buscar el hospital existente
         Hospital hospitalExists = hospitalRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Hospital with id " + id + " not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Hospital with id " + id + " not found")); // Fetch hospital or throw an error
 
-        Towns townExist = hospitalExists.getTown_id();
+        Towns townExist = hospitalExists.getTown_id(); // Fetch town associated with the hospital
         TownsDTO town = TownsDTO.builder()
                 .name(townExist.getName())
-                .build();
+                .build(); // Convert town entity to DTO
 
-        // Obtener la lista de EPS y convertirla a una lista de nombres
         List<String> epsName = hospitalExists.getEps_id().stream()
                 .map(hospitalEps -> hospitalEps.getEps().getName())
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()); // Collect EPS names associated with the hospital
 
-        // Generar el perfil de concurrencia
         Map<String, Integer> concurrencyProfile = ConcurrencyAlgorithm.generateConcurrencyProfile(
                 hospitalExists.getMorning_peak(),
                 hospitalExists.getAfternoon_peak(),
                 hospitalExists.getNight_peak()
-        );
+        ); // Generate concurrency profile
 
-        // Mapear el Hospital a HospitalGetResponseDTO
-        HospitalGetResponseDTO hospitalGetResponseDTO = hospitalMapper.toHospitalGetResponseDTO(hospitalExists);
-
-        // Establecer los EPS y el perfil de concurrencia
-        hospitalGetResponseDTO.setEps_id(epsName);
-        hospitalGetResponseDTO.setConcurrencyProfile(concurrencyProfile);
-        hospitalGetResponseDTO.setTown_id(town);
+        HospitalGetResponseDTO hospitalGetResponseDTO = hospitalMapper.toHospitalGetResponseDTO(hospitalExists); // Map hospital to DTO
+        hospitalGetResponseDTO.setEps_id(epsName); // Set EPS list in DTO
+        hospitalGetResponseDTO.setConcurrencyProfile(concurrencyProfile); // Set concurrency profile in DTO
+        hospitalGetResponseDTO.setTown_id(town); // Set town in DTO
 
         return hospitalGetResponseDTO;
     }
 
+    // Fetches all hospitals and returns them as a list of DTOs
     @Override
     public List<HospitalGetResponseDTO> readALl() {
-        List<Hospital> hospitalExists = this.hospitalRepository.findAll();
+        List<Hospital> hospitalExists = this.hospitalRepository.findAll(); // Fetch all hospitals
 
-        // Usar el mapeador para convertir a DTOs
         return hospitalExists.stream()
                 .map(hospital -> {
-                    Towns townExist = hospital.getTown_id();
+                    Towns townExist = hospital.getTown_id(); // Fetch associated town
                     TownsDTO townsDTO = TownsDTO.builder()
                             .name(townExist.getName())
-                            .build();
+                            .build(); // Convert town entity to DTO
 
-                    // Mapear el hospital a DTO y agregar el townDTO
                     Map<String, Integer> concurrencyProfile = ConcurrencyAlgorithm.generateConcurrencyProfile(
                             hospital.getMorning_peak(),
                             hospital.getAfternoon_peak(),
                             hospital.getNight_peak()
-                    );
+                    ); // Generate concurrency profile
 
-                    HospitalGetResponseDTO hospitalGetResponseDTO = hospitalMapper.toHospitalGetResponseDTO(hospital);
-                    hospitalGetResponseDTO.setTown_id(townsDTO);
-                    hospitalGetResponseDTO.setConcurrencyProfile(concurrencyProfile);
+                    HospitalGetResponseDTO hospitalGetResponseDTO = hospitalMapper.toHospitalGetResponseDTO(hospital); // Convert hospital to DTO
+                    hospitalGetResponseDTO.setTown_id(townsDTO); // Set town in DTO
+                    hospitalGetResponseDTO.setConcurrencyProfile(concurrencyProfile); // Set concurrency profile in DTO
 
                     return hospitalGetResponseDTO;
                 })
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()); // Return list of DTOs
     }
 
-
-
+    // Retrieves the concurrency profile for a hospital based on its ID and other parameters
     public Map<String, Integer> getConcurrencyProfileByHospital(Long hospitalId, String eps, String town, Double latitude, Double longitude) {
-        HospitalSearchRequestDTO requestDTO = new HospitalSearchRequestDTO(eps, town, latitude, longitude);
-        List<HospitalCardDTO> hospitals = getHospitalsNearby(requestDTO);
+        HospitalSearchRequestDTO requestDTO = new HospitalSearchRequestDTO(eps, town, latitude, longitude); // Create a request DTO for searching hospitals
+        List<HospitalCardDTO> hospitals = getHospitalsNearby(requestDTO); // Get nearby hospitals
 
         return hospitals.stream()
-                .filter(hospital -> hospital.getId().equals(hospitalId))
-                .map(HospitalCardDTO::getConcurrencyProfile)
+                .filter(hospital -> hospital.getId().equals(hospitalId)) // Filter the hospital by ID
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("Hospital not found or has no concurrency profile"));
+                .map(HospitalCardDTO::getConcurrencyProfile)
+                .orElseThrow(() -> new EntityNotFoundException("Hospital with id " + hospitalId + " not found")); // Throw error if not found
     }
 }
