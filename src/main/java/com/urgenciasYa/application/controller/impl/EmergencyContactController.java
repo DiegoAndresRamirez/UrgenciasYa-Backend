@@ -1,29 +1,27 @@
 package com.urgenciasYa.application.controller.impl;
 
 import com.urgenciasYa.application.controller.interfaces.IModelEmergencyContact;
-import com.urgenciasYa.application.dto.request.EmergencyContactRequestDTO;
 import com.urgenciasYa.application.exceptions.ErrorSimple;
 import com.urgenciasYa.application.service.impl.EmergencyContactService;
-import com.urgenciasYa.application.service.impl.UserService;
 import com.urgenciasYa.domain.model.EmergencyEntity;
-import com.urgenciasYa.domain.model.UserEntity;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.HashMap;
 import java.util.Map;
+
+/*
+ * Controller for managing emergency contacts.
+ * This class provides endpoints for creating and updating emergency contact information.
+ */
 
 @RestController
 @RequestMapping("/api/v1/contacts")
@@ -33,6 +31,8 @@ public class EmergencyContactController implements IModelEmergencyContact {
 
     @Autowired
     private EmergencyContactService emergencyContactService;
+
+    //Creates a new emergency contact for a specific user.
 
     @Operation(
             summary = "Create a new emergency contact",
@@ -115,7 +115,7 @@ public class EmergencyContactController implements IModelEmergencyContact {
         }
     }
 
-
+    //Updates an existing emergency contact identified by the provided ID.
 
     @Override
     @PutMapping("/{id}")
