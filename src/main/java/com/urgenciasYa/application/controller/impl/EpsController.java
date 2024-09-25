@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/eps")
-@CrossOrigin(origins = "https://urgenciasya-frontend-3.onrender.com")
+@CrossOrigin(origins = "https://localhost:3000")
 public class EpsController implements IModelEps {
 
     @Autowired
