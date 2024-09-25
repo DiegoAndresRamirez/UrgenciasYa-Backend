@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+// Entity representing the relationship between Hospital and EPS (Health Insurance Company)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -22,8 +23,8 @@ public class HospitalEps {
 
     @ManyToOne
     @MapsId("epsId")
-    @JoinColumn(name = "eps_id")
-    private Eps eps;
+    @JoinColumn(name = "eps_id") // Specifies the foreign key column name in the database
+    private Eps eps; // EPS associated with this record
 
     // Other fields if needed
 }
