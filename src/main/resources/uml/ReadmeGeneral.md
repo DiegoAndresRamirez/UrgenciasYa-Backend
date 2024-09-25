@@ -337,3 +337,53 @@ for Hospitals
 ---
 
 This `README.md` file provides a complete guide to run, maintain, and expand the **Urgencias Ya** application, ensuring that any user can efficiently understand its operation and structure.
+
+### **Problem Statement**:
+
+During a medical emergency, it is crucial to access appropriate care quickly. However, users often face the following challenges:
+
+- Uncertainty about which hospital to go to.
+- Lack of information on wait times and congestion levels at medical centers.
+- Anxiety about finding the nearest hospital or the quickest route.
+
+Long waits and overcrowded emergency rooms can worsen a patient's condition and hinder communication with medical staff due to high demand.
+
+---
+
+### **Project Scope**:
+
+#### **Short Term**:
+- **Real-Time Information**: Develop a web application that displays the nearest emergency medical care centers based on the user's location.
+- **Congestion Levels**: Provide up-to-date information on congestion and wait times at each medical center.
+- **Travel Directions**: Offer directions and estimated travel times to the selected care center via car or public transportation using Waze and Google Maps.
+- **Emergency Contact**: Connect to an emergency hotline or contact in case the user cannot travel independently.
+- **Health Insurance Filters**: Allow users to filter care centers based on their health insurance provider (EPS) or SISBEN classification.
+
+#### **Medium Term**:
+- **Personal Information Integration**: Incorporate each user's personal information (in accordance with the "Personal Data Protection Law"), such as underlying diseases, socioeconomic status, location, age, gender, health insurance provider, and contact details. This information can be sent to the hospital to expedite care.
+- **Service Information**: Integrate data about the services provided by each hospital.
+- **Accident Support**: Add a feature that helps users involved in traffic accidents find hospitals that can treat them based on their insurance policy or SOAT.
+- **User Login**: Create a login system for users who authorize the processing of their data to expedite care upon arrival at the medical center.
+
+#### **Long Term**:
+- **Expand Coverage**: Expand the application's coverage to national and Latin American levels.
+- **Additional Features**: Incorporate features like medical appointment reminders, visit history, and priority appointment requests.
+- **Partnerships**: Establish partnerships with insurance companies and medical service providers to enhance the user experience.
+- **Endorsement**: Obtain approval from the Ministry of Health for implementation in all emergency care centers in the country.
+
+---
+
+### **Out of Scope**:
+- The application will **not** provide direct medical care or replace existing emergency services.
+- It will **not** integrate with the internal systems of hospitals or medical care centers.
+- **No** transportation or ambulance services will be offered directly through the application.
+- We **cannot guarantee** the quality of care provided by the hospital once the user is attended internally.
+
+### **Who We Are**:
+
+- **Mission**: To provide the population with up-to-date and reliable information about the nearest and least congested medical care centers, improving their quality of life and safety in emergency and urgent situations.
+
+- **Vision**: To be the leading web platform in the country by 2028, endorsed by the Ministry of Health, providing up-to-date and reliable information to facilitate quick and efficient access to emergency medical care centers.
+
+- **Values**: Transparency, Innovation, Commitment, Collaboration, Trust, Quality.
+
