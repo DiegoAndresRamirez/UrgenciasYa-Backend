@@ -21,7 +21,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class HospitalService implements IHospitalModel {
+public class HospitalService implements IHospitalModel { // Implementing the IHospitalModel interface
 
     @Autowired
     private HospitalRepository hospitalRepository;
@@ -35,40 +35,43 @@ public class HospitalService implements IHospitalModel {
     @Autowired
     private EpsRepository epsRepository;
 
-    private static final double EARTH_RADIUS = 6371;
-    private static final double SEARCH_RADIUS = 3.0; // en kilómetros
+    private static final double EARTH_RADIUS = 6371; // Earth radius in kilometers
+    private static final double SEARCH_RADIUS = 3.0; // Search radius in kilometers
 
+    // Method to retrieve hospitals nearby based on user location and EPS
     public List<HospitalCardDTO> getHospitalsNearby(HospitalSearchRequestDTO requestDTO) {
-        String epsName = requestDTO.getEps();
-        String townName = requestDTO.getTown();
-        Double userLatitude = requestDTO.getLatitude();
-        Double userLongitude = requestDTO.getLongitude();
+        String epsName = requestDTO.getEps(); // Getting EPS name from request
+        String townName = requestDTO.getTown(); // Getting town name from request
+        Double userLatitude = requestDTO.getLatitude(); // Getting user latitude from request
+        Double userLongitude = requestDTO.getLongitude(); // Getting user longitude from request
 
-        List<Hospital> hospitals;
+        List<Hospital> hospitals; // List to store hospitals
 
-        if (userLatitude != null && userLongitude != null) {
-            hospitals = hospitalRepository.findByEpsName(epsName);
+        if (userLatitude != null && userLongitude != null) { // If user location is provided
+            hospitals = hospitalRepository.findByEpsName(epsName);  // Find hospitals by EPS name
             hospitals = hospitals.stream()
-                    .filter(h -> calculateDistance(userLatitude, userLongitude, h.getLatitude(), h.getLongitude()) <= SEARCH_RADIUS)
-                    .sorted(Comparator.comparingDouble(h -> calculateDistance(userLatitude, userLongitude, h.getLatitude(), h.getLongitude())))
-                    .collect(Collectors.toList());
-        } else {
-            hospitals = townName != null ? hospitalRepository.findByEpsNameAndTown(epsName, townName) : hospitalRepository.findByEpsName(epsName);
+                    .filter(h -> calculateDistance(userLatitude, userLongitude, h.getLatitude(), h.getLongitude()) <= SEARCH_RADIUS) // Filter by distance
+                    .sorted(Comparator.comparingDouble(h -> calculateDistance(userLatitude, userLongitude, h.getLatitude(), h.getLongitude()))) // Sort by distance
+                    .collect(Collectors.toList()); // Collect the results
+        } else { // If user location is not provided
+            hospitals = townName != null ? hospitalRepository.findByEpsNameAndTown(epsName, townName) : hospitalRepository.findByEpsName(epsName); // Find hospitals by town or EPS name
         }
 
+        // Map the Hospital objects to HospitalCardDTO and return
         return hospitals.stream()
                 .map(this::mapToHospitalCardDTO)
                 .collect(Collectors.toList());
     }
 
+    // Method to map Hospital to HospitalCardDTO
     private HospitalCardDTO mapToHospitalCardDTO(Hospital hospital) {
         Map<String, Integer> concurrencyProfile = ConcurrencyAlgorithm.generateConcurrencyProfile(
                 hospital.getMorning_peak(),
                 hospital.getAfternoon_peak(),
                 hospital.getNight_peak()
-        );
+        ); // Generate concurrency profile based on peak hours
 
-        return HospitalCardDTO.builder()
+        return HospitalCardDTO.builder() // Building HospitalCardDTO
                 .id(hospital.getId())
                 .url_image(hospital.getUrl_image())
                 .phone_number(hospital.getPhone_number())
@@ -83,19 +86,20 @@ public class HospitalService implements IHospitalModel {
                 .build();
     }
 
+    // Method to calculate distance between two geographical points
     private double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
-        double dLat = Math.toRadians(lat2 - lat1);
-        double dLon = Math.toRadians(lon2 - lon1);
+        double dLat = Math.toRadians(lat2 - lat1); // Latitude difference in radians
+        double dLon = Math.toRadians(lon2 - lon1); // Longitude difference in radians
         double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
                 Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
-                        Math.sin(dLon / 2) * Math.sin(dLon / 2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        return EARTH_RADIUS * c;
+                        Math.sin(dLon / 2) * Math.sin(dLon / 2); // Haversine formula calculation
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)); // More calculations based on Haversine formula
+        return EARTH_RADIUS * c; // Return distance in kilometers
     }
 
     @Override
-    public Hospital create(HospitalCreateResponseDTO dto) {
-        Hospital hospital = Hospital.builder()
+    public Hospital create(HospitalCreateResponseDTO dto) { // Method to create a new Hospital
+        Hospital hospital = Hospital.builder() // Building a new Hospital object
                 .url_image(dto.getUrl_image())
                 .phone_number(dto.getPhone_number())
                 .name(dto.getName())
@@ -111,6 +115,7 @@ public class HospitalService implements IHospitalModel {
 
         Hospital savedHospital = hospitalRepository.save(hospital);
 
+        // Creating relationships between Hospital and EPS
         List<HospitalEps> hospitalEpsList = dto.getEps_id().stream()
                 .map(eps -> {
                     Eps epsEntity = epsRepository.findById(eps.getId())
@@ -125,10 +130,11 @@ public class HospitalService implements IHospitalModel {
     }
 
     @Override
-    public Hospital update(Long id, HospitalCreateResponseDTO dto) {
+    public Hospital update(Long id, HospitalCreateResponseDTO dto) { // Method to update an existing Hospital
         Hospital existingHospital = hospitalRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Hospital with id " + id + " not found"));
+                .orElseThrow(() -> new RuntimeException("Hospital with id " + id + " not found"));  // Check if the hospital exists
 
+        // Update hospital details
         existingHospital.setUrl_image(dto.getUrl_image());
         existingHospital.setPhone_number(dto.getPhone_number());
         existingHospital.setName(dto.getName());
@@ -141,9 +147,9 @@ public class HospitalService implements IHospitalModel {
         existingHospital.setLatitude(dto.getLatitude());
         existingHospital.setLongitude(dto.getLongitude());
 
-        Hospital updatedHospital = hospitalRepository.save(existingHospital);
+        Hospital updatedHospital = hospitalRepository.save(existingHospital); // Save the updated hospital
 
-        Set<HospitalEps> existingHospitalEps = new HashSet<>(hospitalEpsRepository.findAllByHospitalId(id));
+        Set<HospitalEps> existingHospitalEps = new HashSet<>(hospitalEpsRepository.findAllByHospitalId(id)); // Get existing EPS relationships
         Set<HospitalEps> newHospitalEps = dto.getEps_id().stream()
                 .map(eps -> {
                     Eps epsEntity = epsRepository.findById(eps.getId())

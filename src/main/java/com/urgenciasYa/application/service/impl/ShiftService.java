@@ -1,6 +1,5 @@
 package com.urgenciasYa.application.service.impl;
 
-import com.urgenciasYa.application.dto.request.EmergencyContactRequestDTO;
 import com.urgenciasYa.application.dto.response.*;
 import com.urgenciasYa.application.mappers.ShiftMapper;
 import com.urgenciasYa.application.service.IModel.IShiftModel;
@@ -15,7 +14,6 @@ import com.urgenciasYa.infrastructure.persistence.UserRepository;
 import com.urgenciasYa.common.utils.enums.StatusShift;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -44,8 +42,10 @@ public class ShiftService implements IShiftModel {
     @Autowired
     private ShiftMapper shiftMapper;
 
+    // Method to create a shift for a user
     @Override
     public Shift createShift(String document, Long hospitalId, Integer epsId) throws Exception {
+        // Retrieve the user based on their document
         UserEntity user = userRepository.findByDocument(document);
         if (user == null) {
             throw new Exception("User not found");
@@ -56,7 +56,7 @@ public class ShiftService implements IShiftModel {
         Eps eps = epsRepository.findById(epsId)
                 .orElseThrow(() -> new Exception("EPS not found"));
 
-        // Get concurrency profile
+        // // Get the concurrency profile for the specified hospital and EPS
         Map<String, Integer> concurrencyProfile = hospitalService.getConcurrencyProfileByHospital(
                 hospitalId, eps.getName(), hospital.getTown_id().getName(), null, null);
 
