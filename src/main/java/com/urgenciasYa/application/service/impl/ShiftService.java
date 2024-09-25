@@ -101,10 +101,12 @@ public class ShiftService implements IShiftModel {
     public UserShiftResponseDTO convertShiftToDTO(Shift shift) {
 
         UserShiftResponseDTO userShiftResponseDTO = shiftMapper.shiftToUserShiftResponseDTO(shift);
+        userShiftResponseDTO.setHospitalId(shiftMapper.hospitalToHospitalShiftResponseDTO(shift.getHospital()));
+        userShiftResponseDTO.setEpsId(shiftMapper.epsToEpsShiftResponseDTO(shift.getEps()));
         return userShiftResponseDTO;
 
     }
-        public List<UserShiftResponseDTO> getAllShiftsByUser (String document) throws Exception {
+    public List<UserShiftResponseDTO> getAllShiftsByUser (String document) throws Exception {
             UserEntity user = userRepository.findByDocument(document);
 
             List<Shift> shifts = shiftRepository.findByUser(user);
@@ -112,6 +114,6 @@ public class ShiftService implements IShiftModel {
             return shifts.stream()
                     .map(this::convertShiftToDTO)
                     .collect(Collectors.toList());
-        }
+    }
 
     }
