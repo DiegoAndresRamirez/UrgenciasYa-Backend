@@ -15,7 +15,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
 import java.util.List;
 
 @Configuration
@@ -28,6 +27,7 @@ public class SecurityConfig {
     @Autowired
     private UserDetailsService userDetailsService;
 
+    // Define public resources that do not require authentication
     private final String[] PUBLIC_RESOURCES = {
             "/api/v1/users/login",
             "/api/v1/users/register",
@@ -42,6 +42,7 @@ public class SecurityConfig {
             "/api/v1/hospitals/{id}"
     };
 
+    // Define admin resources that require ADMIN authority
     private final String[] ADMIN_RESOURCES = {
             "/api/v1/towns/**",
             "/api/v1/eps/**",
@@ -51,6 +52,7 @@ public class SecurityConfig {
             "/api/v1/users/login"
     };
 
+    // Define user resources that require USER authority
     private final String[] USER_RESOURCES = {
             "/api/v1/contacts/{id}",
             "/api/v1/towns/getAll",
@@ -69,6 +71,7 @@ public class SecurityConfig {
             "/api/v1/shifts/user/{document}",
     };
 
+    // Define the security filter chain configuration
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -79,7 +82,7 @@ public class SecurityConfig {
                     source.setAllowedHeaders(List.of("Authorization", "Content-Type"));
                     return source;
                 }))
-                .csrf(csrf -> csrf.disable()) // Deshabilita CSRF
+                .csrf(csrf -> csrf.disable()) // Disable CSRF protection
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(PUBLIC_RESOURCES).permitAll()
                         .requestMatchers(USER_RESOURCES).hasAuthority("USER")
@@ -89,7 +92,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
-        return http.build(); // Construye el SecurityFilterChain
+        return http.build(); // Build and return the SecurityFilterChain
     }
 
     @Bean
