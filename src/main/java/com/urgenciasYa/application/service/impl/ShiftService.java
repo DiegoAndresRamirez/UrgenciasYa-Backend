@@ -103,45 +103,7 @@ public class ShiftService implements IShiftModel {
         UserShiftResponseDTO userShiftResponseDTO = shiftMapper.shiftToUserShiftResponseDTO(shift);
         return userShiftResponseDTO;
 
-        /*
-        UserResponseDTO userDTO = UserResponseDTO.builder()
-                .id(shift.getUser().getId())
-                .name(shift.getUser().getName())
-                .eps(shift.getUser().getEps())
-                .email(shift.getUser().getEmail())
-                .document(shift.getUser().getDocument())
-                .emergency(shift.getUser().getEmergency() != null ? EmergencyContactRequestDTO.builder()
-                        .name(shift.getUser().getEmergency().getName())
-                        .phone(shift.getUser().getEmergency().getPhone())
-                        .build() : null)
-                .role(shift.getUser().getRole() != null ? RoleResponseDTO.builder()
-                        .code(shift.getUser().getRole().getCode())
-                        .build() : null)
-                .build();
-*/
-
-       /*
-        return UserShiftResponseDTO.builder()
-                .id(shift.getId())
-                .shiftNumber(shift.getShiftNumber())
-                .estimatedTime(shift.getEstimatedTime())
-                .status(shift.getStatus().name())
-                .user(userDTO)
-                .hospitalId(HospitalShiftResponseDTO.builder()
-                        .id(shift.getHospital().getId())
-                        .name(shift.getHospital().getName())
-                        .build())
-                .epsId(EpsShiftResponseDTO.builder()
-                        .id(shift.getEps().getId())
-                        .name(shift.getEps().getName())
-                        .build())
-                .build();
     }
-
-        */
-    }
-
-
         public List<UserShiftResponseDTO> getAllShiftsByUser (String document) throws Exception {
             UserEntity user = userRepository.findByDocument(document);
 
