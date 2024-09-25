@@ -7,7 +7,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,11 +14,12 @@ import java.util.List;
 
 public class GlobalExceptionHandler {
 
+    // Handle MethodArgumentNotValidException, which occurs when validation fails
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
     public ErrorSimple badRequest (MethodArgumentNotValidException exception){
 
-        List<String> errors = new ArrayList<>();
+        List<String> errors = new ArrayList<>(); // Create a list to hold error messages
 
         exception.getAllErrors().forEach(error -> errors.add(error.getDefaultMessage()));
 
@@ -30,6 +30,7 @@ public class GlobalExceptionHandler {
                 .build();
     }
 
+    // Handle IllegalArgumentException, which can be thrown for various invalid argument cases
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(code = HttpStatus.CONFLICT)
     public ErrorSimple conflict(IllegalArgumentException exception){

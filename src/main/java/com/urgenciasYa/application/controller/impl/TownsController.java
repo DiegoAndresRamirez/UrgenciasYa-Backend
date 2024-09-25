@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -27,6 +26,7 @@ import java.util.stream.Collectors;
 @CrossOrigin(origins = "https://localhost:3000")
 public class TownsController implements IModelTowns {
 
+    // Dependency injection for the towns service
     @Autowired
     ITownsModel townsService;
 
@@ -48,8 +48,10 @@ public class TownsController implements IModelTowns {
     })
     public ResponseEntity<?> getAllTowns() {
         try {
+            // Retrieve all towns from the service
             List<Towns> towns = townsService.readALl();
             if (towns.isEmpty()) {
+                // If no towns are found, return a 404 error
                 ErrorSimple errorSimple = ErrorSimple.builder()
                         .code(HttpStatus.NOT_FOUND.value())
                         .status(HttpStatus.NOT_FOUND.name())
@@ -58,14 +60,17 @@ public class TownsController implements IModelTowns {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorSimple);
             }
 
+            // Convert Town entities to TownsDTO
             List<TownsDTO> townsDTOS = towns.stream()
                     .map(town -> TownsDTO.builder()
                             .name(town.getName())
                             .build())
                     .collect(Collectors.toList());
 
+            // Return the list of towns
             return ResponseEntity.ok(townsDTOS);
         } catch (Exception e) {
+            // Handle any unexpected exceptions and return a 500 error
             ErrorSimple errorSimple = ErrorSimple.builder()
                     .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
                     .status(HttpStatus.INTERNAL_SERVER_ERROR.name())
@@ -95,6 +100,7 @@ public class TownsController implements IModelTowns {
     public ResponseEntity<?> getById(
             @Parameter(description = "ID of the town to be retrieved") @PathVariable Integer id) {
         try {
+            // Retrieve town by ID
             Towns town = townsService.getById(id);
             if (town == null) {
                 ErrorSimple errorSimple = ErrorSimple.builder()
@@ -105,12 +111,15 @@ public class TownsController implements IModelTowns {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorSimple);
             }
 
+            // Convert Town entity to TownsDTO
             TownsDTO townDTO = TownsDTO.builder()
                     .name(town.getName())
                     .build();
 
+            // Return the town
             return ResponseEntity.ok(townDTO);
         } catch (Exception e) {
+            // Handle any unexpected exceptions and return a 500 error
             ErrorSimple errorSimple = ErrorSimple.builder()
                     .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
                     .status(HttpStatus.INTERNAL_SERVER_ERROR.name())
@@ -142,7 +151,9 @@ public class TownsController implements IModelTowns {
     })
     public ResponseEntity<?> create(@RequestBody @Valid TownCreateDTO dto) {
         try {
+            // Create the new town
             townsService.create(dto);
+            // Return success response
             SuccessResponse successResponse = SuccessResponse.builder()
                     .code(HttpStatus.CREATED.value())
                     .status(HttpStatus.CREATED.name())
@@ -150,6 +161,7 @@ public class TownsController implements IModelTowns {
                     .build();
             return ResponseEntity.status(HttpStatus.CREATED).body(successResponse);
         } catch (IllegalArgumentException exception) {
+            // Handle conflict errors (e.g., if town already exists)
             ErrorSimple errorSimple = ErrorSimple.builder()
                     .code(HttpStatus.CONFLICT.value())
                     .status(HttpStatus.CONFLICT.name())
@@ -157,6 +169,7 @@ public class TownsController implements IModelTowns {
                     .build();
             return ResponseEntity.status(HttpStatus.CONFLICT).body(errorSimple);
         } catch (Exception exception) {
+            // Handle any unexpected exceptions and return a 500 error
             ErrorSimple errorSimple = ErrorSimple.builder()
                     .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
                     .status(HttpStatus.INTERNAL_SERVER_ERROR.name())

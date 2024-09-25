@@ -15,12 +15,14 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+
+// Entity representing a role in the application
 public class RoleEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(nullable = false)
-    private String code;
+    private String code; // Code representing the role (e.g., "USER", "ADMIN")
 
     @OneToMany(mappedBy = "role")
     private Set<UserEntity> users;

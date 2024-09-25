@@ -21,6 +21,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -48,6 +49,7 @@ public class UserService implements IUserModel {
 
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
+    // Method to create a new user
     @Override
     public UserEntity create(UserRegisterRequestDTO userRegisterDTO) {
         UserEntity existUser = userRepository.findByEmail(userRegisterDTO.getEmail());
@@ -55,9 +57,9 @@ public class UserService implements IUserModel {
             throw new IllegalArgumentException("El correo ya existe");
         }
 
-        // Aquí deberías obtener el EPS del DTO directamente
+        // Get EPS name from the registration DTO
         String epsName = userRegisterDTO.getEps().getName();
-        // Si necesitas buscar el EPS en la base de datos, puedes hacerlo aquí
+        // Check if the EPS exists in the database
         Eps epsExists = epsRepository.findByName(epsName);
         if (epsExists == null) {
             throw new IllegalArgumentException("La EPS no existe");
@@ -70,6 +72,7 @@ public class UserService implements IUserModel {
         user.setEps(UserMapper.INSTANCE.epsResponseDTOToUserEntity(userRegisterDTO.getEps())); // Usar el nombre de EPS encontrado
         user.setRole(defaultRole);
         user.setPassword(encoder.encode(userRegisterDTO.getPassword()));
+
 
         return userRepository.save(user);
     }
@@ -135,9 +138,9 @@ public class UserService implements IUserModel {
                     .name(epsExists.getName())
                     .build();
 
-            EmergencyContactResponseDTO emergencyContactResponseDTO = null; // Inicializamos como null
+            EmergencyContactResponseDTO emergencyContactResponseDTO = null; // Initialize emergency contact as null
 
-            if (user.getEmergency() != null) { // Comprobamos si existe el contacto de emergencia
+            if (user.getEmergency() != null) { // Check if emergency contact exists and build its DTO
                 emergencyContactResponseDTO = EmergencyContactResponseDTO.builder()
                         .id(user.getEmergency().getId())
                         .name(user.getEmergency().getName())
@@ -148,9 +151,9 @@ public class UserService implements IUserModel {
             return UserRegisterDTO.builder()
                     .name(user.getName())
                     .email(user.getEmail())
-                    .eps(epsUserResponseDTO)
-                    .password(user.getPassword())
-                    .contact(emergencyContactResponseDTO) // Puede ser null
+                    .eps(epsUserResponseDTO) // Set EPS DTO
+                    .password(user.getPassword()) // Include password (consider security implications)
+                    .contact(emergencyContactResponseDTO) // Set emergency contact (can be null)
                     .document(user.getDocument())
                     .build();
         } else {
@@ -164,7 +167,7 @@ public class UserService implements IUserModel {
         UserEntity existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Usuario con ID " + id + " no encontrado"));
 
-        // Usar el EPS del DTO
+        // Get EPS name from the update DTO
         String epsName = userUpdateDTO.getEps().getName();
         Eps epsExists = epsRepository.findByName(epsName);
         if (epsExists == null) {
@@ -183,17 +186,17 @@ public class UserService implements IUserModel {
         UserEntity user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Usuario con ID " + id + " no encontrado"));
 
-        // Verificar la contraseña actual
+        // Verify the current password
         if (!encoder.matches(passwordChangeDTO.getCurrentPassword(), user.getPassword())) {
             throw new IllegalArgumentException("La contraseña actual es incorrecta");
         }
 
-        // Verificar que la nueva contraseña y su confirmación coincidan
+        // Verify that the new password matches the confirmation
         if (!passwordChangeDTO.getNewPassword().equals(passwordChangeDTO.getConfirmNewPassword())) {
             throw new IllegalArgumentException("La nueva contraseña y su confirmación no coinciden");
         }
 
-        // Establecer la nueva contraseña
+        // Set the new password and save the user
         user.setPassword(encoder.encode(passwordChangeDTO.getNewPassword()));
         userRepository.save(user);
     }

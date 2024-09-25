@@ -20,8 +20,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+
+/*
+ * This class serves as the controller for managing hospital-related operations.
+ * It provides CRUD operations and a filtering system to query hospitals based on specific criteria.
+ */
 
 @RestController
 @RequestMapping("/api/v1/hospitals")
@@ -29,7 +33,9 @@ import java.util.List;
 public class HospitalController implements IModelHospital {
 
     @Autowired
-    private HospitalService hospitalService;
+    private HospitalService hospitalService;  // Injects the service that contains the business logic for hospitals
+
+    // Endpoint to retrieve a list of hospitals based on EPS, town, latitude, and longitude.
 
     @Operation(
             summary = "Retrieve a list of hospitals based on EPS, town, latitude, and longitude.",
@@ -55,12 +61,14 @@ public class HospitalController implements IModelHospital {
     @GetMapping("/filter")
     public ResponseEntity<?> getHospitalByEpsAndTown(
             @RequestParam String eps,
-            @RequestParam(required = false) String town, // No requerido
+            @RequestParam(required = false) String town, // No required
             @RequestParam(required = false) Double latitude,
             @RequestParam(required = false) Double longitude
     ) {
+        // Creating a request DTO based on the available parameters
         HospitalSearchRequestDTO requestDTO;
 
+        // If both latitude and longitude are present, use them for location-based filtering
         if (latitude != null && longitude != null) {
             requestDTO = new HospitalSearchRequestDTO(eps, null, latitude, longitude); // Town es null
         } else {
@@ -68,8 +76,10 @@ public class HospitalController implements IModelHospital {
         }
 
         try {
+            // Fetch the hospitals based on the search criteria
             List<HospitalCardDTO> hospitals = hospitalService.getHospitalsNearby(requestDTO);
 
+            // If no hospitals are found, return a 404 response
             if (hospitals.isEmpty()) {
                 ErrorSimple error = ErrorSimple.builder()
                         .code(HttpStatus.NOT_FOUND.value())
@@ -79,8 +89,10 @@ public class HospitalController implements IModelHospital {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
             }
 
+            // Return the list of hospitals in a 200 OK response
             return ResponseEntity.ok(hospitals);
         } catch (Exception e) {
+            // Handle any unexpected errors and return a 500 response
             ErrorSimple error = ErrorSimple.builder()
                     .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
                     .status(HttpStatus.INTERNAL_SERVER_ERROR.name())
@@ -89,7 +101,9 @@ public class HospitalController implements IModelHospital {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
         }
     }
-
+    /*
+     * Endpoint to create a new hospital in the system.
+     */
 
 
     @Operation(
@@ -119,9 +133,11 @@ public class HospitalController implements IModelHospital {
     @PostMapping("/create")
     public ResponseEntity<?> create(@RequestBody HospitalCreateResponseDTO dto) {
         try {
+            // Call the service layer to create a new hospital
             Hospital createdHospital = hospitalService.create(dto);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdHospital);
         } catch (IllegalArgumentException e) {
+            // Handle invalid data input and return a 400 response
             ErrorSimple error = ErrorSimple.builder()
                     .code(HttpStatus.BAD_REQUEST.value())
                     .status(HttpStatus.BAD_REQUEST.name())
@@ -129,6 +145,7 @@ public class HospitalController implements IModelHospital {
                     .build();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
         } catch (Exception e) {
+            // Handle unexpected errors and return a 500 response
             ErrorSimple error = ErrorSimple.builder()
                     .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
                     .status(HttpStatus.INTERNAL_SERVER_ERROR.name())

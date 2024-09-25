@@ -15,8 +15,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+
+/*
+ * This class serves as the controller for managing emergency shift operations.
+ * It provides endpoints for creating and retrieving shifts based on user information.
+ */
 
 @RestController
 @RequestMapping("/api/v1/shifts")
@@ -24,7 +28,11 @@ import java.util.List;
 public class ShiftController {
 
     @Autowired
-    private ShiftService shiftService;
+    private ShiftService shiftService; // Inject the ShiftService for business logic
+
+    /*
+     * Endpoint to create an emergency shift for a user at the hospital assigned by their EPS.
+     */
 
     @PostMapping("/create")
     @Operation(
@@ -52,8 +60,10 @@ public class ShiftController {
             @Parameter(description = "EPS ID") @RequestParam Integer epsId
     ) {
         try {
+            // Call the service layer to create a new emergency shift
             Shift shift = shiftService.createShift(document, hospitalId, epsId);
 
+            // Build the user information for the response
             UserResponseDTO userDTO = UserResponseDTO.builder()
                     .id(shift.getUser().getId())
                     .name(shift.getUser().getName())
@@ -69,6 +79,7 @@ public class ShiftController {
                             .build() : null)
                     .build();
 
+            // Build the shift information for the response
             UserShiftResponseDTO shiftDTO = UserShiftResponseDTO.builder()
                     .id(shift.getId())
                     .shiftNumber(shift.getShiftNumber())
@@ -85,8 +96,10 @@ public class ShiftController {
                             .build()) // Solo ID de la EPS
                     .build();
 
+            // Return the created shift details in a 201 Created response
             return ResponseEntity.status(HttpStatus.CREATED).body(shiftDTO);
         } catch (IllegalArgumentException e) {
+            // Handle case where user, hospital, or EPS is not found, and return a 404 error response
             ErrorSimple errorSimple = ErrorSimple.builder()
                     .code(HttpStatus.NOT_FOUND.value())
                     .status(HttpStatus.NOT_FOUND.name())
@@ -94,6 +107,7 @@ public class ShiftController {
                     .build();
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorSimple);
         } catch (IllegalStateException e) {
+            // Handle case of invalid request parameters, and return a 400 Bad Request response
             ErrorSimple errorSimple = ErrorSimple.builder()
                     .code(HttpStatus.BAD_REQUEST.value())
                     .status(HttpStatus.BAD_REQUEST.name())
@@ -101,6 +115,7 @@ public class ShiftController {
                     .build();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorSimple);
         } catch (Exception e) {
+            // Handle unexpected errors and return a 500 Internal Server Error response
             ErrorSimple errorSimple = ErrorSimple.builder()
                     .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
                     .status(HttpStatus.INTERNAL_SERVER_ERROR.name())
@@ -109,6 +124,10 @@ public class ShiftController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorSimple);
         }
     }
+
+    /*
+     * Endpoint to retrieve all shifts associated with a specific user based on their document number.
+     */
 
     @GetMapping("/user/{document}")
     @Operation(
@@ -123,9 +142,11 @@ public class ShiftController {
     })
     public ResponseEntity<?> getAllShiftsByUser(@PathVariable String document) {
         try {
+            // Fetch all shifts for the user using their document number
             List<UserShiftResponseDTO> shiftsDTO = shiftService.getAllShiftsByUser(document);
             return ResponseEntity.ok(shiftsDTO);
         } catch (IllegalArgumentException e) {
+            // Handle case where user or shifts are not found, and return a 404 error response
             ErrorSimple errorSimple = ErrorSimple.builder()
                     .code(HttpStatus.NOT_FOUND.value())
                     .status(HttpStatus.NOT_FOUND.name())
@@ -133,6 +154,7 @@ public class ShiftController {
                     .build();
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorSimple);
         } catch (Exception e) {
+            // Handle unexpected errors and return a 500 Internal Server Error response
             ErrorSimple errorSimple = ErrorSimple.builder()
                     .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
                     .status(HttpStatus.INTERNAL_SERVER_ERROR.name())
